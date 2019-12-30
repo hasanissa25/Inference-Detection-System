@@ -7,6 +7,11 @@ mvn clean package
 How to run the program:
 mvn spring-boot:run
 
+To access development database:
+go to '/h2-console'
+enter into the 'JDBC URL' field: jdbc:h2:mem:testdb
+click on connect button
+
 Lombok plugin installation:
  
 install this plugin: click on download resource on the right hand side, then drag file onto gitpod window
