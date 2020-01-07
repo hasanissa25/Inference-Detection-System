@@ -50,15 +50,16 @@ public class IFSAdminController {
     @GetMapping("/addPolicy")
     public String addPolicy(Model m) {
         logger.info("GET addPolicy");
+        m.addAttribute("policy", new Policy());
         return "addPolicy";
     }
 
-    //Not sure if need slash or not
-    @PostMapping("addNewPolicy")
+    @PostMapping("addPolicy")
     public String addNewPolicy(@ModelAttribute Policy newPolicyForm, Model m){
-        logger.info("Add new policy parameters:"+ newPolicyForm); 
-        logger.info("POST");
-        return "addNewPolicy";
+        logger.info("Add new policy parameters: " + newPolicyForm);
+        logger.info("POST: " + newPolicyForm);
+        policyManager.savePolicy(newPolicyForm);
+        return "redirect:/admin";
     }
     
     @GetMapping("/editPolicy")

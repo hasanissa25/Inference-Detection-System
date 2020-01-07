@@ -37,7 +37,7 @@
                 <a class="nav-link active" href="#">Policies</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link " href="#">Users</a>
+                <a class="nav-link" href="#">Users</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Inference Attack Logs</a>
@@ -47,23 +47,37 @@
     </div>
      <div class="row">
         <div class="col">
-            <h1>Add a New Policy:</h1>
-            <form action="#" th:action="@{/addNewPolicy}"  th:object="${addNewPolicy}" method="post">
-            <!-- <form action="/addNewPolicy" method="post"> -->
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Input Columns:</label>
-                    <input type="text" class="form-control" id="exampleInputColumn" placeholder="patient_info.date_of_entry + patient_info.date_of_leave">
+            <h1>Add Policy: <span th:text="${policy.id}" /></h1>
+            <form id="addPolicy" action="/addPolicy" th:action="@{/addPolicy(policyId=${policy.id})}"  th:object="${policy}" method="post">
+                <input hidden th:name="id" th:value="${policy.id}"/>
+                <p>Input Columns:</p>
+                <div id="input-columns">
+                    <div class="form-group" th:each="x, itemStat : ${policy.inputColumns}">
+                        <input type="text" class="form-control" th:field="${policy.inputColumns[__${itemStat.index}__]}">
+                        <button type="button" class="btn btn-danger  fas fa-trash"/>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Blocked Columns:</label>
-                    <input type="text" class="form-control" id="exampleBlockedColumn" placeholder="patient_medical_info.length_of_stay">
+                <button id="addInputColumnButton" type="button" class="btn btn-success">Add Input Column</button>
+
+                <p>Blocked Columns:</p>
+                <div id="blocked-columns">
+                    <div class="form-group" th:each="x, itemStat : ${policy.blockedColumns}">
+                        <input type="text" class="form-control" th:field="${policy.blockedColumns[__${itemStat.index}__]}">
+                        <button type="button" class="btn btn-danger  fas fa-trash"/>
+                    </div>
                 </div>
-                <div class="form-group">
-                <label for="exampleInputPassword1">Policy Rule:</label>
-                <input type="text" class="form-control" id="examplePolicyRule" placeholder="If (patient_info.date_of_leave  -  patient_info.date_of_entry = patient_medical_info.length_of_stay) Then Block Column ">
+                <div class="row">
+                        <div class="col mb-2">
+                            <button id="addBlockedColumnButton" type="button" class="btn btn-success">Add Blocked Column</button>
+                        </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <a class="btn btn-primary" href="/admin">Go Back</a>
+
+                <div class="row">
+                    <div class="col mt-2" >
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <a class="btn btn-primary" href="/admin">Go Back</a>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -71,8 +85,40 @@
 <!-- /.container -->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script th:src="@{webjars/bootstrap/4.3.1/js/bootstrap.min.js}" type="text/javascript">
+<script th:src="@{webjars/bootstrap/4.3.1/js/bootstrap.min.js}" type="text/javascript"></script>
+<script type="text/javascript">
+
+function inputComponentBuilder(num) {
+    const inputComponent = `<div class="form-group">
+                            <input type="text" name="inputColumns[${num}]" class="form-control" placeholder="Column Name">
+                            <button type="button" class="btn btn-danger  fas fa-trash"/>
+                            </div>`;
+    return inputComponent;
+}
+
+function blockedComponentBuilder(num) {
+    const inputComponent = `<div class="form-group">
+                            <input type="text" name="blockedColumns[${num}]" class="form-control" placeholder="Column Name">
+                            <button type="button" class="btn btn-danger  fas fa-trash"/>
+                            </div>`;
+    return inputComponent;
+}
+
 $(document).ready(function(){
+    $("#addInputColumnButton").click(function(){
+        let num = $("#input-columns > div").length;
+        $("#input-columns").append(inputComponentBuilder(num));
+    });
+
+    $("#addBlockedColumnButton").click(function(){
+        let num = $("#blocked-columns > div").length;
+        $("#blocked-columns").append(blockedComponentBuilder(num));
+    });
+
+    $(".btn-danger").click(function(){
+       $(this).parent().remove();
+    })
+
 });
 </script>
 </body>
