@@ -52,8 +52,7 @@
     <div class="row">
       <div class="col">
         <h1>Edit User: <span th:text="${user.userName}"/></h1>
-        <form id="editUser" name="editForm" action="/editUser" th:action="@{/editUser(userId=${user.id})}" th:object="${user}" method="post" onsubmit="changeTime()">
-          <form id="editUser" name="editForm"  method="post">
+        <form id="editUser" name="editForm" action="/editUser" th:action="@{/editUser(userId=${user.id})}" th:object="${user}" method="post">
           <div class="form-group">
             <input hidden th:name="id" th:value="${user.id}"/>
             <label for="exampleInputEmail1">User Name: </label>

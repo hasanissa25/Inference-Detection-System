@@ -117,6 +117,15 @@ public class IFSAdminController {
     }
     @GetMapping("/addUser")
     public String addUser(Model m) {
+        logger.info("GET addNewUser");
+        m.addAttribute("user", new User());
         return "addUser";
+    }
+
+    @PostMapping("/addUser")
+    public String addUser(@ModelAttribute User newUserForm, Model m) {
+        logger.info("User Form: " + newUserForm);
+        userManager.saveUserInfo(newUserForm);
+        return "redirect:/users";
     }
 }
