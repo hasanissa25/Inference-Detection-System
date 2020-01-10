@@ -56,8 +56,10 @@
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col">User Name</th>
-                            <th scope="col">User Password</th>
+                            <th scope="col">Creation date</th>
+                            <th scope="col">Last login date</th>
                             <th scope="col">Actions</th>
+
                         </tr>
                         <!-- <tr>
                             <td>ThisGuy</td>
@@ -97,13 +99,10 @@
                         </tr> -->
                     </thead>
                     <tbody>
-                        <tr th:each="user: users">
-                            <td>
-                                ${user.userName}
-                            </td>
-                            <td>
-                                ${user.password}
-                            </td>
+                        <tr th:each="user: ${users}">
+                            <td th:text="${user.userName}"/>
+                            <td th:text="${user.creationDate}"/>
+                            <td th:text="${user.lastLoginDate}"/>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     <a class="btn btn-primary" href="/editUser">

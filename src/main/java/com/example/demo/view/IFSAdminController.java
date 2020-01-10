@@ -25,14 +25,16 @@ public class IFSAdminController {
 
     private final static Logger logger = LoggerFactory.getLogger(IFSAdminController.class);
 
+    @Autowired
     private PolicyManager policyManager;
+    
+    @Autowired
     private UserManager userManager;
     
     @Autowired
     private DBLogEntryRepository dbLogEntryRepository;
     
-    public IFSAdminController(PolicyManager policyManager) {
-        this.policyManager = policyManager;
+    public IFSAdminController() {
     }
 
     @GetMapping("/clearLog")

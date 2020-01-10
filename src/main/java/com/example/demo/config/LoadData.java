@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
@@ -7,9 +8,11 @@ import javax.annotation.PostConstruct;
 import com.example.demo.data.model.PatientInfo;
 import com.example.demo.data.model.PatientMedicalInfo;
 import com.example.demo.data.model.Policy;
+import com.example.demo.data.model.User;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PatientlnfoRepository;
 import com.example.demo.data.repository.PolicyRepository;
+import com.example.demo.data.repository.UserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +32,9 @@ public class LoadData {
 
     @Autowired
     private PatientlnfoRepository patientInfoRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PostConstruct
     public void run(){
@@ -60,5 +66,10 @@ public class LoadData {
             new PatientInfo("Fiona Fastener", "Oct 25, 2014", "TBD", "F", false),
             new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)
             ));
+
+         userRepository.saveAll(Arrays.asList(
+            new User(1,"John Smith",LocalDate.of(2020,1,1),LocalDate.of(2020,1,10),"Password")))
+            
+        ;
     }
 }
