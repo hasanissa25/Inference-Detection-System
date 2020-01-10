@@ -46,9 +46,20 @@ public class IFSAdminController {
         m.addAttribute("policies", policies);
         return "admin";
     }
+
     @GetMapping("/addPolicy")
     public String addPolicy(Model m) {
+        logger.info("GET addPolicy");
+        m.addAttribute("policy", new Policy());
         return "addPolicy";
+    }
+
+    @PostMapping("addPolicy")
+    public String addNewPolicy(@ModelAttribute Policy newPolicyForm, Model m){
+        logger.info("Add new policy parameters: " + newPolicyForm);
+        logger.info("POST: " + newPolicyForm);
+        policyManager.savePolicy(newPolicyForm);
+        return "redirect:/admin";
     }
     
     @GetMapping("/editPolicy")
