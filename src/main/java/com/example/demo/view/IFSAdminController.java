@@ -5,8 +5,10 @@ import java.util.Optional;
 
 import com.example.demo.data.model.DBLogEntry;
 import com.example.demo.data.model.Policy;
+import com.example.demo.data.model.User;
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.logic.PolicyManager;
+import com.example.demo.logic.UserManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,8 @@ public class IFSAdminController {
     private final static Logger logger = LoggerFactory.getLogger(IFSAdminController.class);
 
     private PolicyManager policyManager;
-
+    private UserManager userManager;
+    
     @Autowired
     private DBLogEntryRepository dbLogEntryRepository;
     
@@ -86,10 +89,15 @@ public class IFSAdminController {
         m.addAttribute("logs", logs);
         return "logs";
     }
+    
     @GetMapping("/users")
     public String users(Model m) {
+        logger.info("GET users");
+        List<User> users = userManager.getAllUsers();
+        m.addAttribute("users", users);
         return "users";
     }
+
     @GetMapping("/editUser")
     public String editUser(Model m) {
         return "editUser";
