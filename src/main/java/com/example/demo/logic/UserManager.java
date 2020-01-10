@@ -28,4 +28,8 @@ public class UserManager {
     public Optional<User> getUserById(int id) {
         return userRepository.findById(id);
     }
+
+    public void removeUser(int id) {
+        userRepository.deleteById(id);
+    }
 }

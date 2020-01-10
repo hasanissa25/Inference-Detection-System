@@ -74,7 +74,9 @@
                                     <a class="btn btn-primary" th:href="@{/editUser(userId=${user.id})}">
                                         <span class="fas fa-edit">
                                     </a>
-                                    <button type="button" class="btn btn-danger  fas fa-trash" />
+                                    <a class="btn btn-danger" th:href="@{/removeUser(userId=${user.id})}">
+                                        <span class="fas fa-trash">
+                                    </a>
                                 </div>
                             </td>
                         </tr>

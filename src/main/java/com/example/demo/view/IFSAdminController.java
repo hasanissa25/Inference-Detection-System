@@ -128,4 +128,11 @@ public class IFSAdminController {
         userManager.saveUserInfo(newUserForm);
         return "redirect:/users";
     }
+
+    @GetMapping("/removeUser")
+    public String removeUser(@RequestParam(name="userId") int userId , Model m) {
+        logger.info("Removing User ID: " + userId);
+        userManager.removeUser(userId);
+        return "redirect:/users";
+    }
 }
