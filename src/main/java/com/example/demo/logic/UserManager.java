@@ -5,6 +5,7 @@ import com.example.demo.data.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.demo.data.model.User;
 
@@ -18,5 +19,13 @@ public class UserManager {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public void saveUserInfo(User userForm) {
+        userRepository.save(userForm);
+    }
+
+    public Optional<User> getUserById(int id) {
+        return userRepository.findById(id);
     }
 }

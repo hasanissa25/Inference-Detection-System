@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +31,9 @@ public class User {
     @SequenceGenerator(name="user_generator", sequenceName = "user_seq")
     private int id;
     private String userName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate creationDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate lastLoginDate;
     private String password;
     
