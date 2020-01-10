@@ -15,11 +15,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
 @Table(name = "User")
 public class User {
  
@@ -32,4 +32,5 @@ public class User {
     private LocalDate creationDate;
     private LocalDate lastLoginDate;
     private String password;
+    
 }

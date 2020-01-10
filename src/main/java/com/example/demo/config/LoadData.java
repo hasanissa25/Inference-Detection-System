@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LoadData {
-    
+
     private static final Logger log = LoggerFactory.getLogger(LoadData.class);
 
     @Autowired
@@ -70,6 +70,5 @@ public class LoadData {
          userRepository.saveAll(Arrays.asList(
             new User(1,"John Smith",LocalDate.of(2020,1,1),LocalDate.of(2020,1,10),"Password")))
             
-        ;
-    }
+        ;    }
 }
