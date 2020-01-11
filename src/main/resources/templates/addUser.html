@@ -52,7 +52,7 @@
     <div class="row">
       <div class="col">
         <h1>Add a New User:</h1>
-        <form id="addUserForm" action="/addUser" th:object="${user}" method="post">
+        <form id="addUserForm" th:action="@{/addUser}" th:object="${user}" method="post">
           <div class="form-group">
             <input hidden th:name="id" th:value="0" />
             <label for="exampleInputEmail1">User Name:</label>
