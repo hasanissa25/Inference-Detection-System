@@ -5,12 +5,15 @@ import java.util.Optional;
 
 import com.example.demo.data.model.DBLogEntry;
 import com.example.demo.data.model.Policy;
+import com.example.demo.data.model.User;
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.logic.PolicyManager;
+import com.example.demo.logic.UserManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,13 +26,19 @@ public class IFSAdminController {
 
     private final static Logger logger = LoggerFactory.getLogger(IFSAdminController.class);
 
+    @Autowired
     private PolicyManager policyManager;
-
+    
+    @Autowired
+    private UserManager userManager;
+    
     @Autowired
     private DBLogEntryRepository dbLogEntryRepository;
-    
-    public IFSAdminController(PolicyManager policyManager) {
-        this.policyManager = policyManager;
+
+    @Autowired
+    private PasswordEncoder passwordencoder;
+
+    public IFSAdminController() {
     }
 
     /**
@@ -124,6 +133,9 @@ public class IFSAdminController {
      */
     @GetMapping("/users")
     public String users(Model m) {
+        logger.info("GET users");
+        List<User> users = userManager.getAllUsers();
+        m.addAttribute("users", users);
         return "users";
     }
 
@@ -131,9 +143,21 @@ public class IFSAdminController {
      * GET the edit user page
      * @param m
      */
+
     @GetMapping("/editUser")
-    public String editUser(Model m) {
+    public String editUser(@RequestParam(name="userId") int userId , Model m) {
+        logger.info("Editing User ID: " + userId);
+        Optional<User> user = userManager.getUserById(userId);
+        m.addAttribute("user", user.get());
         return "editUser";
+    }
+
+    @PostMapping("/editUser")
+    public String savetUser(@RequestParam(name="userId") int userId, @ModelAttribute User userForm, Model m) {
+        logger.info("Saving User ID: " + userId);
+        logger.info("User Form: " + userForm);
+        userManager.saveUserInfo(userForm);
+        return "redirect:/users";
     }
 
     /**
@@ -142,6 +166,23 @@ public class IFSAdminController {
      */
     @GetMapping("/addUser")
     public String addUser(Model m) {
+        logger.info("GET addNewUser");
+        m.addAttribute("user", new User());
         return "addUser";
+    }
+
+    @PostMapping("/addUser")
+    public String addUser(@ModelAttribute User newUserForm, Model m) {
+        logger.info("User Form: " + newUserForm);
+        newUserForm.setPassword(passwordencoder.encode(newUserForm.getPassword()));
+        userManager.saveUserInfo(newUserForm);
+        return "redirect:/users";
+    }
+
+    @GetMapping("/removeUser")
+    public String removeUser(@RequestParam(name="userId") int userId , Model m) {
+        logger.info("Removing User ID: " + userId);
+        userManager.removeUser(userId);
+        return "redirect:/users";
     }
 }

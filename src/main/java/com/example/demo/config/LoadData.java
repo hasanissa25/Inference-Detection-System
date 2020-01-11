@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
@@ -7,18 +8,21 @@ import javax.annotation.PostConstruct;
 import com.example.demo.data.model.PatientInfo;
 import com.example.demo.data.model.PatientMedicalInfo;
 import com.example.demo.data.model.Policy;
+import com.example.demo.data.model.User;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PatientlnfoRepository;
 import com.example.demo.data.repository.PolicyRepository;
+import com.example.demo.data.repository.UserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LoadData {
-    
+
     private static final Logger log = LoggerFactory.getLogger(LoadData.class);
 
     @Autowired
@@ -30,9 +34,16 @@ public class LoadData {
     @Autowired
     private PatientlnfoRepository patientInfoRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostConstruct
     public void run(){
         log.info("Creating stub data into IFS database");
+        
         Policy p = new Policy();
         p.setInputColumns(Arrays.asList("patient_medical_info.length_of_stay", "patient_info.date_of_entry", "patient_info.date_of_leave"));
         p.setBlockedColumns(Arrays.asList("patient_info.name"));
@@ -60,5 +71,10 @@ public class LoadData {
             new PatientInfo("Fiona Fastener", "Oct 25, 2014", "TBD", "F", false),
             new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)
             ));
+
+         userRepository.saveAll(Arrays.asList(
+            new User(1, "admin", LocalDate.now(), null, passwordEncoder.encode("admin")),
+            new User(2, "doctor", LocalDate.now(), null, passwordEncoder.encode("doctor"))
+         ));
     }
 }
