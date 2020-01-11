@@ -17,6 +17,7 @@ import com.example.demo.data.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -36,9 +37,13 @@ public class LoadData {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostConstruct
     public void run(){
         log.info("Creating stub data into IFS database");
+        
         Policy p = new Policy();
         p.setInputColumns(Arrays.asList("patient_medical_info.length_of_stay", "patient_info.date_of_entry", "patient_info.date_of_leave"));
         p.setBlockedColumns(Arrays.asList("patient_info.name"));
@@ -68,7 +73,8 @@ public class LoadData {
             ));
 
          userRepository.saveAll(Arrays.asList(
-            new User(1,"John Smith",LocalDate.of(2020,1,1),LocalDate.of(2020,1,10),"Password")))
-            
-        ;    }
+            new User(1, "admin", LocalDate.now(), null, passwordEncoder.encode("admin")),
+            new User(2, "doctor", LocalDate.now(), null, passwordEncoder.encode("doctor"))
+         ));
+    }
 }
