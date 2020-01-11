@@ -101,11 +101,38 @@ public class IFSAdminController {
     }
 
     @GetMapping("/editUser")
-    public String editUser(Model m) {
+    public String editUser(@RequestParam(name="userId") int userId , Model m) {
+        logger.info("Editing User ID: " + userId);
+        Optional<User> user = userManager.getUserById(userId);
+        m.addAttribute("user", user.get());
         return "editUser";
+    }
+
+    @PostMapping("/editUser")
+    public String savetUser(@RequestParam(name="userId") int userId, @ModelAttribute User userForm, Model m) {
+        logger.info("Saving User ID: " + userId);
+        logger.info("User Form: " + userForm);
+        userManager.saveUserInfo(userForm);
+        return "redirect:/users";
     }
     @GetMapping("/addUser")
     public String addUser(Model m) {
+        logger.info("GET addNewUser");
+        m.addAttribute("user", new User());
         return "addUser";
+    }
+
+    @PostMapping("/addUser")
+    public String addUser(@ModelAttribute User newUserForm, Model m) {
+        logger.info("User Form: " + newUserForm);
+        userManager.saveUserInfo(newUserForm);
+        return "redirect:/users";
+    }
+
+    @GetMapping("/removeUser")
+    public String removeUser(@RequestParam(name="userId") int userId , Model m) {
+        logger.info("Removing User ID: " + userId);
+        userManager.removeUser(userId);
+        return "redirect:/users";
     }
 }

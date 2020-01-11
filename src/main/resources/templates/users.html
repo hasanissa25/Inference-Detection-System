@@ -61,54 +61,22 @@
                             <th scope="col">Actions</th>
 
                         </tr>
-                        <!-- <tr>
-                            <td>ThisGuy</td>
-                            <td>HisPassword</td>
-                            <td>
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <a class="btn btn-primary" href="/editUser">
-                                        <span class="fas fa-edit">
-                                    </a>
-                                    <button type="button" class="btn btn-danger  fas fa-trash" />
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ME</td>
-                            <td>MyPassword</td>
-                            <td>
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <a class="btn btn-primary" href="/editUser">
-                                        <span class="fas fa-edit">
-                                    </a>
-                                    <button type="button" class="btn btn-danger  fas fa-trash" />
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>ThatGuy</td>
-                            <td>HisPassword</td>
-                            <td>
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <a class="btn btn-primary" href="/editUser">
-                                        <span class="fas fa-edit">
-                                    </a>
-                                    <button type="button" class="btn btn-danger  fas fa-trash" />
-                                </div>
-                            </td>
-                        </tr> -->
                     </thead>
                     <tbody>
                         <tr th:each="user: ${users}">
+                            <input hidden th:name="id" th:value="${user.id}"/>
                             <td th:text="${user.userName}"/>
                             <td th:text="${user.creationDate}"/>
-                            <td th:text="${user.lastLoginDate}"/>
+                            <td th:text="${user.lastLoginDate} "/>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                    <a class="btn btn-primary" href="/editUser">
+                                    <!-- Place holder for now changing it later -->
+                                    <a class="btn btn-primary" th:href="@{/editUser(userId=${user.id})}">
                                         <span class="fas fa-edit">
                                     </a>
-                                    <button type="button" class="btn btn-danger  fas fa-trash" />
+                                    <a class="btn btn-danger" th:href="@{/removeUser(userId=${user.id})}">
+                                        <span class="fas fa-trash">
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -132,7 +100,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
     </script>
-    <script th:src="@{webjars/bootstrap/4.3.1/js/bootstrap.min.js}" type="text/javascript"></script>
+    <script th:src="@{webjars/bootstrap/4.3.1/js/bootstrap.min.js}" type="text/javascript">    
+    </script>
 </body>
 
 </html>
