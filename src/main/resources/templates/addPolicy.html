@@ -48,7 +48,7 @@
      <div class="row">
         <div class="col">
             <h1>Add Policy: <span th:text="${policy.id}" /></h1>
-            <form id="addPolicy" action="/addPolicy" th:action="@{/addPolicy(policyId=${policy.id})}"  th:object="${policy}" method="post">
+            <form id="addPolicy" th:action="@{/addPolicy(policyId=${policy.id})}"  th:object="${policy}" method="post">
                 <input hidden th:name="id" th:value="${policy.id}"/>
                 <p>Input Columns:</p>
                 <div id="input-columns">
