@@ -1,6 +1,5 @@
 package com.example.demo.data.model;
 
-import java.time.LocalDate;
 import java.util.Collection;
 
 import javax.persistence.Column;
@@ -12,9 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
-import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,28 +22,23 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Data
-@Table(name = "User")
-public class User {
+public class Role {
  
     @Id
     @Column(name = "id", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
-    @SequenceGenerator(name="user_generator", sequenceName = "user_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_generator")
+    @SequenceGenerator(name="role_generator", sequenceName = "role_seq")
     private int id;
-    private String userName;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate creationDate;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate lastLoginDate;
-    private String password;
+    
+    @Column(unique = true)
+    private String name;
 
     @ManyToMany
-    @JoinTable( 
-        name = "users_roles", 
+    @JoinTable(
+        name = "roles_privileges", 
         joinColumns = @JoinColumn(
-          name = "user_id", referencedColumnName = "id"), 
+          name = "role_id", referencedColumnName = "id"), 
         inverseJoinColumns = @JoinColumn(
-          name = "role_id", referencedColumnName = "id")) 
-    private Collection<Role> roles;
-    
+          name = "privilege_id", referencedColumnName = "id"))
+    private Collection<Privilege> privileges;
 }
