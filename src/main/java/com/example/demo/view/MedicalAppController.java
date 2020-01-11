@@ -33,12 +33,21 @@ public class MedicalAppController {
         return "index";
     }
 
+    /**
+     * GET the patient medical info page
+     * @param m
+     */
     @GetMapping("patientMedicalInfo")
     public String pateintMedicalInfo(Model m) {
         m.addAttribute("patientMedicalInfoForm", new PatientMedicalInfo());
         return "patientMedicalInfo";
     }
 
+    /**
+     * POST a patient medical info search form
+     * @param patientMedicalInfoForm
+     * @param m
+     */
     @PostMapping("patientMedicalInfo")
     public String pateintMedicalInfoSearchForm(@ModelAttribute PatientMedicalInfo patientMedicalInfoForm, Model m) {
         logger.info("Patient Medical Info Search Form parameters:"+patientMedicalInfoForm); 
@@ -49,12 +58,21 @@ public class MedicalAppController {
         return "patientMedicalInfo";
     }
 
+    /**
+     * GET the patient info page
+     * @param m
+     */
     @GetMapping("patientInfo")
     public String patientInfo(Model m) {
         m.addAttribute("patientInfoForm", new PatientInfo());
         return "patientInfo";
     }
 
+    /**
+     * POST a patient info search form
+     * @param patientInfoForm
+     * @param m
+     */
     @PostMapping("patientInfo")
     public String pateintInfoSearchForm(@ModelAttribute PatientInfo patientInfoForm, Model m) {
         logger.info("Patient Info Search Form parameters:"+patientInfoForm); 
