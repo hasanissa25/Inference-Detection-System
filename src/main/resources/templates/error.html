@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
+    <head th:replace="fragments/common.html :: htmlheader"></head>
     <style>
 table td{
 vertical-align:top;
@@ -12,6 +13,7 @@ padding:10px;
     </style>
 </head>
 <body>
+<header th:replace="fragments/common.html :: header"></header>
 <h1>My Thymeleaf Error Page</h1>
 <table>
     <tr>
@@ -45,5 +47,6 @@ padding:10px;
         </td>
     </tr>
 </table>
+<footer  th:replace="fragments/common.html :: htmlfooter"></footer>
 </body>
 </html>

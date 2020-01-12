@@ -18,7 +18,8 @@ public class GlobalConfiguration {
     }
 
     @Bean
-    public PatientMedicalInfoManager PatientMedicalInfoManager(PatientMedicalInfoRepository patientMedicalInfoRepository) {
+    public PatientMedicalInfoManager PatientMedicalInfoManager(
+            PatientMedicalInfoRepository patientMedicalInfoRepository) {
         return new PatientMedicalInfoManager(patientMedicalInfoRepository);
     }
 
@@ -26,5 +27,4 @@ public class GlobalConfiguration {
     public PatientInfoManager patientInfoManager(PatientlnfoRepository patientInfoRepository) {
         return new PatientInfoManager(patientInfoRepository);
     }
-
 }

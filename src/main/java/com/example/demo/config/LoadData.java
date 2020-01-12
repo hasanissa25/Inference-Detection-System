@@ -1,29 +1,40 @@
 package com.example.demo.config;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
-
-import javax.annotation.PostConstruct;
+import java.util.List;
 
 import com.example.demo.data.model.PatientInfo;
 import com.example.demo.data.model.PatientMedicalInfo;
 import com.example.demo.data.model.Policy;
+
+import com.example.demo.data.model.Privilege;
+
+import com.example.demo.data.model.Role;
 import com.example.demo.data.model.User;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PatientlnfoRepository;
 import com.example.demo.data.repository.PolicyRepository;
+import com.example.demo.data.repository.RoleRepository;
 import com.example.demo.data.repository.UserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class LoadData {
+public class LoadData implements
+  ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger log = LoggerFactory.getLogger(LoadData.class);
+
+    boolean alreadySetup = false;
 
     @Autowired
     private PolicyRepository policyRepository;
@@ -38,11 +49,20 @@ public class LoadData {
     private UserRepository userRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostConstruct
-    public void run(){
-        log.info("Creating stub data into IFS database");
+    @Override
+    @Transactional
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+  
+        if (alreadySetup) {
+            log.info("Already loaded stub data");
+            return;
+        } else 
+            log.info("Populating database with stub data");
         
         Policy p = new Policy();
         p.setInputColumns(Arrays.asList("patient_medical_info.length_of_stay", "patient_info.date_of_entry", "patient_info.date_of_leave"));
@@ -72,9 +92,18 @@ public class LoadData {
             new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)
             ));
 
-         userRepository.saveAll(Arrays.asList(
-            new User(1, "admin", LocalDate.now(), null, passwordEncoder.encode("admin")),
-            new User(2, "doctor", LocalDate.now(), null, passwordEncoder.encode("doctor"))
-         ));
+        Role doctorRole = new Role(0, "ROLE_DOCTOR", new ArrayList<Privilege>());
+        Role adminRole = new Role(0, "ROLE_ADMIN", new ArrayList<Privilege>());
+
+        roleRepository.saveAll(Arrays.asList(doctorRole, adminRole));
+
+        List<User> users = new ArrayList<>();
+        users.add(new User(1, "hasan", LocalDate.now(), null, passwordEncoder.encode("hasan"), Arrays.asList(adminRole)));
+        users.add(new User(2, "ryan", LocalDate.now(), null, passwordEncoder.encode("ryan"), Arrays.asList(adminRole)));
+        users.add(new User(3, "jason", LocalDate.now(), null, passwordEncoder.encode("jason"), Arrays.asList(doctorRole)));
+
+        userRepository.saveAll(users);
+
+        alreadySetup = true;
     }
 }
