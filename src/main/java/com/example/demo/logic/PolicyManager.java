@@ -18,6 +18,10 @@ public class PolicyManager {
         policyRepository.save(policy);
     }
 
+    public void deletePolicyById(int policyId) {
+        policyRepository.deleteById((long) policyId);
+    }
+
     public List<Policy> getAllPolicies() {
         return policyRepository.findAll();
     }

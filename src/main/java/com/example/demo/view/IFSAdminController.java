@@ -65,6 +65,18 @@ public class IFSAdminController {
     }
 
     /**
+     * GET a policy ID to delete
+     * @param m
+     */
+    @GetMapping("/deletePolicy")
+    public String deletePolicy(@RequestParam(name="policyId") int policyId , Model m) {
+        logger.info("User accessed /deletePolicy");
+        policyManager.deletePolicyById(policyId);
+        return "redirect:/admin";
+    }
+
+
+    /**
      * GET the add policy page
      * @param m
      */
