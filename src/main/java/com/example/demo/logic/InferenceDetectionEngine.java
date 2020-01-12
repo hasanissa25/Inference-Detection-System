@@ -147,6 +147,7 @@ public class InferenceDetectionEngine {
             else return null;
     }
 
+    
 
     public boolean checkForInference(List<String> currentQueryTablesColumnsAccessed, Map<String, String> currentQueryResultRowMap, Policy policy, List<DBLogEntry2> currentUserLogs) {
         // check if one of the query input columns are in the policy blocked columns 
