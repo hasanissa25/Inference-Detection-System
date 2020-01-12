@@ -11,9 +11,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.example.demo.data.model.DBLogEntry;
+import com.example.demo.data.model.DBLogEntry2;
 import com.example.demo.data.model.PatientInfo;
 import com.example.demo.data.model.PatientMedicalInfo;
 import com.example.demo.data.model.Policy;
+import com.example.demo.data.model.QueryResult;
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PolicyRepository;
@@ -143,5 +145,37 @@ public class InferenceDetectionEngine {
                 return authentication.getName();
             }
             else return null;
+    }
+
+
+    public boolean checkForInference(List<String> currentQueryTablesColumnsAccessed, Map<String, String> currentQueryResultRowMap, Policy policy, List<DBLogEntry2> currentUserLogs) {
+        // check if one of the query input columns are in the policy blocked columns 
+        // this determines an inference attack is possible if the input columns is returned to user
+        boolean isInPolicy = false;
+        for(String columnInQuery : currentQueryTablesColumnsAccessed) {
+            if(policy.getInputColumns().contains(columnInQuery)) {
+                isInPolicy = true;
+                break;
+            }
+        }
+        
+        if(!isInPolicy) return false;
+
+        // first check if the policy columns have been all searched before
+        Map<String, Boolean> policyTablesColumnsFlags = new HashMap<>();
+        for(DBLogEntry2 currentLog : currentUserLogs) {
+            for(String columnInQuery : currentLog.getTablesColumnsAccessed()) {
+            if(policy.getInputColumns().contains(columnInQuery)) {
+                columnPolicyFlag  = true;
+            }
+        }
+        }
+        boolean isInference = policyTablesColumnsFlags.stream().reduce(Boolean::logicalAnd).get();
+        // second check if the policy criteria has been met for these query results that are flagged as potential inference
+
+        
+
+
+        return false;
     }
 }
