@@ -167,11 +167,11 @@ public class InferenceDetectionEngine {
         for(DBLogEntry2 currentLog : currentUserLogs) {
             for(String columnInQuery : currentLog.getTablesColumnsAccessed()) {
             if(policy.getInputColumns().contains(columnInQuery)) {
-                columnPolicyFlag  = true;
+                //columnPolicyFlag  = true;
             }
         }
         }
-        boolean isInference = policyTablesColumnsFlags.stream().reduce(Boolean::logicalAnd).get();
+        //boolean isInference = policyTablesColumnsFlags.stream().reduce(Boolean::logicalAnd).get();
         // second check if the policy criteria has been met for these query results that are flagged as potential inference
 
         
