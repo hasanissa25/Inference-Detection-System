@@ -48,10 +48,12 @@
                     </td>
                     <td>
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <a class="btn btn-primary" href="/editPolicy?policyId=1">
+                            <a class="btn btn-primary" href="/editPolicy?policyId=1">   
                                 <span class="fas fa-edit">
                             </a>                            
-                            <button type="button" class="btn btn-danger  fas fa-trash"/>
+                            <a class="btn btn-danger" th:href="@{/deletePolicy(policyId=${policy.id})}">
+                                <span class="fas fa-trash">
+                            </a>
                         </div>    
                     </td>
                 </tr>
@@ -62,7 +64,6 @@
     <div class="row">
         <div class="col">
             <a type="button" class="btn btn-success fas fa-plus" href="/addPolicy" > Add Policy</a>
-
         </div>
     </div>
     
