@@ -49,6 +49,7 @@
                 <th scope="col">Patient ID</th>
                 <th scope="col">Reason of Visit</th>
                 <th scope="col">Length of Stay</th>
+                <th scope="col">Inference</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,6 +57,7 @@
                     <th scope="row" th:text="${result.patientId}" />
                     <td th:text="${result.reasonOfVisit}"/>
                     <td th:text="${result.lengthOfStay}"/>
+                    <td th:text="${result.inference} ? 'yes' : 'no'">
                 </tr>
             </tbody>
             </table>

@@ -29,7 +29,9 @@ public class PatientInfoManager {
         else 
             results = patientInfoRepository.findByNameIgnoreCaseOrDateOfEntryOrDateOfLeaveOrGenderIgnoreCase(patientName, dateOfEntry, dateOfLeave, gender);
         
-            results = inferenceDetectionEngine.checkInferenceForPatientInfo(results, Arrays.asList("patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", "patient_info.gender"));
+
+        results = inferenceDetectionEngine.checkInferenceForPatientInfo(results, Arrays.asList("patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", "patient_info.gender"));
+
         return results;
     }
 }
