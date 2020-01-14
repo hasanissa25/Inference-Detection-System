@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,7 @@ import com.example.demo.data.model.PatientMedicalInfo;
 import com.example.demo.data.model.Policy;
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
+import com.example.demo.data.repository.PatientlnfoRepository;
 import com.example.demo.data.repository.PolicyRepository;
 
 import org.slf4j.Logger;
@@ -42,6 +45,9 @@ public class InferenceDetectionEngine {
     
     @Autowired
     private PatientMedicalInfoRepository patientMedicallnfoRepository;
+
+    @Autowired
+    private PatientlnfoRepository patientlnfoRepository;
     
 
     public <T> List<T> checkInferenceForPatientInfo(List<T> resultList, List<String> tablesAndColumnsAccessed) {
@@ -85,10 +91,8 @@ public class InferenceDetectionEngine {
                     
                     for(DBLogEntry entry: logEntries) {
                         logger.info("Log entry=>" + entry);
-                        
                         String policyRelationship = p.getRelationship();
-
-                        processRelationship(policyRelationship);
+                        processRelationship(policyRelationship, entry);
                     }
                         
 
@@ -162,15 +166,24 @@ public class InferenceDetectionEngine {
             else return null;
     }
 
-    private boolean processRelationship(String relationship){
+    private boolean processRelationship(String relationship, DBLogEntry entry){
         relationship = "patient_info.date_of_entry - patient_info.date_of_leave != patient_medical_info.length_of_stay";
         relationship = relationship.trim();
         String[] tokens = relationship.split("(\\s+)");
         //String[] tokens = relationship.split("[-+*/=]");    
-        logger.info("tokens=>"+Arrays.asList(PatientInfo.class.getFields()));
+        logger.info("tokens=>"+Arrays.asList(tokens));
+        Queue<String> operands = new LinkedList<String>();
+        Queue<String> operators = new LinkedList<String>();
         for(String token:tokens)  
         {
-            if(!token.matches(regex))
+            logger.info("token=>"+token);
+            if(!token.matches("[-+*/=&&[!=]&&[==]]")){
+
+                operands.add(getColumnValue(token, entry));
+            }
+            else{
+                operators.add(token);
+            }
 
         }   
         return false;
@@ -178,10 +191,46 @@ public class InferenceDetectionEngine {
         
     }
 
-    private String getColumnValue(){
+    private String getColumnValue(String operand, DBLogEntry entry){
 
+        String table = operand.split("\\.")[0];
+        String col = operand.split("\\.")[1];
+        Long id = entry.getId();
+        switch(table){
 
-        return null;
+            case "patient_info":
+
+                switch(col){
+                    case "name":
+                        return patientlnfoRepository.findById(id).get().getName();                  
+                    case "date_of_entry":
+                        return patientlnfoRepository.findById(id).get().getDateOfEntry();
+                    case "date_of_leave":
+                        return patientlnfoRepository.findById(id).get().getDateOfLeave();
+                    case "gender":
+                        return patientlnfoRepository.findById(id).get().getGender();
+                    default:
+                        return null;
+                }
+
+            case "patient_medical_info":
+
+                switch(col){
+                    case "patient_id":
+                        return patientMedicallnfoRepository.findById(id).get().getPatientId().toString();         
+                    case "length_of_stay":
+                        return patientMedicallnfoRepository.findById(id).get().getLengthOfStay();
+                    case "reason_of_visit":
+                        return patientMedicallnfoRepository.findById(id).get().getReasonOfVisit();
+                    default:
+                        return null;
+                }
+                
+            default:
+                return null;
+
+        }
+
 
     }
 
