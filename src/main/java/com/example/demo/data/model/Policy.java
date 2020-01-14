@@ -31,8 +31,9 @@ public class Policy {
     private List<String> inputColumns;
     @ElementCollection 
     private List<String> blockedColumns;
+    private String relationship;
 
-    public boolean processCriteria(Map<String, String> policyCriteriaInputMap) {
+    public boolean processCriteria(DBLogEntry entry) {
         //TODO: placeholder to make policy criteria generic
         return true;
 	}

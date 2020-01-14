@@ -41,35 +41,52 @@ public class InferenceDetectionEngine {
     private PatientMedicalInfoRepository patientMedicallnfoRepository;
     
 
-    public List<PatientInfo> checkInferenceForPatientInfo(List<PatientInfo> resultList, List<String> tablesAndColumnsAccessed) {
+    public <T> List<T> checkInferenceForPatientInfo(List<T> resultList, List<String> tablesAndColumnsAccessed) {
         
-        boolean policiesFound = false;
 
-        //1 - First step for the inference detection is to fetch the user 
-        String currentUserName = getUser();
-        logger.info("Step 1: getUser() => " + currentUserName);
-        
-        //2. get policies related to the query
-        List<Policy> policies = policyRepository.findDistinctByInputColumnsInAndBlockedColumnsIn(tablesAndColumnsAccessed, tablesAndColumnsAccessed);
-        logger.info("Step 2: get policies, found [" + policies.size() + "] policies => " + policies);
-        if(!policies.isEmpty()) {
-            policiesFound = true;
-        }
-        
-        if(policiesFound) {
-            //for each item in the result list check if it causes potential inference attack
-            Map<PatientInfo, Boolean> inferenceDetectionResults = new HashMap<>();
-            for(PatientInfo pi : resultList) {
-                for(Policy p: policies) {
+        if(!resultList.isEmpty()){
+            //1 - First step for the inference detection is to fetch the user 
+            String currentUserName = getUser();
+            logger.info("Step 1: getUser() => " + currentUserName);
+            
+            //2. get policies related to the query
+            List<Policy> policies = policyRepository.findDistinctByInputColumnsInAndBlockedColumnsIn(tablesAndColumnsAccessed, tablesAndColumnsAccessed);
+            logger.info("Step 2: get policies, found [" + policies.size() + "] policies => " + policies);
+
+
+            if(resultList.get(0) instanceof PatientInfo){
+
+                //last step. record a log of the query performed (TODO: add inference logic)
+                List<String> values = ((List<PatientInfo>)resultList).stream().map(e -> String.valueOf(e.getName())).collect(Collectors.toList());
+                logger.info("values => " + values);
+                DBLogEntry dbLogEntry = new DBLogEntry(null, currentUserName, tablesAndColumnsAccessed, values, LocalDateTime.now());
+                
+                logger.info("Step last: recording log => " + dbLogEntry);
+                //NOTE: the save opertion also resulted into updating the patient info data retrieved with modification to the inference flag (deprecated), so hibernate picks up changes automatically. be careful of this to avoid unwanted changes to database
+                dbLogEntryRepository.save(dbLogEntry);
+            
+
+                //for each item in the result list check if it causes potential inference attack
+                //Map<PatientInfo, Boolean> inferenceDetectionResults = new HashMap<>();
+                for(PatientInfo pi : (List<PatientInfo>) resultList) {
+                    for(Policy p: policies) {
                     //3. get the input columns that are not part of this query
                     List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
-                    policyInputColumns.removeIf(x-> tablesAndColumnsAccessed.contains(x));
+                    logger.info("policyInputColumns=>" + policyInputColumns);
+                    //policyInputColumns.removeIf(x-> tablesAndColumnsAccessed.contains(x));
                     //get information from the logs based on the policy input columns
                     List<DBLogEntry> logEntries = dbLogEntryRepository.findDistinctByTablesColumnsAccessedIn(policyInputColumns);
-                    //logger.info("Logs=>" + logEntries);
+                    logger.info("Logs=>" + logEntries);
                     //TODO: if we have duplicate information, then we will process into unique set
                     //TODO: for each log entry, check the policy criteria
                     for(DBLogEntry entry: logEntries) {
+
+                        if(!p.processCriteria(entry)){
+                            pi.setInference(true);
+                            //logger.info("pi.name=" + pi.getName() + ", pmi.id=" + id +", days b/w=" + daysBetween + ", length of Stay=" + lengthOfStayN + ", inference=" + isInference);
+                            break;
+                        }
+                        /*
                         for(String id: entry.getIdsAccessed()) {
                             String lengthOfStay = patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getLengthOfStay();
                             String dateOfEntry = pi.getDateOfEntry();
@@ -99,12 +116,7 @@ public class InferenceDetectionEngine {
                                 logger.info("pi.name=" + pi.getName() + ", pmi.id=" + id +", days b/w=" + daysBetween + ", length of Stay=" + lengthOfStayN + ", inference=" + isInference);
                             }
                             //=========================================================================================
-                            
-                            //TODOif it matches, mark it as reference attack
-                            if(isInference) {
-                                pi.setInference(true);
-                                break;
-                            }
+                            */
                         }
                     }
                     
@@ -112,13 +124,7 @@ public class InferenceDetectionEngine {
             }
         }
 
-        //last step. record a log of the query performed (TODO: add inference logic)
-        List<String> values = resultList.stream().map(e -> String.valueOf(e.getName())).collect(Collectors.toList());
-        DBLogEntry dbLogEntry = new DBLogEntry(null, currentUserName, tablesAndColumnsAccessed, values, LocalDateTime.now());
-        
-        logger.info("Step last: recording log => " + dbLogEntry);
-        //NOTE: the save opertion also resulted into updating the patient info data retrieved with modification to the inference flag (deprecated), so hibernate picks up changes automatically. be careful of this to avoid unwanted changes to database
-        dbLogEntryRepository.save(dbLogEntry);
+
 
         return resultList;
     }
