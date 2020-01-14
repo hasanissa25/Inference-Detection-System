@@ -5,9 +5,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.example.demo.data.model.DBLogEntry;
@@ -45,6 +48,7 @@ public class InferenceDetectionEngine {
         
 
         if(!resultList.isEmpty()){
+            logger.info("results => " + resultList);
             //1 - First step for the inference detection is to fetch the user 
             String currentUserName = getUser();
             logger.info("Step 1: getUser() => " + currentUserName);
@@ -69,6 +73,7 @@ public class InferenceDetectionEngine {
                 //for each item in the result list check if it causes potential inference attack
                 //Map<PatientInfo, Boolean> inferenceDetectionResults = new HashMap<>();
                 for(PatientInfo pi : (List<PatientInfo>) resultList) {
+                    logger.info("patient=>" + pi);
                     for(Policy p: policies) {
                     //3. get the input columns that are not part of this query
                     List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
@@ -76,16 +81,22 @@ public class InferenceDetectionEngine {
                     //policyInputColumns.removeIf(x-> tablesAndColumnsAccessed.contains(x));
                     //get information from the logs based on the policy input columns
                     List<DBLogEntry> logEntries = dbLogEntryRepository.findDistinctByTablesColumnsAccessedIn(policyInputColumns);
-                    logger.info("Logs=>" + logEntries);
-                    //TODO: if we have duplicate information, then we will process into unique set
-                    //TODO: for each log entry, check the policy criteria
+                    Map<String, String> map = new HashMap<>();
+                    
                     for(DBLogEntry entry: logEntries) {
+                        logger.info("Log entry=>" + entry);
+                        
+                        String policyRelationship = p.getRelationship();
 
-                        if(!p.processCriteria(entry)){
-                            pi.setInference(true);
+                        processRelationship(policyRelationship);
+                    }
+                        
+
+                       // if(!p.processCriteria(entry)){
+                         //   pi.setInference(true);
                             //logger.info("pi.name=" + pi.getName() + ", pmi.id=" + id +", days b/w=" + daysBetween + ", length of Stay=" + lengthOfStayN + ", inference=" + isInference);
-                            break;
-                        }
+                         //   break;
+                       // }
                         /*
                         for(String id: entry.getIdsAccessed()) {
                             String lengthOfStay = patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getLengthOfStay();
@@ -122,9 +133,9 @@ public class InferenceDetectionEngine {
                     
                 }
             }
-        }
+        
 
-
+    
 
         return resultList;
     }
@@ -150,4 +161,29 @@ public class InferenceDetectionEngine {
             }
             else return null;
     }
+
+    private boolean processRelationship(String relationship){
+        relationship = "patient_info.date_of_entry - patient_info.date_of_leave != patient_medical_info.length_of_stay";
+        relationship = relationship.trim();
+        String[] tokens = relationship.split("(\\s+)");
+        //String[] tokens = relationship.split("[-+*/=]");    
+        logger.info("tokens=>"+Arrays.asList(PatientInfo.class.getFields()));
+        for(String token:tokens)  
+        {
+            if(!token.matches(regex))
+
+        }   
+        return false;
+
+        
+    }
+
+    private String getColumnValue(){
+
+
+        return null;
+
+    }
+
+
 }

@@ -11,6 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,8 +36,31 @@ public class Policy {
     private List<String> blockedColumns;
     private String relationship;
 
+    private final static Logger logger = LoggerFactory.getLogger(Policy.class);
+
     public boolean processCriteria(DBLogEntry entry) {
-        //TODO: placeholder to make policy criteria generic
+        List<String> entryColumns = entry.getTablesColumnsAccessed();
+        logger.info("entrycolumns:" + entryColumns);
+        logger.info("inputColumns:" + inputColumns);
+        parseRelationship();
+        if(entryColumns.containsAll(inputColumns)){
+            parseRelationship();
+            //entryColumns.get(entryColumns.indexOf())
+
+        }
         return true;
-	}
+    }
+    
+    private void parseRelationship(){
+        relationship = "patient_info.date_of_entry - patient_info.date_of_leave != patient_medical_info.length_of_stay";
+        relationship = relationship.trim();
+        String[] tokens = relationship.split("(?=\\W)");
+        //String[] tokens = relationship.split("[-+*/=]");    
+        logger.info("tokens=>"+tokens);
+        for(String token:tokens)  
+        {
+
+        }   
+    }
+
 }

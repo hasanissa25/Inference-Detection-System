@@ -29,6 +29,7 @@
                     <th scope="col">ID</th>
                     <th scope="col">Input Columns</th>
                     <th scope="col">Blocked Columns</th>
+                    <th scope="col">Relationship</th>
                     <th scope="col">Actions</th>
                 </tr>
                 </thead>
@@ -46,6 +47,11 @@
                             <li th:text="${blockedColumn}" />
                         </ul>
                     </td>
+                    <td>
+                        <ul th:each="relationship : ${policy.relationship}">
+                            <li th:text="${relationship}" />
+                        </ul>
+                    </td>                    
                     <td>
                         <div class="btn-group" role="group" aria-label="Basic example">
                             <a class="btn btn-primary" href="/editPolicy?policyId=1">
