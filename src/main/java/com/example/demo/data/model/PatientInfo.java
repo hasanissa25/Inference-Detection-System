@@ -23,4 +23,20 @@ public class PatientInfo {
     private String gender;
     @Transient
     private boolean inference;
+
+    public String getColumn(String col){
+        switch(col){
+
+            case "date_of_entry":
+                return dateOfEntry;
+            case "date_of_leave":
+                return dateOfLeave;
+            case "name":
+                return name;
+            case "gender":
+                return gender;
+            default:
+                return null;
+        }
+    }
 } 

@@ -84,16 +84,34 @@ public class InferenceDetectionEngine {
                     //3. get the input columns that are not part of this query
                     List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
                     logger.info("policyInputColumns=>" + policyInputColumns);
+                    Queue<String> policyRelationshipOperators = p.getRelationshipOperators();
+                    
                     //policyInputColumns.removeIf(x-> tablesAndColumnsAccessed.contains(x));
                     //get information from the logs based on the policy input columns
                     List<DBLogEntry> logEntries = dbLogEntryRepository.findDistinctByTablesColumnsAccessedIn(policyInputColumns);
-                    Map<String, String> map = new HashMap<>();
                     
+                    Map<List<String>, List<String>> columnAndID = new HashMap<>();
+                   
                     for(DBLogEntry entry: logEntries) {
                         logger.info("Log entry=>" + entry);
-                        String policyRelationship = p.getRelationship();
-                        processRelationship(policyRelationship, entry);
+                        if(!entry.getTablesColumnsAccessed().get(0).startsWith("patient_info")){
+
+                            //columnAndID.put(entry.getTablesColumnsAccessed(), entry.getIdsAccessed());
+                            List<String> columns = entry.getTablesColumnsAccessed();
+                            for(String operand: policyInputColumns){
+                                    if(columns.contains(operand)){
+                                        
+                                    }
+                            }
+                        
+                        }
                     }
+
+
+
+                    
+                        
+                    
                         
 
                        // if(!p.processCriteria(entry)){
@@ -166,73 +184,53 @@ public class InferenceDetectionEngine {
             else return null;
     }
 
-    private boolean processRelationship(String relationship, DBLogEntry entry){
-        relationship = "patient_info.date_of_entry - patient_info.date_of_leave != patient_medical_info.length_of_stay";
-        relationship = relationship.trim();
-        String[] tokens = relationship.split("(\\s+)");
-        //String[] tokens = relationship.split("[-+*/=]");    
-        logger.info("tokens=>"+Arrays.asList(tokens));
-        Queue<String> operands = new LinkedList<String>();
-        Queue<String> operators = new LinkedList<String>();
-        for(String token:tokens)  
-        {
-            logger.info("token=>"+token);
-            if(!token.matches("[-+*/=&&[!=]&&[==]]")){
-
-                operands.add(getColumnValue(token, entry));
-            }
-            else{
-                operators.add(token);
-            }
-
-        }   
-        return false;
-
-        
-    }
-
-    private String getColumnValue(String operand, DBLogEntry entry){
-
+    private String getColumnValue(String operand, List<String> ids){
+        logger.info("operand:"+operand);
         String table = operand.split("\\.")[0];
         String col = operand.split("\\.")[1];
-        Long id = entry.getId();
-        switch(table){
+        
 
-            case "patient_info":
-
-                switch(col){
-                    case "name":
-                        return patientlnfoRepository.findById(id).get().getName();                  
-                    case "date_of_entry":
-                        return patientlnfoRepository.findById(id).get().getDateOfEntry();
-                    case "date_of_leave":
-                        return patientlnfoRepository.findById(id).get().getDateOfLeave();
-                    case "gender":
-                        return patientlnfoRepository.findById(id).get().getGender();
-                    default:
-                        return null;
-                }
-
-            case "patient_medical_info":
-
-                switch(col){
-                    case "patient_id":
-                        return patientMedicallnfoRepository.findById(id).get().getPatientId().toString();         
-                    case "length_of_stay":
-                        return patientMedicallnfoRepository.findById(id).get().getLengthOfStay();
-                    case "reason_of_visit":
-                        return patientMedicallnfoRepository.findById(id).get().getReasonOfVisit();
-                    default:
-                        return null;
-                }
+        for(String id: ids){
+            switch(table){
                 
-            default:
-                return null;
+                case "patient_info":
+                    
+                    switch(col){
+                        case "name":
+                            return patientlnfoRepository.findByName(id).getName();                  
+                        case "date_of_entry":
+                            return patientlnfoRepository.findByName(id).getDateOfEntry();
+                        case "date_of_leave":
+                            return patientlnfoRepository.findByName(id).getDateOfLeave();
+                        case "gender":
+                            return patientlnfoRepository.findByName(id).getGender();
+                            
+                        default:
+                            return null;
+                    }
+
+                case "patient_medical_info":
+
+                    switch(col){
+                        case "patient_id":
+                            return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getPatientId().toString();         
+                        case "length_of_stay":
+                            return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getLengthOfStay();
+                        case "reason_of_visit":
+                            return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getReasonOfVisit();
+                        default:
+                            return null;
+                    }
+                    
+                default:
+                    return null;
+
+            }
 
         }
-
-
+        return null;
     }
+    
 
 
 }

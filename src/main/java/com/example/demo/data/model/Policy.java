@@ -1,7 +1,11 @@
 package com.example.demo.data.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -39,28 +43,27 @@ public class Policy {
     private final static Logger logger = LoggerFactory.getLogger(Policy.class);
 
     public boolean processCriteria(DBLogEntry entry) {
-        List<String> entryColumns = entry.getTablesColumnsAccessed();
-        logger.info("entrycolumns:" + entryColumns);
-        logger.info("inputColumns:" + inputColumns);
-        parseRelationship();
-        if(entryColumns.containsAll(inputColumns)){
-            parseRelationship();
-            //entryColumns.get(entryColumns.indexOf())
-
-        }
+  
         return true;
     }
     
-    private void parseRelationship(){
-        relationship = "patient_info.date_of_entry - patient_info.date_of_leave != patient_medical_info.length_of_stay";
+    public Queue<String> getRelationshipOperators(){
+        relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
         relationship = relationship.trim();
-        String[] tokens = relationship.split("(?=\\W)");
+        String[] tokens = relationship.split("(\\s+)");
         //String[] tokens = relationship.split("[-+*/=]");    
-        logger.info("tokens=>"+tokens);
-        for(String token:tokens)  
-        {
+        logger.info("tokens=>"+Arrays.asList(tokens));
+        Queue<String> operators = new LinkedList<String>();
+        for(String token:tokens){ 
+        
+            logger.info("token=>"+token);
+            if(!token.matches("[a-zA-Z_\\.]+")){
+                operators.add(token);
+            }
+        }
 
-        }   
+        return operators;
     }
+
 
 }
