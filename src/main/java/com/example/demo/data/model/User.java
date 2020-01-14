@@ -15,6 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ import lombok.ToString;
 @ToString
 @Data
 @Table(name = "User")
+@DynamicUpdate
 public class User {
  
     @Id

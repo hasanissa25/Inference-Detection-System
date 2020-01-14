@@ -168,6 +168,7 @@ public class IFSAdminController {
     public String savetUser(@RequestParam(name="userId") int userId, @ModelAttribute User userForm, Model m) {
         logger.info("Saving User ID: " + userId);
         logger.info("User Form: " + userForm);
+        userForm.setPassword(passwordencoder.encode(userForm.getPassword()));
         userManager.saveUserInfo(userForm);
         return "redirect:/users";
     }
