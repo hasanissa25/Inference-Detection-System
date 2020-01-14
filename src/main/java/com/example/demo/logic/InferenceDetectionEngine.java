@@ -96,31 +96,30 @@ public class InferenceDetectionEngine {
                         String col = operand.split("\\.")[1].trim();
                         String table = operand.split("\\.")[0].trim();
                         if(table.equals("patient_info")){
-                            pi.getColumn(col);
-                            
+                            policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand), pi.getColumn(col));
                         }
                     }
 
                     for(DBLogEntry entry: logEntries) {
                         logger.info("Log entry=>" + entry);
-                        int i= 0;
-                        String[] operandValues = new String[policyInputColumns.size()];
-
                         if(!entry.getTablesColumnsAccessed().get(0).startsWith("patient_info")){
 
                             //columnAndID.put(entry.getTablesColumnsAccessed(), entry.getIdsAccessed());
                             List<String> columns = entry.getTablesColumnsAccessed();
-                            for(String operand: policyInputColumns){
+                            for(String operand: policyRelationshipOperands){
+                                if(!operand.startsWith("patient_info")){
                                     if(columns.contains(operand)){
                                         String col = operand.split("\\.")[1];
                                         String table = operand.split("\\.")[0];
                                         for(String id: entry.getIdsAccessed()){
-
+                                            
+                                            policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand), getColumnValue(operand, id));
 
                                         }
+                                    }
 
                                         
-                                    }
+                                }
                             }
                         
                         }
@@ -203,13 +202,11 @@ public class InferenceDetectionEngine {
             else return null;
     }
 
-    private String getColumnValue(String operand, List<String> ids){
+    private String getColumnValue(String operand, String id){
         logger.info("operand:"+operand);
         String table = operand.split("\\.")[0];
         String col = operand.split("\\.")[1];
         
-
-        for(String id: ids){
             switch(table){
                 
                 case "patient_info":
@@ -246,8 +243,8 @@ public class InferenceDetectionEngine {
 
             }
 
-        }
-        return null;
+        
+
     }
     
 
