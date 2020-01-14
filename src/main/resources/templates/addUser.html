@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="fragments/common.html :: htmlheader"></head>
-
+<head>
+<th:block th:include="fragments/common.html :: htmlheader"></th:block>
+</head>
 <body>
   <header th:replace="fragments/common.html :: header"></header>
 
@@ -29,11 +29,11 @@
           <div class="form-group">
             <input hidden th:name="id" th:value="0" />
             <label for="exampleInputEmail1">User Name:</label>
-            <input type="text" class="form-control" name="userName" placeholder="Input a User Name">
+            <input type="text" required class="form-control" name="userName" placeholder="Input a User Name">
           </div>
           <div class="form-group">
             <label for="exampleInputPassword1">User Password:</label>
-            <input type="text" class="form-control" name="password" placeholder="Input a User Password">
+            <input type="password" required class="form-control" name="password" placeholder="Input a User Password">
             <input id="creationDate" hidden th:name="creationDate" th:value="${user.creationDate}" />
             <input id="lastLoginDate" hidden th:name="lastLoginDate" th:value="${user.lastLoginDate}" />
           </div>

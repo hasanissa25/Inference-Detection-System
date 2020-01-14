@@ -67,7 +67,7 @@ public class InferenceDetectionEngine {
                     List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
                     policyInputColumns.removeIf(x-> tablesAndColumnsAccessed.contains(x));
                     //get information from the logs based on the policy input columns
-                    List<DBLogEntry> logEntries = dbLogEntryRepository.findDistinctByTablesColumnsAccessedIn(policyInputColumns);
+                    List<DBLogEntry> logEntries = dbLogEntryRepository.findDistinctByTablesColumnsAccessedInAndUserName(policyInputColumns, currentUserName);
                     //logger.info("Logs=>" + logEntries);
                     //TODO: if we have duplicate information, then we will process into unique set
                     //TODO: for each log entry, check the policy criteria

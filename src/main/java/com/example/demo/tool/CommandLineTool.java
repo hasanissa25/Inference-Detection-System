@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+// TESTING
 //@Component
 public class CommandLineTool implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(CommandLineTool.class);
