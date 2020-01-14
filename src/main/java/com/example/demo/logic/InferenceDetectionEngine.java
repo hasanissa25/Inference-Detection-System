@@ -74,8 +74,6 @@ public class InferenceDetectionEngine {
                 logger.info("Step last: recording log => " + dbLogEntry);
                 //NOTE: the save opertion also resulted into updating the patient info data retrieved with modification to the inference flag (deprecated), so hibernate picks up changes automatically. be careful of this to avoid unwanted changes to database
                 dbLogEntryRepository.save(dbLogEntry);
-            
-
                 //for each item in the result list check if it causes potential inference attack
                 //Map<PatientInfo, Boolean> inferenceDetectionResults = new HashMap<>();
                 for(PatientInfo pi : (List<PatientInfo>) resultList) {
@@ -84,22 +82,43 @@ public class InferenceDetectionEngine {
                     //3. get the input columns that are not part of this query
                     List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
                     logger.info("policyInputColumns=>" + policyInputColumns);
+                    ArrayList<String> policyRelationshipOperands = p.getRelationshipOperands();
+                    logger.info("policy RelationshipOperands=>" + policyRelationshipOperands);
                     Queue<String> policyRelationshipOperators = p.getRelationshipOperators();
+                    logger.info("policy RelationshipOperators=>" + policyRelationshipOperators);
                     
                     //policyInputColumns.removeIf(x-> tablesAndColumnsAccessed.contains(x));
                     //get information from the logs based on the policy input columns
                     List<DBLogEntry> logEntries = dbLogEntryRepository.findDistinctByTablesColumnsAccessedIn(policyInputColumns);
                     
-                    Map<List<String>, List<String>> columnAndID = new HashMap<>();
-                   
+                    
+                    for(String operand: policyRelationshipOperands){
+                        String col = operand.split("\\.")[1].trim();
+                        String table = operand.split("\\.")[0].trim();
+                        if(table.equals("patient_info")){
+                            pi.getColumn(col);
+                            
+                        }
+                    }
+
                     for(DBLogEntry entry: logEntries) {
                         logger.info("Log entry=>" + entry);
+                        int i= 0;
+                        String[] operandValues = new String[policyInputColumns.size()];
+
                         if(!entry.getTablesColumnsAccessed().get(0).startsWith("patient_info")){
 
                             //columnAndID.put(entry.getTablesColumnsAccessed(), entry.getIdsAccessed());
                             List<String> columns = entry.getTablesColumnsAccessed();
                             for(String operand: policyInputColumns){
                                     if(columns.contains(operand)){
+                                        String col = operand.split("\\.")[1];
+                                        String table = operand.split("\\.")[0];
+                                        for(String id: entry.getIdsAccessed()){
+
+
+                                        }
+
                                         
                                     }
                             }

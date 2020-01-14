@@ -65,5 +65,22 @@ public class Policy {
         return operators;
     }
 
+        public ArrayList<String> getRelationshipOperands(){
+        relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
+        relationship = relationship.trim();
+        String[] tokens = relationship.split("(\\s+)");
+        //String[] tokens = relationship.split("[-+*/=]");    
+        logger.info("tokens=>"+Arrays.asList(tokens));
+        ArrayList<String> operands = new ArrayList<String>();
+        for(String token:tokens){ 
+        
+            logger.info("token=>"+token);
+            if(token.matches("[a-zA-Z_\\.]+")){
+                operands.add(token);
+            }
+        }
+
+        return operands;
+    }
 
 }
