@@ -42,15 +42,11 @@ public class Policy{
     private final static Logger logger = LoggerFactory.getLogger(Policy.class);
     
     public Queue<String> getRelationshipOperators(){
-        relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
+        //relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
         relationship = relationship.trim();
         String[] tokens = relationship.split("(\\s+)");
-        //String[] tokens = relationship.split("[-+*/=]");    
-        logger.info("tokens=>"+Arrays.asList(tokens));
         Queue<String> operators = new LinkedList<String>();
         for(String token:tokens){ 
-        
-            logger.info("token=>"+token);
             if(!token.matches("[a-zA-Z_\\.]+")){
                 operators.add(token);
             }
@@ -60,15 +56,11 @@ public class Policy{
     }
 
     public ArrayList<String> getRelationshipOperands(){
-        relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
+        //relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
         relationship = relationship.trim();
         String[] tokens = relationship.split("(\\s+)");
-        //String[] tokens = relationship.split("[-+*/=]");    
-        logger.info("tokens=>"+Arrays.asList(tokens));
         ArrayList<String> operands = new ArrayList<String>();
         for(String token:tokens){ 
-        
-            logger.info("token=>"+token);
             if(token.matches("[a-zA-Z_\\.]+")){
                 operands.add(token);
             }
