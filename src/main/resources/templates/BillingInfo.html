@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<th:block th:include="fragments/common.html :: htmlheader"></th:block>
+</head>
+<body>
+<header th:replace="fragments/common.html :: header"></header>
+
+<main class="container" role="main">
+       <div class="row">
+        <div class="col">
+        <ul class="nav nav-pills nav-fill mt-3">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+             <li class="nav-item">
+                <a class="nav-link" href="/patientMedicalInfo">Patient Medical Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/BillingInfo">Billing Info</a>
+            </li>
+            </ul>
+        </div>
+    </div>
+   
+    <div class="card mt-3">
+        <div class="card-body">
+   <form action="#" th:action="@{/BillingInfo}"  th:object="${BillingInfoForm}" method="post">        
+     <div class="form-group">
+      <label for="AccountNumber">Account Number:</label>
+      <input type="number" class="form-control" th:field="*{AccountNumber}">
+     </div>
+         <div class="form-group">
+    <label for="PatientAddress">Date of Entry:</label>
+    <input type="text" class="form-control" th:field="*{PatientAddress}">
+  </div>
+    <div class="form-group">
+    <label for="TotalMedicalCost">Date of Leave:</label>
+    <input type="number" class="form-control" th:field="*{TotalMedicalCost}">
+  </div>
+   <button type="submit" class="btn btn-primary mb-2 btn-lg btn-block">Search</button>
+            </form>
+        </div>
+    </div>
+    <div class="card mt-3">
+        <div class="card-body">
+        <h1>Results:</h1>
+         <table class="table">
+            <thead>
+                <tr>
+                <th scope="col">Account Number</th>
+                <th scope="col">Patient Address</th>
+                <th scope="col">Total Medical Costs</th>
+                <th scope="col">Inference</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="result : ${searchResults}">
+                    <th scope="row" th:text="${result.AccountNumber}" />
+                    <td th:text="${result.PatientAddress}"/>
+                    <td th:text="${result.TotalMedicalCost}"/>
+                    <td th:text="${result.inference} ? 'yes' : 'no'">
+                </tr>
+            </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<!-- /.container -->
+<footer  th:replace="fragments/common.html :: htmlfooter"></footer>
+</body>
+</html>

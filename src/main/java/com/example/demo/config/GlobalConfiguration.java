@@ -27,4 +27,9 @@ public class GlobalConfiguration {
     public PatientInfoManager patientInfoManager(PatientlnfoRepository patientInfoRepository) {
         return new PatientInfoManager(patientInfoRepository);
     }
+
+    // @Bean
+    // public BillingInfoManager BillingInfoManager(BillinglnfoRepository billingInfoRepository) {
+    //     return new BillingInfoManager(billingInfoRepository);
+    // }
 }

@@ -44,6 +44,9 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired
     private PatientlnfoRepository patientInfoRepository;
 
+    // @Autowired
+    // private BillinglnfoRepository billingInfoRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -87,6 +90,15 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
                         new PatientInfo("Chris Campbell", "Oct 29, 2014", "Oct 31, 2014", "M", false),
                         new PatientInfo("Fiona Fastener", "Oct 25, 2014", "TBD", "F", false),
                         new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)));
+
+        // BillingInfoRepository.saveAll(Arrays.asList(new BillingInfo(null, "TBD", "Cardiac Arrest", false),
+        //         new BillingInfo(85721, "1348 Millfair Way", 300),
+        //         new BillingInfo(85722, "34 Bensay Ave", 420),
+        //         new BillingInfo(85723, "3281 Beavertree Dr", 120),
+        //         new BillingInfo(85724, "1200 Martin St Apt 11", 340),
+        //         new BillingInfo(85725, "523 Menpearl St", 78),
+        //         new BillingInfo(85726, "2 Brysonmount Dr", 980),
+        //         new BillingInfo(85727, "4488 Tonsinville Way", 1120)));
 
         Role doctorRole = new Role(0, "ROLE_DOCTOR", new ArrayList<Privilege>());
         Role adminRole = new Role(0, "ROLE_ADMIN", new ArrayList<Privilege>());
