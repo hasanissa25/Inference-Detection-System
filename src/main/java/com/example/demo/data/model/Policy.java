@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 import javax.persistence.Column;
@@ -28,7 +27,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Policy {
+public class Policy{
     @Id
     @Column(name = "id", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "policy_generator")
@@ -41,11 +40,6 @@ public class Policy {
     private String relationship;
 
     private final static Logger logger = LoggerFactory.getLogger(Policy.class);
-
-    public boolean processCriteria(DBLogEntry entry) {
-  
-        return true;
-    }
     
     public Queue<String> getRelationshipOperators(){
         relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
@@ -65,7 +59,7 @@ public class Policy {
         return operators;
     }
 
-        public ArrayList<String> getRelationshipOperands(){
+    public ArrayList<String> getRelationshipOperands(){
         relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
         relationship = relationship.trim();
         String[] tokens = relationship.split("(\\s+)");

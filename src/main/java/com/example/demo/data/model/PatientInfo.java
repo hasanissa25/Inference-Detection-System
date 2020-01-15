@@ -6,15 +6,17 @@ import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper=false)
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class PatientInfo {
+public class PatientInfo extends Table{
 
     @Id
     private String name;
@@ -24,6 +26,7 @@ public class PatientInfo {
     @Transient
     private boolean inference;
 
+    @Override
     public String getColumn(String col){
         switch(col){
 
@@ -38,6 +41,16 @@ public class PatientInfo {
             default:
                 return null;
         }
+    }
+
+    @Override
+    public String getTableName() {
+        return "patient_info";
+    }
+
+    @Override
+    public String getId() {
+        return name;
     }
 
     
