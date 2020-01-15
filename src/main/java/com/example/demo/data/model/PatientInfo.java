@@ -12,11 +12,11 @@ import lombok.ToString;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper=false)
+//@EqualsAndHashCode(callSuper=false)
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class PatientInfo extends Table{
+public class PatientInfo{// extends Table{
 
     @Id
     private String name;
@@ -26,7 +26,7 @@ public class PatientInfo extends Table{
     @Transient
     private boolean inference;
 
-    @Override
+   // @Override
     public String getColumn(String col){
         switch(col){
 
@@ -43,12 +43,12 @@ public class PatientInfo extends Table{
         }
     }
 
-    @Override
+   // @Override
     public String getTableName() {
         return "patient_info";
     }
 
-    @Override
+    // @Override
     public String getId() {
         return name;
     }

@@ -22,7 +22,7 @@ import com.example.demo.data.model.DBLogEntry;
 import com.example.demo.data.model.PatientInfo;
 import com.example.demo.data.model.PatientMedicalInfo;
 import com.example.demo.data.model.Policy;
-import com.example.demo.data.model.Table;
+//import com.example.demo.data.model.Table;
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PatientlnfoRepository;
@@ -112,11 +112,13 @@ public class InferenceDetectionEngine {
 
                                 //9. get table columns accessed in each log 
                                 List<String> tableColumns = entry.getTablesColumnsAccessed();
-
+                                List<String> operands; 
+                                Queue<String> operators;
                                 //10. loop through each id accessed in the log
                                 for(String id: entry.getIdsAccessed()){
                                     //11. loop through each column on the policy input columns
-                                    List<String> operands = policyRelationshipOperands;
+                                    operands = new ArrayList<String>(policyRelationshipOperands);
+                                    operators = new LinkedList<String>(policyRelationshipOperators);
                                     logger.info("operands before:"+operands);
                                     for(String operand: policyRelationshipOperands){
                                         //ignore if one of the policy input columns is one of the columns of the item in focus of the result list
@@ -130,7 +132,7 @@ public class InferenceDetectionEngine {
                                         }
                                     }
                                     logger.info("operands after:"+operands);
-                                    if(isInference(policyRelationshipOperators, operands)) pi.setInference(true);  
+                                    if(isInference(operators, operands)) pi.setInference(true);  
 
                                 }
 
@@ -217,8 +219,9 @@ public class InferenceDetectionEngine {
         logger.info("IS-INFERENCE: OPERATORS =>" + operators);
         logger.info("IS-INFERENCE: OPERANDS =>" + operands);
         if(operators.isEmpty() && operands.size() == 1){
+            if(operands.get(0) == null) return false;
             boolean result = Boolean.parseBoolean(operands.remove(0));
-            logger.info("IS-INFERENCE: The result of the inference detection is =>");
+            logger.info("IS-INFERENCE: The result of the inference detection is =>" + result);
             return result;
         }else if(!operators.isEmpty() && operands.size() >= 2){
         
@@ -235,7 +238,7 @@ public class InferenceDetectionEngine {
             }
             else{
                 operands.add(0,evaluateExpression(operator, operand1, operand2));
-                isInference(operators, operands);
+                return isInference(operators, operands);
             }
         }
         
@@ -282,7 +285,7 @@ public class InferenceDetectionEngine {
 
             int arg1 = Integer.valueOf(operand1);
             int arg2 = Integer.valueOf(operand1);
-            switch(operator.trim()){
+            switch(operator.trim()) {
 
                 case "-":
                     logger.info("Difference is: "+String.valueOf(arg1 - arg2));
@@ -297,11 +300,19 @@ public class InferenceDetectionEngine {
                     logger.info("Multiplication is: "+String.valueOf(arg1 * arg2));
                     return String.valueOf(arg1 * arg2);
                 case "==":
-                    logger.info("Expression is : "+String.valueOf(arg1 == arg2));
-                    return String.valueOf(arg1 == arg2);    
+                    boolean result;
+                    if(arg1 == arg2)boolean = true;
+                    else boolean = false;
+
+                    logger.info("Expression is : "result);
+                    return String.valueOf(result); 
                 case "!=":
-                    logger.info("Expression is : "+String.valueOf(arg1 != arg2));
-                    return String.valueOf(arg1 != arg2);                   
+                    boolean result;
+                    if(arg1 != arg2)boolean = true;
+                    else boolean = false;
+
+                    logger.info("Expression is : "result);
+                    return String.valueOf(result);                          
                 default:
                     return null;
             }

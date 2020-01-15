@@ -16,10 +16,10 @@ import lombok.ToString;
 @Entity
 @ToString
 @Data 
-@EqualsAndHashCode(callSuper=false)
+//@EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class PatientMedicalInfo extends Table{
+public class PatientMedicalInfo{// extends Table{
     @Id 
     @Column(name = "patientId", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patient_medical_info_generator")
@@ -28,7 +28,7 @@ public class PatientMedicalInfo extends Table{
     private String lengthOfStay;
     private String reasonOfVisit; 
 
-    @Override
+    // @Override
     public String getColumn(String col){
         switch(col){
 
@@ -43,12 +43,12 @@ public class PatientMedicalInfo extends Table{
         }
     }
 
-    @Override
+    // @Override
     public String getTableName() {
         return "patient_medical_info";
     }
 
-    @Override
+    // @Override
     public String getId() {
         return String.valueOf(patientId);
     }
