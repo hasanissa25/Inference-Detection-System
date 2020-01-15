@@ -23,9 +23,10 @@ public class PatientMedicalInfo {
     @Column(name = "patientId", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patient_medical_info_generator")
     @SequenceGenerator(name="patient_medical_info_generator", sequenceName = "patient_medical_info_seq")
-    private Long patientId;
+    private long patientId;
     private String lengthOfStay;
     private String reasonOfVisit; 
+    private long dailyMedicalCost; 
     @Transient
     private boolean inference;
 } 

@@ -38,6 +38,10 @@
     <label for="lengthOfStay">Length of Stay:</label>
     <input type="text" class="form-control" th:field="*{lengthOfStay}">
   </div>
+  <div class="form-group">
+    <label for="dailyMedicalCost">Gender:</label>
+    <input type="number" class="form-control" th:field="*{dailyMedicalCost}">
+  </div>
    <button type="submit" class="btn btn-primary mb-2 btn-lg btn-block">Search</button>
             </form>
         </div>
@@ -51,6 +55,7 @@
                 <th scope="col">Patient ID</th>
                 <th scope="col">Reason of Visit</th>
                 <th scope="col">Length of Stay</th>
+                <th scope="col">Daily Medical Cost</th>
                 <th scope="col">Inference</th>
                 </tr>
             </thead>
@@ -59,6 +64,7 @@
                     <th scope="row" th:text="${result.patientId}" />
                     <td th:text="${result.reasonOfVisit}"/>
                     <td th:text="${result.lengthOfStay}"/>
+                    <td th:text="${result.dailyMedicalCost}"/>
                     <td th:text="${result.inference} ? 'yes' : 'no'">
                 </tr>
             </tbody>

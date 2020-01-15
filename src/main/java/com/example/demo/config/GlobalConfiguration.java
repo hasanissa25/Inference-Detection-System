@@ -6,7 +6,7 @@ import com.example.demo.data.repository.BillingInfoRepository;
 import com.example.demo.data.repository.PolicyRepository;
 import com.example.demo.logic.PatientInfoManager;
 import com.example.demo.logic.PatientMedicalInfoManager;
-//import com.example.demo.logic.BillingInfoManager;
+import com.example.demo.logic.BillingInfoManager;
 import com.example.demo.logic.PolicyManager;
 
 import org.springframework.context.annotation.Bean;
@@ -30,8 +30,8 @@ public class GlobalConfiguration {
         return new PatientInfoManager(patientInfoRepository);
     }
 
-    // @Bean
-    // public BillingInfoManager BillingInfoManager(BillingInfoRepository billingInfoRepository) {
-    //     return new BillingInfoManager(billingInfoRepository);
-    // }
+    @Bean
+    public BillingInfoManager BillingInfoManager(BillingInfoRepository billingInfoRepository) {
+        return new BillingInfoManager(billingInfoRepository);
+    }
 }

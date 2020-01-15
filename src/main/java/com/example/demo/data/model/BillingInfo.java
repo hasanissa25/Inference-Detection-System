@@ -23,7 +23,7 @@ public class BillingInfo {
     @Column(name = "AccountNumber", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "billing_info_generator")
     @SequenceGenerator(name="billing_info_generator", sequenceName = "billing_info_seq")
-    private long accountNumber;
+    private int accountNumber;
     private String patientAddress;
     private int totalMedicalCosts; 
     @Transient

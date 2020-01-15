@@ -75,14 +75,14 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
         p.setBlockedColumns(Arrays.asList("patient_info.name"));
         policyRepository.save(p);
 
-        patientMedicalInfoRepository.saveAll(Arrays.asList(new PatientMedicalInfo(null, "TBD", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "3", "Brain Aneurysm", false),
-                new PatientMedicalInfo(null, "2", "Brain Aneurysm", false),
-                new PatientMedicalInfo(null, "4", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "2", "Brain Aneurysm", false),
-                new PatientMedicalInfo(null, "TBD", "Brain Aneurysm", false),
-                new PatientMedicalInfo(null, "9", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "7", "Cardiac Arrest", false)));
+        patientMedicalInfoRepository.saveAll(Arrays.asList(new PatientMedicalInfo((Long)null, "TBD", "Cardiac Arrest", 1500, false),
+                new PatientMedicalInfo((Long)null, "3", "Brain Aneurysm", 1000, false),
+                new PatientMedicalInfo((Long)null, "2", "Brain Aneurysm", 1000, false),
+                new PatientMedicalInfo((Long)null, "4", "Cardiac Arrest", 1500, false),
+                new PatientMedicalInfo((Long)null, "5", "Brain Aneurysm", 1000, false),
+                new PatientMedicalInfo((Long)null, "TBD", "Brain Aneurysm", 1000, false),
+                new PatientMedicalInfo((Long) null, "9", "Cardiac Arrest", 1500, false),
+                new PatientMedicalInfo((Long)null, "7", "Cardiac Arrest", 1500, false)));
 
         patientInfoRepository
                 .saveAll(Arrays.asList(new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
@@ -94,14 +94,14 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
                         new PatientInfo("Fiona Fastener", "Oct 25, 2014", "TBD", "F", false),
                         new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)));
 
-        billingInfoRepository.saveAll(Arrays.asList(new BillingInfo(85720, "99 Jaymarry Cres", 450, false),
-                new BillingInfo(85721, "1348 Millfair Way", 300, false),
-                new BillingInfo(85722, "34 Bensay Ave", 420, false),
-                new BillingInfo(85723, "3281 Beavertree Dr", 120, false),
-                new BillingInfo(85724, "1200 Martin St Apt 11", 340, false),
-                new BillingInfo(85725, "523 Menpearl St", 78, false),
-                new BillingInfo(85726, "2 Brysonmount Dr", 980, false),
-                new BillingInfo(85727, "4488 Tonsinville Way", 1120, false)));
+        billingInfoRepository.saveAll(Arrays.asList(new BillingInfo(85720, "99 Jaymarry Cres", 13500, false),
+                new BillingInfo(85721, "1348 Millfair Way", 6000, false),
+                new BillingInfo(85722, "34 Bensay Ave", 3000, false),
+                new BillingInfo(85723, "3281 Beavertree Dr", 5000, false),
+                new BillingInfo(85724, "1200 Martin St Apt 11", 2000, false),
+                new BillingInfo(85725, "523 Menpearl St", 0, false),
+                new BillingInfo(85726, "2 Brysonmount Dr", 0, false),
+                new BillingInfo(85727, "4488 Tonsinville Way", 10500, false)));
 
         Role doctorRole = new Role(0, "ROLE_DOCTOR", new ArrayList<Privilege>());
         Role adminRole = new Role(0, "ROLE_ADMIN", new ArrayList<Privilege>());

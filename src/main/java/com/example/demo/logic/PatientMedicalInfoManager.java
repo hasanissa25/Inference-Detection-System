@@ -27,13 +27,13 @@ public class PatientMedicalInfoManager {
         this.patientMedicalnfoRepository = patientMedicalnfoRepository;
     }
 
-    public List<PatientMedicalInfo> search(Long patientId, String lengthOfStay, String reasonOfVisit) {
+    public List<PatientMedicalInfo> search(Long patientId, String lengthOfStay, String reasonOfVisit, Long dailyMedicalCost) {
         List<PatientMedicalInfo> results = null;
-        if(patientId == null && StringUtils.isEmpty(lengthOfStay) && StringUtils.isEmpty(reasonOfVisit))
+        if(patientId == null && StringUtils.isEmpty(lengthOfStay) && StringUtils.isEmpty(reasonOfVisit) && dailyMedicalCost == null)
             results = patientMedicalnfoRepository.findAll();
         else 
-            results = patientMedicalnfoRepository.customSearch(patientId, lengthOfStay, reasonOfVisit);
-        results = inferenceDetectionEngine.checkInferenceForPatientMedicalInfo(results, Arrays.asList("patient_medical_info.id", "patient_medical_info.length_of_stay", "patient_medical_info.reason_of_visit"));
+            results = patientMedicalnfoRepository.customSearch(patientId, lengthOfStay, reasonOfVisit, dailyMedicalCost);
+        results = inferenceDetectionEngine.checkInferenceForPatientMedicalInfo(results, Arrays.asList("patient_medical_info.id", "patient_medical_info.length_of_stay", "patient_medical_info.reason_of_visit", "patient_medical_info.daily_medical_cost"));
         return results;
     }
 
