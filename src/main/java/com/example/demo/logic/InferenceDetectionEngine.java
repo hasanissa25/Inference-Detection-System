@@ -18,6 +18,7 @@ import com.example.demo.data.model.Policy;
 import com.example.demo.data.model.QueryResult;
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
+import com.example.demo.data.repository.BillingInfoRepository;
 import com.example.demo.data.repository.PolicyRepository;
 
 import org.slf4j.Logger;
@@ -41,6 +42,9 @@ public class InferenceDetectionEngine {
     
     @Autowired
     private PatientMedicalInfoRepository patientMedicallnfoRepository;
+
+    @Autowired
+    private PatientMedicalInfoRepository BillingInfoRepository;
     
 
     public List<PatientInfo> checkInferenceForPatientInfo(List<PatientInfo> resultList, List<String> tablesAndColumnsAccessed) {

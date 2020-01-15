@@ -6,8 +6,8 @@ import com.example.demo.data.model.BillingInfo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BillinglnfoRepository extends JpaRepository<BillingInfo, Long> {
+public interface BillingInfoRepository extends JpaRepository<BillingInfo, Long> {
 
-	List<BillingInfo> findByNameIgnoreCaseOrDateOfEntryOrDateOfLeaveOrGenderIgnoreCase(int accountNumber, String patientAdrress,
+	List<BillingInfo> findByNameIgnoreCaseOrDateOfEntryOrDateOfLeaveOrGenderIgnoreCase(long accountNumber, String patientAdrress,
 			int totalMedicalCosts);
 }

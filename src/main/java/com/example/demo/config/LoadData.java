@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.example.demo.data.model.PatientInfo;
 import com.example.demo.data.model.PatientMedicalInfo;
+import com.example.demo.data.model.BillingInfo;
+
 import com.example.demo.data.model.Policy;
 
 import com.example.demo.data.model.Privilege;
@@ -15,6 +17,7 @@ import com.example.demo.data.model.Role;
 import com.example.demo.data.model.User;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PatientlnfoRepository;
+import com.example.demo.data.repository.BillingInfoRepository;
 import com.example.demo.data.repository.PolicyRepository;
 import com.example.demo.data.repository.RoleRepository;
 import com.example.demo.data.repository.UserRepository;
@@ -44,8 +47,8 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired
     private PatientlnfoRepository patientInfoRepository;
 
-    // @Autowired
-    // private BillinglnfoRepository billingInfoRepository;
+    @Autowired
+    private BillingInfoRepository billingInfoRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -91,14 +94,14 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
                         new PatientInfo("Fiona Fastener", "Oct 25, 2014", "TBD", "F", false),
                         new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)));
 
-        // BillingInfoRepository.saveAll(Arrays.asList(new BillingInfo(null, "TBD", "Cardiac Arrest", false),
-        //         new BillingInfo(85721, "1348 Millfair Way", 300),
-        //         new BillingInfo(85722, "34 Bensay Ave", 420),
-        //         new BillingInfo(85723, "3281 Beavertree Dr", 120),
-        //         new BillingInfo(85724, "1200 Martin St Apt 11", 340),
-        //         new BillingInfo(85725, "523 Menpearl St", 78),
-        //         new BillingInfo(85726, "2 Brysonmount Dr", 980),
-        //         new BillingInfo(85727, "4488 Tonsinville Way", 1120)));
+        billingInfoRepository.saveAll(Arrays.asList(new BillingInfo(85720, "99 Jaymarry Cres", 450, false),
+                new BillingInfo(85721, "1348 Millfair Way", 300, false),
+                new BillingInfo(85722, "34 Bensay Ave", 420, false),
+                new BillingInfo(85723, "3281 Beavertree Dr", 120, false),
+                new BillingInfo(85724, "1200 Martin St Apt 11", 340, false),
+                new BillingInfo(85725, "523 Menpearl St", 78, false),
+                new BillingInfo(85726, "2 Brysonmount Dr", 980, false),
+                new BillingInfo(85727, "4488 Tonsinville Way", 1120, false)));
 
         Role doctorRole = new Role(0, "ROLE_DOCTOR", new ArrayList<Privilege>());
         Role adminRole = new Role(0, "ROLE_ADMIN", new ArrayList<Privilege>());
