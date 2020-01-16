@@ -39,24 +39,24 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class InferenceDetectionEngine {
-
+    
     private final static Logger logger = LoggerFactory.getLogger(InferenceDetectionEngine.class);
-
+    
     @Autowired
     private PolicyRepository policyRepository;
-
+    
     @Autowired
     private DBLogEntryRepository dbLogEntryRepository;
     
     @Autowired
     private PatientMedicalInfoRepository patientMedicallnfoRepository;
-
+    
     @Autowired
     private PatientlnfoRepository patientlnfoRepository;
     
-
+    
     public List<PatientInfo> checkInferenceForPatientInfo(List<PatientInfo> resultList, List<String> tablesAndColumnsAccessed) {
-
+        
         if(!resultList.isEmpty()){
             logger.info("results => " + resultList);
             //1 - First step for the inference detection is to fetch the user 
@@ -66,7 +66,7 @@ public class InferenceDetectionEngine {
             //2. get policies related to the query
             List<Policy> policies = policyRepository.findDistinctByInputColumnsInAndBlockedColumnsIn(tablesAndColumnsAccessed, tablesAndColumnsAccessed);
             logger.info("get policies, found [" + policies.size() + "] policies => " + policies);
-
+            
             //3. record a log of the query performed 
             List<String> values = ((List<PatientInfo>)resultList).stream().map(e -> String.valueOf(e.getName())).collect(Collectors.toList());
             logger.info("values => " + values);
@@ -74,81 +74,80 @@ public class InferenceDetectionEngine {
             
             logger.info("recording and saving log => " + dbLogEntry);
             dbLogEntryRepository.save(dbLogEntry);            
-
+            
             //4.for each item in the result list check if it causes potential inference attack
             for(PatientInfo pi : resultList) {
-                    //set inference to false
-                    pi.setInference(false);
-                    logger.info("PatientInfo =>" + pi);
-                    for(Policy p: policies) {
-                        //5. Get the policyInputColumns
-                        List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
-                        logger.info("policyInputColumns =>" + policyInputColumns);
-                        //6. Parse the logical relationship of the inputColumns
-                        ArrayList<String> policyRelationshipOperands = p.getRelationshipOperands();
-                        logger.info("policyRelationshipOperands=>" + policyRelationshipOperands);
-                        Queue<String> policyRelationshipOperators = p.getRelationshipOperators();
-                        logger.info("policyRelationshipOperators=>" + policyRelationshipOperators);
-                        
-                        //7. Check if one of the inputColumns is part of the item in focus of the result list
-                        //if so, add the value of that column into the logical relationship
-                        for(String operand: policyRelationshipOperands){
-                            String col = operand.split("\\.")[1].trim();
-                            String table = operand.split("\\.")[0].trim();
-                            if(table.equals(pi.getTableName())){
-                                policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand), pi.getColumn(col));
-                            }
+                //set inference to false
+                pi.setInference(false);
+                logger.info("PatientInfo =>" + pi);
+                for(Policy p: policies) {
+                    //5. Get the policyInputColumns
+                    List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
+                    logger.info("policyInputColumns =>" + policyInputColumns);
+                    //6. Parse the logical relationship of the inputColumns
+                    ArrayList<String> policyRelationshipOperands = p.getRelationshipOperands();
+                    logger.info("policyRelationshipOperands=>" + policyRelationshipOperands);
+                    Queue<String> policyRelationshipOperators = p.getRelationshipOperators();
+                    logger.info("policyRelationshipOperators=>" + policyRelationshipOperators);
+                    
+                    //7. Check if one of the inputColumns is part of the item in focus of the result list
+                    //if so, add the value of that column into the logical relationship
+                    for(String operand: policyRelationshipOperands){
+                        String col = operand.split("\\.")[1].trim();
+                        String table = operand.split("\\.")[0].trim();
+                        if(table.equals(pi.getTableName())){
+                            policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand), pi.getColumn(col));
                         }
-
-                        //8. Get the logs that have accessed the policyInputColumns
-                        List<DBLogEntry> logEntries = dbLogEntryRepository.findDistinctByTablesColumnsAccessedIn(policyInputColumns);
-                        logger.info("logEntries =>" + logEntries);
-                        
-                        //9. iterate through each log
-                        for(DBLogEntry entry: logEntries) {
-                            logger.info("Log entry=>" + entry);
-                            //Ignore logs that are part of the item in focus of the result list, item's values have already been added to logical relationship 
-                            if(!entry.getTablesColumnsAccessed().get(0).startsWith(pi.getTableName())){
-
-                                //9. get table columns accessed in each log 
-                                List<String> tableColumns = entry.getTablesColumnsAccessed();
-                                List<String> operands; 
-                                Queue<String> operators;
-                                //10. loop through each id accessed in the log
-                                for(String id: entry.getIdsAccessed()){
-                                    //list of operands for each id/row accessed
-                                    operands = new ArrayList<String>(policyRelationshipOperands);
-                                    //queue of operators from the policy relationship
-                                    operators = new LinkedList<String>(policyRelationshipOperators);
-                                    //11. loop through each column on the policy input columns
-                                    for(String operand: policyRelationshipOperands){
-                                        //ignore if one of the policy input columns is one of the columns of the item in focus of the result list
-                                        //the values of the item's columns have already been added
-                                        if(!operand.startsWith(pi.getTableName())){
-                                            //12. if table columns accessed in the log contains one of the input policy columns, add the value of the operand to the list
-                                            if(tableColumns.contains(operand)){
-                                                operands.set(operands.indexOf(operand), queryRepositories(operand, id));
-                                                
-                                            }
+                    }
+                    
+                    //8. Get the logs that have accessed the policyInputColumns
+                    List<DBLogEntry> logEntries = dbLogEntryRepository.findDistinctByTablesColumnsAccessedIn(policyInputColumns);
+                    logger.info("logEntries =>" + logEntries);
+                    
+                    //9. iterate through each log
+                    for(DBLogEntry entry: logEntries) {
+                        logger.info("Log entry=>" + entry);
+                        //get table columns accessed in each log 
+                        List<String> tableColumnsFromLog = entry.getTablesColumnsAccessed();
+                        //Ignore logs that are part of the item in focus of the result list, item's values have already been added to logical relationship 
+                        if(!tableColumnsFromLog.get(0).startsWith(pi.getTableName())){
+                            List<String> operands; 
+                            Queue<String> operators;
+                            //10. loop through each id accessed in the log
+                            for(String id: entry.getIdsAccessed()){
+                                //list of operands for each id/row accessed
+                                operands = new ArrayList<String>(policyRelationshipOperands);
+                                //queue of operators from the policy relationship
+                                operators = new LinkedList<String>(policyRelationshipOperators);
+                                //11. loop through each column on the policy input columns
+                                for(String operand: policyRelationshipOperands){
+                                    //ignore if one of the policy input columns is one of the columns of the item in focus of the result list
+                                    //the values of the item's columns have already been added
+                                    if(!operand.startsWith(pi.getTableName())){
+                                        //12. if table columns accessed in the log contains one of the input policy columns, add the value of the operand to the list
+                                        if(tableColumnsFromLog.contains(operand)){
+                                            operands.set(operands.indexOf(operand), queryRepositories(operand, id));
+                                            
                                         }
                                     }
-                                    //using the operands and operators for this row, check if there is an inference detection
-                                    if(isInference(operators, operands)) pi.setInference(true);  
-
                                 }
-
+                                //using the operands and operators for this row, check if there is an inference detection
+                                if(isInference(operators, operands)) pi.setInference(true);  
+                                
                             }
-
-                        }
                             
+                        }
+                        
                     }
+                    
+                }
             }
         }
-
+        
         return resultList;
     }
-
-
+    
+    
     public List<PatientMedicalInfo> checkInferenceForPatientMedicalInfo(List<PatientMedicalInfo> resultList, List<String> tablesAndColumnsAccessed) {
         //1 - First step for the inference detection is to fetch the user 
         String currentUserName = getUser();
@@ -158,63 +157,63 @@ public class InferenceDetectionEngine {
         DBLogEntry dbLogEntry = new DBLogEntry(null, currentUserName, tablesAndColumnsAccessed, values, LocalDateTime.now());
         logger.info("Step last: recording log => " + dbLogEntry);
         dbLogEntryRepository.save(dbLogEntry);
-    
+        
         return resultList;
     }
-
+    
     //We get the user if they are logged in. If they are not logged in we return null.
     private String getUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (!(authentication instanceof AnonymousAuthenticationToken)) {
-                return authentication.getName();
-            }
-            else return null;
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            return authentication.getName();
+        }
+        else return null;
     }
-
+    
     private String queryRepositories(String tableColumn, String id){
         logger.info("id queried:"+id);
         String table = tableColumn.split("\\.")[0];
         String col = tableColumn.split("\\.")[1];
         
-            switch(table){
+        switch(table){
+            
+            case "patient_info":
+            
+            switch(col){
+                case "name":
+                return patientlnfoRepository.findByName(id).getName();                  
+                case "date_of_entry":
+                return patientlnfoRepository.findByName(id).getDateOfEntry();
+                case "date_of_leave":
+                return patientlnfoRepository.findByName(id).getDateOfLeave();
+                case "gender":
+                return patientlnfoRepository.findByName(id).getGender();
                 
-                case "patient_info":
-                    
-                    switch(col){
-                        case "name":
-                            return patientlnfoRepository.findByName(id).getName();                  
-                        case "date_of_entry":
-                            return patientlnfoRepository.findByName(id).getDateOfEntry();
-                        case "date_of_leave":
-                            return patientlnfoRepository.findByName(id).getDateOfLeave();
-                        case "gender":
-                            return patientlnfoRepository.findByName(id).getGender();
-                            
-                        default:
-                            return null;
-                    }
-
-                case "patient_medical_info":
-
-                    switch(col){
-                        case "patient_id":
-                            return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getPatientId().toString();         
-                        case "length_of_stay":
-                            logger.info("result of query:"+patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getLengthOfStay());
-                            return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getLengthOfStay();
-                        case "reason_of_visit":
-                            return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getReasonOfVisit();
-                        default:
-                            return null;
-                    }
-                    
                 default:
-                    return null;
-
+                return null;
             }
-
+            
+            case "patient_medical_info":
+            
+            switch(col){
+                case "patient_id":
+                return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getPatientId().toString();         
+                case "length_of_stay":
+                logger.info("result of query:"+patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getLengthOfStay());
+                return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getLengthOfStay();
+                case "reason_of_visit":
+                return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getReasonOfVisit();
+                default:
+                return null;
+            }
+            
+            default:
+            return null;
+            
+        }
+        
     }
-
+    
     private boolean isInference(Queue<String> operators, List<String> operands){
         //base case
         if(operators.isEmpty() && operands.size() < 2){
@@ -223,7 +222,7 @@ public class InferenceDetectionEngine {
             logger.info("IS-INFERENCE: The result of the inference detection is =>" + result);
             return result;
         }else if(!operators.isEmpty() && operands.size() >= 2){
-        
+            
             
             String operator = operators.remove();
             String operand1 = operands.remove(0);
@@ -231,7 +230,7 @@ public class InferenceDetectionEngine {
             logger.info("IS-INFERENCE: OPERATOR =>" + operator);
             logger.info("IS-INFERENCE: OPERAND1 =>" + operand1);
             logger.info("IS-INFERENCE: OPERAND2 =>" + operand2);
-
+            
             if(operator == null || operand1 == null || operand2 == null){
                 logger.info("IS-INFERENCE: Cannot evaluate expression, data types not compatible");
                 return false;
@@ -247,92 +246,92 @@ public class InferenceDetectionEngine {
         } 
         
         
-
- 
+        
+        
         
     }
-
+    
     private String evaluateExpression(String operator, String operand1, String operand2){
-
+        
         boolean result;
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
         int daysBetween, arg1, arg2;
-
+        
         if(isValidDate(operand1) && isValidDate(operand2)){
             logger.info("IS DATE");
-
+            
             
             LocalDate date1 = LocalDate.parse(operand1, dateFormatter);
             LocalDate date2 = LocalDate.parse(operand2, dateFormatter);
             
             switch(operator.trim()){
-
+                
                 case "-":
-                    daysBetween = (int) ChronoUnit.DAYS.between(date1, date2);
-                    if (daysBetween < 0){
-                        daysBetween = (int) ChronoUnit.DAYS.between(date2, date1);
-                    }
-                    logger.info("Days between: "+String.valueOf(daysBetween));
-                    return String.valueOf(daysBetween);
+                daysBetween = (int) ChronoUnit.DAYS.between(date1, date2);
+                if (daysBetween < 0){
+                    daysBetween = (int) ChronoUnit.DAYS.between(date2, date1);
+                }
+                logger.info("Days between: "+String.valueOf(daysBetween));
+                return String.valueOf(daysBetween);
                 case "==":
-                    if(date1.equals(date2))result = true;
-                    else result = false;
-
-                    logger.info("Expression is : "+Boolean.toString(result));
-                    return Boolean.toString(result);
- 
+                if(date1.equals(date2))result = true;
+                else result = false;
+                
+                logger.info("Expression is : "+Boolean.toString(result));
+                return Boolean.toString(result);
+                
                 case "!=":
-                    if(!date1.equals(date2))result = true;
-                    else result = false;
-
-                    logger.info("Expression is : "+Boolean.toString(result));
-                    return Boolean.toString(result);                  
+                if(!date1.equals(date2))result = true;
+                else result = false;
+                
+                logger.info("Expression is : "+Boolean.toString(result));
+                return Boolean.toString(result);                  
                 default:
-                    return null;
+                return null;
             }
-
+            
         }
         else if(isInteger(operand1) && isInteger(operand2)){
-
+            
             logger.info("IS INTEGER");
-
+            
             arg1 = Integer.valueOf(operand1);
             arg2 = Integer.valueOf(operand2);
             switch(operator.trim()) {
-
+                
                 case "-":
-                    logger.info("Difference is: "+String.valueOf(arg1 - arg2));
-                    return String.valueOf(arg1 - arg2);
+                logger.info("Difference is: "+String.valueOf(arg1 - arg2));
+                return String.valueOf(arg1 - arg2);
                 case "+":
-                    logger.info("Sum is: "+String.valueOf(arg1 + arg2));
-                    return String.valueOf(arg1 + arg2);
+                logger.info("Sum is: "+String.valueOf(arg1 + arg2));
+                return String.valueOf(arg1 + arg2);
                 case "/":
-                    logger.info("Division is: "+String.valueOf(arg1 / arg2));
-                    return String.valueOf(arg1 / arg2);
+                logger.info("Division is: "+String.valueOf(arg1 / arg2));
+                return String.valueOf(arg1 / arg2);
                 case "*":
-                    logger.info("Multiplication is: "+String.valueOf(arg1 * arg2));
-                    return String.valueOf(arg1 * arg2);
+                logger.info("Multiplication is: "+String.valueOf(arg1 * arg2));
+                return String.valueOf(arg1 * arg2);
                 case "==":
-                    
-                    if(arg1 != arg2)result = true;
-                    else result = false;
-
-                    logger.info("Expression is : "+Boolean.toString(result));
-                    return Boolean.toString(result);
+                
+                if(arg1 != arg2)result = true;
+                else result = false;
+                
+                logger.info("Expression is : "+Boolean.toString(result));
+                return Boolean.toString(result);
                 case "!=":
-                    if(arg1 == arg2)result = true;
-                    else result = false;
-                    logger.info("Expression is : "+Boolean.toString(result));
-                    return Boolean.toString(result);                      
+                if(arg1 == arg2)result = true;
+                else result = false;
+                logger.info("Expression is : "+Boolean.toString(result));
+                return Boolean.toString(result);                      
                 default:
-                    return null;
+                return null;
             }
-
+            
         }
         else return null;
     }
-
-
+    
+    
     private boolean isValidDate(String inDate) {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
         try{
@@ -341,7 +340,7 @@ public class InferenceDetectionEngine {
             return false;
         }
         return true;
-/*
+        /*
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
         dateFormat.setLenient(false);
         try {
@@ -352,8 +351,8 @@ public class InferenceDetectionEngine {
         return true;
         **/
     }
-
-
+    
+    
     private boolean isInteger(String input) {
         try {
             Integer.parseInt( input );
@@ -363,10 +362,10 @@ public class InferenceDetectionEngine {
             return false;
         }
     }
-
+    
 }
 
-    
+
 
 
 
