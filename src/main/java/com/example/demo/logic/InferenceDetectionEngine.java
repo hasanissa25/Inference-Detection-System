@@ -31,7 +31,6 @@ import com.example.demo.data.repository.PolicyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.ast.Operator;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -335,7 +334,7 @@ public class InferenceDetectionEngine {
     private boolean isValidDate(String inDate) {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
         try{
-            LocalDate date1 = LocalDate.parse(inDate, dateFormatter);
+            LocalDate.parse(inDate, dateFormatter);
         } catch (DateTimeParseException pe) {
             return false;
         }
