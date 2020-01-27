@@ -419,16 +419,7 @@ public class InferenceDetectionEngine {
             return false;
         }
         return true;
-        /*
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
-        dateFormat.setLenient(false);
-        try {
-            dateFormat.parse(inDate.trim());
-        } catch (ParseException pe) {
-            return false;
-        }
-        return true;
-        **/
+
     }
     
     
