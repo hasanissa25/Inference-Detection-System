@@ -7,5 +7,5 @@ import com.example.demo.data.model.DBLogEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DBLogEntryRepository extends JpaRepository<DBLogEntry, Long> {
-    List<DBLogEntry> findDistinctByTablesColumnsAccessedIn(List<String> tablesAndColumnsAccessed);
+    List<DBLogEntry> findDistinctByTablesColumnsAccessedInAndUserName(List<String> tablesAndColumnsAccessed, String userName);
 }
