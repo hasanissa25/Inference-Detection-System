@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,9 @@ public class PatientMedicalInfo{// extends Table{
     private Long patientId;
     private String lengthOfStay;
     private String reasonOfVisit; 
+    @Transient
+    private boolean inference;
+
 
     // @Override
     public String getColumn(String col){
