@@ -10,16 +10,18 @@ import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
 @ToString
-@Data
+@Data 
+//@EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class PatientMedicalInfo {
-    @Id
+public class PatientMedicalInfo{// extends Table{
+    @Id 
     @Column(name = "patientId", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patient_medical_info_generator")
     @SequenceGenerator(name="patient_medical_info_generator", sequenceName = "patient_medical_info_seq")
@@ -28,4 +30,33 @@ public class PatientMedicalInfo {
     private String reasonOfVisit; 
     @Transient
     private boolean inference;
+
+
+    // @Override
+    public String getColumn(String col){
+        switch(col){
+
+            case "patient_id":
+                return String.valueOf(patientId);
+            case "length_of_stay":
+                return lengthOfStay;
+            case "reason_of_visit":
+                return reasonOfVisit;
+            default:
+                return null;
+        }
+    }
+
+    // @Override
+    public String getTableName() {
+        return "patient_medical_info";
+    }
+
+    // @Override
+    public String getId() {
+        return String.valueOf(patientId);
+    }
+
+
+
 } 
