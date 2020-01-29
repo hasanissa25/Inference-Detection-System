@@ -10,7 +10,6 @@ import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -33,7 +32,7 @@ public class PatientMedicalInfo{// extends Table{
 
 
     // @Override
-    public String getColumn(String col){
+    public String getColumnValue(String col){
         switch(col){
 
             case "patient_id":

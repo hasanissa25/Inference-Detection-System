@@ -3,7 +3,6 @@ package com.example.demo.config;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.hibernate.CallbackException;
 import org.hibernate.type.Type;
 import org.hibernate.EmptyInterceptor;
 
