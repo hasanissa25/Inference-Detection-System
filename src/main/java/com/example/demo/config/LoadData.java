@@ -95,12 +95,14 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
         roleRepository.saveAll(Arrays.asList(doctorRole, adminRole));
 
         List<User> users = new ArrayList<>();
-        users.add(
-        new User(1, "hasan", LocalDate.now(), null, passwordEncoder.encode("hasan"), Arrays.asList(adminRole)));
+        users.add(new User(1, "hasan", LocalDate.now(), null, passwordEncoder.encode("hasan"), Arrays.asList(adminRole)));
         users.add(new User(2, "ryan", LocalDate.now(), null, passwordEncoder.encode("ryan"), Arrays.asList(adminRole)));
         users.add(new User(3, "jason", LocalDate.now(), null, passwordEncoder.encode("jason"),Arrays.asList(doctorRole)));
-        users.add(new User(4, "admin", LocalDate.now(), null, passwordEncoder.encode("admin"),Arrays.asList(adminRole)));
-
+        users.add(new User(4, "sasha", LocalDate.now(), null, passwordEncoder.encode("sasha"),Arrays.asList(adminRole)));
+        users.add(new User(5, "tashfiq", LocalDate.now(), null, passwordEncoder.encode("tashfiq"),Arrays.asList(adminRole)));
+        users.add(new User(6, "calvin", LocalDate.now(), null, passwordEncoder.encode("calvin"),Arrays.asList(adminRole)));
+        users.add(new User(7, "admin", LocalDate.now(), null, passwordEncoder.encode("admin"),Arrays.asList(adminRole)));
+        users.add(new User(8, "user", LocalDate.now(), null, passwordEncoder.encode("user"),Arrays.asList(doctorRole)));
         userRepository.saveAll(users);
 
         alreadySetup = true;
