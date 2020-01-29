@@ -23,8 +23,8 @@ public class BillingInfoManager {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public BillingInfoManager(BillingInfoRepository patientMedicalnfoRepository) {
-        this.billingInfoRepository = patientMedicalnfoRepository;
+    public BillingInfoManager(BillingInfoRepository billingInfoRepository) {
+        this.billingInfoRepository = billingInfoRepository;
     }
 
     public List<BillingInfo> search(int accountNumber, String patientAddress, int totalMedicalCosts) {
@@ -32,7 +32,7 @@ public class BillingInfoManager {
         if(accountNumber == 0 && StringUtils.isEmpty(patientAddress) && totalMedicalCosts == 0)
             results = billingInfoRepository.findAll();
         else 
-            results = billingInfoRepository.findByNameIgnoreCaseOrDateOfEntryOrDateOfLeaveOrGenderIgnoreCase(accountNumber, patientAddress, totalMedicalCosts);
+            results = billingInfoRepository.findByNumberOrPatientAddressIgnoreCaseOrTotalMedicalCosts(accountNumber, patientAddress, totalMedicalCosts);
         //results = inferenceDetectionEngine.checkInferenceForBillingInfo(results, Arrays.asList("billing_info.account_number", "billing_info.patient_address", "billing_info.total_medical_costs"));
         return results;
     }
