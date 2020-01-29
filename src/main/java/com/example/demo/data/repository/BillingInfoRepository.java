@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BillingInfoRepository extends JpaRepository<BillingInfo, Long> {
 
-	List<BillingInfo> findByNameIgnoreCaseOrDateOfEntryOrDateOfLeaveOrGenderIgnoreCase(int accountNumber,
+	List<BillingInfo> findByNumberOrPatientAddressIgnoreCaseOrTotalMedicalCosts(int accountNumber,
             String patientAdrress, int totalMedicalCosts);
 }
