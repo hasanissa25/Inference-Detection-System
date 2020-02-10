@@ -38,7 +38,7 @@ public class CustomPatientMedicalInfoRepositoryImpl implements CustomPatientMedi
             predicates.add(cb.equal(reasonOfVisitPath, reasonOfVisit));
         if(!StringUtils.isEmpty(lengthOfStay))
             predicates.add(cb.equal(lengthOfStayPath, lengthOfStay));
-        if(dailyMedicalCost != 0)
+        if(!StringUtils.isEmpty(dailyMedicalCost))
             predicates.add(cb.equal(dailyMedicalCostPath, dailyMedicalCost));
 
         query.select(patientMedicalInfos)
