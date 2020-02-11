@@ -67,26 +67,33 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
         p.setInputColumns(Arrays.asList("patient_medical_info.length_of_stay", "patient_info.date_of_entry",
                 "patient_info.date_of_leave"));
         p.setBlockedColumns(Arrays.asList("patient_info.name"));
+        p.setRelationship("patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay");
         policyRepository.save(p);
 
-        patientMedicalInfoRepository.saveAll(Arrays.asList(new PatientMedicalInfo(null, "TBD", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "3", "Brain Aneurysm", false),
-                new PatientMedicalInfo(null, "2", "Brain Aneurysm", false),
-                new PatientMedicalInfo(null, "4", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "2", "Brain Aneurysm", false),
-                new PatientMedicalInfo(null, "TBD", "Brain Aneurysm", false),
-                new PatientMedicalInfo(null, "9", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "7", "Cardiac Arrest", false)));
 
-        patientInfoRepository
-                .saveAll(Arrays.asList(new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
-                        new PatientInfo("Mary Jane", "Oct 22, 2014", "Oct 31, 2014", "F", false),
-                        new PatientInfo("Patty Patterson", "Oct 24, 2014", "Oct 31, 2014", "F", false),
-                        new PatientInfo("Jimmy Jistle", "Oct 28, 2014", "Oct 31, 2014", "M", false),
-                        new PatientInfo("Tony Tiger", "Oct 29, 2014", "Oct 31, 2014", "M", false),
-                        new PatientInfo("Chris Campbell", "Oct 29, 2014", "Oct 31, 2014", "M", false),
-                        new PatientInfo("Fiona Fastener", "Oct 25, 2014", "TBD", "F", false),
-                        new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)));
+
+        patientMedicalInfoRepository.saveAll(Arrays.asList(
+        new PatientMedicalInfo(null, "TBD", "Cardiac Arrest", false),
+        new PatientMedicalInfo(null, "3", "Brain Aneurysm",false),
+        new PatientMedicalInfo(null, "2", "Brain Aneurysm",false),
+        new PatientMedicalInfo(null, "4", "Cardiac Arrest",false),
+        new PatientMedicalInfo(null, "2", "Brain Aneurysm",false),
+        new PatientMedicalInfo(null, "TBD", "Brain Aneurysm",false),
+        new PatientMedicalInfo(null, "9", "Cardiac Arrest",false),
+        new PatientMedicalInfo(null, "7", "Cardiac Arrest",false)
+        ));
+
+        patientInfoRepository.saveAll(Arrays.asList(
+            new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
+            new PatientInfo("Mary Jane", "Oct 22, 2014", "Oct 31, 2014", "F", false),
+            new PatientInfo("Patty Patterson", "Oct 24, 2014", "Oct 31, 2014", "F", false),
+            new PatientInfo("Jimmy Jistle", "Oct 28, 2014", "Oct 31, 2014", "M", false),
+            new PatientInfo("Tony Tiger", "Oct 29, 2014", "Oct 31, 2014", "M", false),
+            new PatientInfo("Chris Campbell", "Oct 29, 2014", "Oct 31, 2014", "M", false),
+            new PatientInfo("Fiona Fastener", "Oct 25, 2014", "TBD", "F", false),
+            new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)
+            ));
+
 
         Role doctorRole = new Role(0, "ROLE_DOCTOR", new ArrayList<Privilege>());
         Role adminRole = new Role(0, "ROLE_ADMIN", new ArrayList<Privilege>());
