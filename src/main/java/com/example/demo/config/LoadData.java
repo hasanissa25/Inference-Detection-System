@@ -29,8 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class LoadData implements
-  ApplicationListener<ContextRefreshedEvent> {
+public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger log = LoggerFactory.getLogger(LoadData.class);
 
@@ -57,18 +56,20 @@ public class LoadData implements
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
-  
+
         if (alreadySetup) {
             log.info("Already loaded stub data");
             return;
-        } else 
+        } else
             log.info("Populating database with stub data");
-        
+
         Policy p = new Policy();
-        p.setInputColumns(Arrays.asList("patient_medical_info.length_of_stay", "patient_info.date_of_entry", "patient_info.date_of_leave"));
+        p.setInputColumns(Arrays.asList("patient_medical_info.length_of_stay", "patient_info.date_of_entry",
+                "patient_info.date_of_leave"));
         p.setBlockedColumns(Arrays.asList("patient_info.name"));
         p.setRelationship("patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay");
         policyRepository.save(p);
+
 
 
         patientMedicalInfoRepository.saveAll(Arrays.asList(
@@ -93,6 +94,7 @@ public class LoadData implements
             new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)
             ));
 
+
         Role doctorRole = new Role(0, "ROLE_DOCTOR", new ArrayList<Privilege>());
         Role adminRole = new Role(0, "ROLE_ADMIN", new ArrayList<Privilege>());
 
@@ -101,8 +103,12 @@ public class LoadData implements
         List<User> users = new ArrayList<>();
         users.add(new User(1, "hasan", LocalDate.now(), null, passwordEncoder.encode("hasan"), Arrays.asList(adminRole)));
         users.add(new User(2, "ryan", LocalDate.now(), null, passwordEncoder.encode("ryan"), Arrays.asList(adminRole)));
-        users.add(new User(3, "jason", LocalDate.now(), null, passwordEncoder.encode("jason"), Arrays.asList(doctorRole)));
-
+        users.add(new User(3, "jason", LocalDate.now(), null, passwordEncoder.encode("jason"),Arrays.asList(doctorRole)));
+        users.add(new User(4, "sasha", LocalDate.now(), null, passwordEncoder.encode("sasha"),Arrays.asList(adminRole)));
+        users.add(new User(5, "tashfiq", LocalDate.now(), null, passwordEncoder.encode("tashfiq"),Arrays.asList(adminRole)));
+        users.add(new User(6, "calvin", LocalDate.now(), null, passwordEncoder.encode("calvin"),Arrays.asList(adminRole)));
+        users.add(new User(7, "admin", LocalDate.now(), null, passwordEncoder.encode("admin"),Arrays.asList(adminRole)));
+        users.add(new User(8, "user", LocalDate.now(), null, passwordEncoder.encode("user"),Arrays.asList(doctorRole)));
         userRepository.saveAll(users);
 
         alreadySetup = true;

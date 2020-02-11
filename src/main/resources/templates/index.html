@@ -1,8 +1,9 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/common.html :: htmlheader"></head>
+<head>
+<th:block th:include="fragments/common.html :: htmlheader"></th:block>
+</head>
 <body>
-
 <header th:replace="fragments/common.html :: header"></header>
 
 <main class="container" role="main">
@@ -25,20 +26,11 @@
         <div class="card-body">
             <h1>IFS System Demo</h1>
             <p>Welcome to IFS system demo! This demo will demonstrate a simple inference attack, and how our system will handle it using one of two methods. Cell suppression, or modifying the result data. </p>
-            <h3>Instructions to run the demo</h3>
-            <ol>
-                <li>Navigate to Patient Medical Info tab </li>
-                <li>Perform a search for  </li>
-            </ol>
+            <h3>Introduction</h3>
         </div>
     </div>
 </main>
 <!-- /.container -->
 <footer  th:replace="fragments/common.html :: htmlfooter"></footer>
-<script type="text/javascript">
-$(function () {
-  $('[data-toggle="popover"]').popover()
-})
-</script>
 </body>
 </html>

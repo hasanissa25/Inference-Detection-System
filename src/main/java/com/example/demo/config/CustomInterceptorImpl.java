@@ -10,7 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Component
+// TESTING
+//@Component
 public class CustomInterceptorImpl extends EmptyInterceptor {
      
 	private static final long serialVersionUID = 1L;

@@ -1,6 +1,12 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/common.html :: htmlheader">
+
+<head>
+<th:block th:include="fragments/common.html :: htmlheader"></th:block>
+    <style>
+        .form-group { display: flex; }
+        #addInputColumnButton { margin-bottom: 15px; }
+    </style>
 </head>
 <body>
 <header th:replace="fragments/common.html :: header"></header>
@@ -29,7 +35,7 @@
                 <p>Input Columns:</p>
                 <div id="input-columns">
                     <div class="form-group" th:each="x, itemStat : ${policy.inputColumns}">
-                        <input type="text" class="form-control" th:field="${policy.inputColumns[__${itemStat.index}__]}">
+                        <input type="text" class="form-control" th:field="${policy.inputColumns[__${itemStat.index}__]}" required>
                         <button type="button" class="btn btn-danger  fas fa-trash"/>
                     </div>
                 </div>
@@ -38,7 +44,7 @@
                 <p>Blocked Columns:</p>
                 <div id="blocked-columns">
                     <div class="form-group" th:each="x, itemStat : ${policy.blockedColumns}">
-                        <input type="text" class="form-control" th:field="${policy.blockedColumns[__${itemStat.index}__]}">
+                        <input type="text" class="form-control" th:field="${policy.blockedColumns[__${itemStat.index}__]}" required>
                         <button type="button" class="btn btn-danger  fas fa-trash"/>
                     </div>
                 </div>
@@ -70,7 +76,7 @@
 
 function inputComponentBuilder(num) {
     const inputComponent = `<div class="form-group">
-                            <input type="text" name="inputColumns[${num}]" class="form-control" placeholder="Column Name">
+                            <input type="text" name="inputColumns[${num}]" class="form-control" placeholder="Column Name" required>
                             <button type="button" class="btn btn-danger  fas fa-trash"/>
                             </div>`;
     return inputComponent;
@@ -78,7 +84,7 @@ function inputComponentBuilder(num) {
 
 function blockedComponentBuilder(num) {
     const inputComponent = `<div class="form-group">
-                            <input type="text" name="blockedColumns[${num}]" class="form-control" placeholder="Column Name">
+                            <input type="text" name="blockedColumns[${num}]" class="form-control" placeholder="Column Name" required>
                             <button type="button" class="btn btn-danger  fas fa-trash"/>
                             </div>`;
     return inputComponent;
@@ -95,10 +101,9 @@ $(document).ready(function(){
         $("#blocked-columns").append(blockedComponentBuilder(num));
     });
 
-    $(".btn-danger").click(function(){
-       $(this).parent().remove();
-    })
-
+    $(document).on('click','button.btn-danger', function(){
+        $(this).parent().remove();
+    });
 });
 </script>
 </body>

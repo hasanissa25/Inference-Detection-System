@@ -41,12 +41,20 @@ public class IFSAdminController {
     public IFSAdminController() {
     }
 
+    /**
+     * Clear the Log File
+     * @param m
+     */
     @GetMapping("/clearLog")
     public String clearLogs(Model m) {
         dbLogEntryRepository.deleteAll();
         return "redirect:/logs";
     }
 
+    /**
+     * GET the Admin page
+     * @param m
+     */
     @GetMapping("/admin")
     public String adminPage(Model m) {
         logger.info("User accessed /index");
@@ -56,6 +64,22 @@ public class IFSAdminController {
         return "admin";
     }
 
+    /**
+     * GET a policy ID to delete
+     * @param m
+     */
+    @GetMapping("/deletePolicy")
+    public String deletePolicy(@RequestParam(name="policyId") int policyId , Model m) {
+        logger.info("User accessed /deletePolicy");
+        policyManager.deletePolicyById(policyId);
+        return "redirect:/admin";
+    }
+
+
+    /**
+     * GET the add policy page
+     * @param m
+     */
     @GetMapping("/addPolicy")
     public String addPolicy(Model m) {
         logger.info("GET addPolicy");
@@ -63,6 +87,11 @@ public class IFSAdminController {
         return "addPolicy";
     }
 
+    /**
+     * POST a new policy
+     * @param newPolicyForm
+     * @param m
+     */
     @PostMapping("addPolicy")
     public String addNewPolicy(@ModelAttribute Policy newPolicyForm, Model m){
         logger.info("Add new policy parameters: " + newPolicyForm);
@@ -71,6 +100,11 @@ public class IFSAdminController {
         return "redirect:/admin";
     }
     
+    /**
+     * GET the edit policy page
+     * @param policyId
+     * @param m
+     */
     @GetMapping("/editPolicy")
     public String editPolicy(@RequestParam(name="policyId") int policyId , Model m) {
         logger.info("Editing Policy ID: " + policyId);
@@ -79,6 +113,12 @@ public class IFSAdminController {
         return "editPolicy";
     }
 
+    /**
+     * POST a set of modified policies
+     * @param policyId
+     * @param policyForm
+     * @param m
+     */
     @PostMapping("/editPolicy")
     public String savePolicy(@RequestParam(name="policyId") int policyId , @ModelAttribute Policy policyForm, Model m) {
         logger.info("Editing Policy ID: " + policyId);
@@ -89,13 +129,20 @@ public class IFSAdminController {
         return "redirect:/editPolicy?policyId=" + policyId;
     }
 
+    /**
+     * GET the log page
+     */
     @GetMapping("/logs")
     public String logs(Model m) {
         List<DBLogEntry> logs = dbLogEntryRepository.findAll();
         m.addAttribute("logs", logs);
         return "logs";
     }
-    
+
+    /**
+     * GET the users page
+     * @param m
+     */
     @GetMapping("/users")
     public String users(Model m) {
         logger.info("GET users");
@@ -103,6 +150,11 @@ public class IFSAdminController {
         m.addAttribute("users", users);
         return "users";
     }
+
+    /**
+     * GET the edit user page
+     * @param m
+     */
 
     @GetMapping("/editUser")
     public String editUser(@RequestParam(name="userId") int userId , Model m) {
@@ -116,9 +168,15 @@ public class IFSAdminController {
     public String savetUser(@RequestParam(name="userId") int userId, @ModelAttribute User userForm, Model m) {
         logger.info("Saving User ID: " + userId);
         logger.info("User Form: " + userForm);
+        userForm.setPassword(passwordencoder.encode(userForm.getPassword()));
         userManager.saveUserInfo(userForm);
         return "redirect:/users";
     }
+
+    /**
+     * GET the add user page
+     * @param m
+     */
     @GetMapping("/addUser")
     public String addUser(Model m) {
         logger.info("GET addNewUser");

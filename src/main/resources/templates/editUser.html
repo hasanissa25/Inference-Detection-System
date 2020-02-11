@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/common.html :: htmlheader">
+<head>
+<th:block th:include="fragments/common.html :: htmlheader"></th:block>
 </head>
 <body>
   <header th:replace="fragments/common.html :: header"></header>
@@ -28,12 +29,12 @@
           <div class="form-group">
             <input hidden th:name="id" th:value="${user.id}"/>
             <label for="exampleInputEmail1">User Name: </label>
-            <input type="text" class="form-control" id="newUserName" aria-describedby="emailHelp" th:field="${user.userName}"
+            <input type="text" required class="form-control" id="newUserName" aria-describedby="emailHelp" th:field="${user.userName}"
               placeholder="New User Name">
           </div>
           <div class="form-group">
             <label for="exampleInputPassword1">User Password:</label>
-            <input type="text" class="form-control" id="exampleInputPassword" th:field="${user.password}"
+            <input type="password" required class="form-control" id="exampleInputPassword" th:field="${user.password}"
               placeholder="New User Password">
           <input hidden th:name="creationDate" th:value="${user.creationDate}"/>
           <input hidden th:name="lastLoginDate" th:value="${user.lastLoginDate}"/>

@@ -13,10 +13,13 @@ import java.util.Queue;
 import java.util.stream.Collectors;
 
 import com.example.demo.data.model.DBLogEntry;
+import com.example.demo.data.model.DBLogEntry2;
 import com.example.demo.data.model.PatientInfo;
 import com.example.demo.data.model.PatientMedicalInfo;
 import com.example.demo.data.model.Policy;
-//import com.example.demo.data.model.Table;
+
+import com.example.demo.data.model.QueryResult;
+
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PatientlnfoRepository;
@@ -78,6 +81,7 @@ public class InferenceDetectionEngine {
                 for(Policy p: policies) {
                     //5. Get the policyInputColumns
                     List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
+
                     logger.info("policyInputColumns =>" + policyInputColumns);
                     
                     //6. Parse the logical relationship of the inputColumns
@@ -101,6 +105,7 @@ public class InferenceDetectionEngine {
                     logger.info("logEntries =>" + logEntries);
                     
                     //9. iterate through each log
+
                     for(DBLogEntry entry: logEntries) {
                         logger.info("Log entry=>" + entry);
                         //get table columns accessed in each log 
@@ -411,7 +416,7 @@ public class InferenceDetectionEngine {
         return true;
         
     }
-    
+
     
     private boolean isInteger(String input) {
         try {
@@ -423,6 +428,7 @@ public class InferenceDetectionEngine {
         }
     }
     
+
 }
 
 
