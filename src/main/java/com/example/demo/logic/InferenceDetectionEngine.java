@@ -1,21 +1,15 @@
 package com.example.demo.logic;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.example.demo.data.model.DBLogEntry;
@@ -23,7 +17,9 @@ import com.example.demo.data.model.DBLogEntry2;
 import com.example.demo.data.model.PatientInfo;
 import com.example.demo.data.model.PatientMedicalInfo;
 import com.example.demo.data.model.Policy;
-//import com.example.demo.data.model.Table;
+
+import com.example.demo.data.model.QueryResult;
+
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PatientlnfoRepository;
@@ -59,6 +55,7 @@ public class InferenceDetectionEngine {
         
         if(!resultList.isEmpty()){
             logger.info("results => " + resultList);
+            logger.info("table columns accessed => "+tablesAndColumnsAccessed);
             //1 - First step for the inference detection is to fetch the user 
             String currentUserName = getUser();
             logger.info("getUser() => " + currentUserName);
@@ -84,7 +81,9 @@ public class InferenceDetectionEngine {
                 for(Policy p: policies) {
                     //5. Get the policyInputColumns
                     List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
+
                     logger.info("policyInputColumns =>" + policyInputColumns);
+                    
                     //6. Parse the logical relationship of the inputColumns
                     ArrayList<String> policyRelationshipOperands = p.getRelationshipOperands();
                     logger.info("policyRelationshipOperands=>" + policyRelationshipOperands);
@@ -106,6 +105,7 @@ public class InferenceDetectionEngine {
                     logger.info("logEntries =>" + logEntries);
                     
                     //9. iterate through each log
+
                     for(DBLogEntry entry: logEntries) {
                         logger.info("Log entry=>" + entry);
                         //get table columns accessed in each log 
@@ -190,7 +190,7 @@ public class InferenceDetectionEngine {
                         String col = operand.split("\\.")[1].trim();
                         String table = operand.split("\\.")[0].trim();
                         if(table.equals(pi.getTableName())){
-                            policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand), pi.getColumn(col));
+                            policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand), pi.getColumnValue(col));
                         }
                     }
                     
@@ -205,14 +205,13 @@ public class InferenceDetectionEngine {
                         List<String> tableColumnsFromLog = entry.getTablesColumnsAccessed();
                         //Ignore logs that are part of the item in focus of the result list, item's values have already been added to logical relationship 
                         if(!tableColumnsFromLog.get(0).startsWith(pi.getTableName())){
-                            List<String> operands; 
-                            Queue<String> operators;
+                            
                             //10. loop through each id accessed in the log
                             for(String id: entry.getIdsAccessed()){
                                 //list of operands for each id/row accessed
-                                operands = new ArrayList<String>(policyRelationshipOperands);
+                                List<String> operands = new ArrayList<String>(policyRelationshipOperands);
                                 //queue of operators from the policy relationship
-                                operators = new LinkedList<String>(policyRelationshipOperators);
+                                Queue<String> operators = new LinkedList<String>(policyRelationshipOperators);
                                 //11. loop through each column on the policy input columns
                                 for(String operand: policyRelationshipOperands){
                                     //ignore if one of the policy input columns is one of the columns of the item in focus of the result list
@@ -303,7 +302,6 @@ public class InferenceDetectionEngine {
             return result;
         }else if(!operators.isEmpty() && operands.size() >= 2){
             
-            
             String operator = operators.remove();
             String operand1 = operands.remove(0);
             String operand2 = operands.remove(0);
@@ -325,10 +323,6 @@ public class InferenceDetectionEngine {
             return false;
         } 
         
-        
-        
-        
-        
     }
     
     private String evaluateExpression(String operator, String operand1, String operand2){
@@ -339,7 +333,6 @@ public class InferenceDetectionEngine {
         
         if(isValidDate(operand1) && isValidDate(operand2)){
             logger.info("IS DATE");
-            
             
             LocalDate date1 = LocalDate.parse(operand1, dateFormatter);
             LocalDate date2 = LocalDate.parse(operand2, dateFormatter);
@@ -402,7 +395,8 @@ public class InferenceDetectionEngine {
                 if(arg1 == arg2)result = true;
                 else result = false;
                 logger.info("Expression is : "+Boolean.toString(result));
-                return Boolean.toString(result);                      
+                return Boolean.toString(result);       
+                
                 default:
                 return null;
             }
@@ -420,9 +414,9 @@ public class InferenceDetectionEngine {
             return false;
         }
         return true;
-
+        
     }
-    
+
     
     private boolean isInteger(String input) {
         try {
@@ -435,38 +429,6 @@ public class InferenceDetectionEngine {
     }
     
 
-    
-
-    public boolean checkForInference(List<String> currentQueryTablesColumnsAccessed, Map<String, String> currentQueryResultRowMap, Policy policy, List<DBLogEntry2> currentUserLogs) {
-        // check if one of the query input columns are in the policy blocked columns 
-        // this determines an inference attack is possible if the input columns is returned to user
-        boolean isInPolicy = false;
-        for(String columnInQuery : currentQueryTablesColumnsAccessed) {
-            if(policy.getInputColumns().contains(columnInQuery)) {
-                isInPolicy = true;
-                break;
-            }
-        }
-        
-        if(!isInPolicy) return false;
-
-        // first check if the policy columns have been all searched before
-        Map<String, Boolean> policyTablesColumnsFlags = new HashMap<>();
-        for(DBLogEntry2 currentLog : currentUserLogs) {
-            for(String columnInQuery : currentLog.getTablesColumnsAccessed()) {
-            if(policy.getInputColumns().contains(columnInQuery)) {
-                //columnPolicyFlag  = true;
-            }
-        }
-        }
-        //boolean isInference = policyTablesColumnsFlags.stream().reduce(Boolean::logicalAnd).get();
-        // second check if the policy criteria has been met for these query results that are flagged as potential inference
-
-        
-
-
-        return false;
-    }
 }
 
 

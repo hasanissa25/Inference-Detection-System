@@ -1,7 +1,6 @@
 package com.example.demo.data.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -13,9 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,7 +35,6 @@ public class Policy{
     private List<String> blockedColumns;
     private String relationship;
 
-    private final static Logger logger = LoggerFactory.getLogger(Policy.class);
     
     public Queue<String> getRelationshipOperators(){
         //relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
