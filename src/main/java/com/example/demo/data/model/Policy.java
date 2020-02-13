@@ -35,6 +35,20 @@ public class Policy{
     private List<String> blockedColumns;
     private String relationship;
 
+    public List<String> getInputColumns()
+    {
+        return inputColumns;
+    }
+
+    public List<String> getBlockedColumns()
+    {
+        return blockedColumns;
+    }
+
+    public String getRelationship()
+    {
+        return relationship;
+    }
     
     public Queue<String> getRelationshipOperators(){
         //relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";

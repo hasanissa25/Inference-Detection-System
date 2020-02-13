@@ -94,6 +94,20 @@ public class IFSAdminController {
      */
     @PostMapping("addPolicy")
     public String addNewPolicy(@ModelAttribute Policy newPolicyForm, Model m){
+        if (newPolicyForm == null) { }
+        else {
+            if (newPolicyForm.getInputColumns().isEmpty() || newPolicyForm.getInputColumns().contains(null) || newPolicyForm.getInputColumns().contains("")) {
+
+            }
+            
+            if (newPolicyForm.getBlockedColumns().isEmpty() || newPolicyForm.getBlockedColumns().contains(null) || newPolicyForm.getBlockedColumns().contains("")) {
+
+            }
+            if (newPolicyForm.getRelationship().isBlank()) {
+
+            }
+        }
+        logger.info("Test: " + newPolicyForm.getInputColumns());
         logger.info("Add new policy parameters: " + newPolicyForm);
         logger.info("POST: " + newPolicyForm);
         policyManager.savePolicy(newPolicyForm);
