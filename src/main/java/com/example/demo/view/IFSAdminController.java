@@ -3,6 +3,8 @@ package com.example.demo.view;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.example.demo.data.model.DBLogEntry;
 import com.example.demo.data.model.Policy;
 import com.example.demo.data.model.User;
@@ -69,10 +71,17 @@ public class IFSAdminController {
      * @param m
      */
     @GetMapping("/deletePolicy")
-    public String deletePolicy(@RequestParam(name="policyId") int policyId , Model m) {
+    public String deletePolicy(@RequestParam(name="policyId") int policyId , Model m, HttpServletResponse servletResponse) {
         logger.info("User accessed /deletePolicy");
-        policyManager.deletePolicyById(policyId);
-        return "redirect:/admin";
+        if (policyId < 0 || policyId > 999) {
+            logger.info("Error - Policy ID value error");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "redirect:/admin";
+        }
+        else {
+            policyManager.deletePolicyById(policyId);
+            return "redirect:/admin";
+        }
     }
 
 
@@ -93,25 +102,35 @@ public class IFSAdminController {
      * @param m
      */
     @PostMapping("addPolicy")
-    public String addNewPolicy(@ModelAttribute Policy newPolicyForm, Model m){
-        if (newPolicyForm == null) { }
-        else {
-            if (newPolicyForm.getInputColumns().isEmpty() || newPolicyForm.getInputColumns().contains(null) || newPolicyForm.getInputColumns().contains("")) {
-
-            }
-            
-            if (newPolicyForm.getBlockedColumns().isEmpty() || newPolicyForm.getBlockedColumns().contains(null) || newPolicyForm.getBlockedColumns().contains("")) {
-
-            }
-            if (newPolicyForm.getRelationship().isBlank()) {
-
-            }
+    public String addNewPolicy(@ModelAttribute Policy newPolicyForm, Model m, HttpServletResponse servletResponse){
+        if (newPolicyForm == null) {
+            logger.info("Error - Form is empty");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-        logger.info("Test: " + newPolicyForm.getInputColumns());
-        logger.info("Add new policy parameters: " + newPolicyForm);
-        logger.info("POST: " + newPolicyForm);
-        policyManager.savePolicy(newPolicyForm);
-        return "redirect:/admin";
+        else {
+            if (newPolicyForm.getInputColumns() == null || newPolicyForm.getInputColumns().isEmpty() || newPolicyForm.getInputColumns().contains(null) || newPolicyForm.getInputColumns().contains("")) {
+                logger.info("Error - Empty Input Columns");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "addPolicy";
+            }
+            if (newPolicyForm.getBlockedColumns() == null || newPolicyForm.getBlockedColumns().isEmpty() || newPolicyForm.getBlockedColumns().contains(null) || newPolicyForm.getBlockedColumns().contains("")) {
+                logger.info("Error - Empty Blocked Columns");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "addPolicy";
+            }
+            if (newPolicyForm.getRelationship() == null || newPolicyForm.getRelationship().isBlank()) {
+                logger.info("Error - Empty Relationship");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "addPolicy";
+            }
+
+            logger.info("Add new policy parameters: " + newPolicyForm);
+            logger.info("POST: " + newPolicyForm);
+            policyManager.savePolicy(newPolicyForm);
+            return "redirect:/admin";
+        }        
+
+        return "addPolicy";
     }
     
     /**
@@ -134,14 +153,42 @@ public class IFSAdminController {
      * @param m
      */
     @PostMapping("/editPolicy")
-    public String savePolicy(@RequestParam(name="policyId") int policyId , @ModelAttribute Policy policyForm, Model m) {
-        logger.info("Editing Policy ID: " + policyId);
-        logger.info("Policy Form: " + policyForm);
-        policyManager.savePolicy(policyForm);
-        // Optional<Policy> policy = policyManager.getPolicyById(policyId);
-        // m.addAttribute("policy", policy.get());
-        return "redirect:/editPolicy?policyId=" + policyId;
-    }
+    public String savePolicy(@RequestParam(name="policyId") int policyId , @ModelAttribute Policy policyForm, Model m, HttpServletResponse servletResponse) {
+        if (policyId < 0 || policyId > 999) {
+            logger.info("Error - Policy ID value error");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "redirect:/editPolicy?policyId=" + policyId;
+        }
+        if (policyForm == null) {
+            logger.info("Error - Form is empty");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "redirect:/editPolicy?policyId=" + policyId;
+        }
+        else {
+            if (policyForm.getInputColumns() == null || policyForm.getInputColumns().isEmpty() || policyForm.getInputColumns().contains(null) || policyForm.getInputColumns().contains("")) {
+                logger.info("Error - Empty Input Columns");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "redirect:/editPolicy?policyId=" + policyId;
+            }
+            if (policyForm.getBlockedColumns() == null || policyForm.getBlockedColumns().isEmpty() || policyForm.getBlockedColumns().contains(null) || policyForm.getBlockedColumns().contains("")) {
+                logger.info("Error - Empty Blocked Columns");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "redirect:/editPolicy?policyId=" + policyId;
+            }
+            if (policyForm.getRelationship() == null || policyForm.getRelationship().isBlank()) {
+                logger.info("Error - Empty Relationship");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "redirect:/editPolicy?policyId=" + policyId;
+            }
+
+            logger.info("Editing Policy ID: " + policyId);
+            logger.info("Policy Form: " + policyForm);
+            policyManager.savePolicy(policyForm);
+            return "redirect:/editPolicy?policyId=" + policyId;
+        }
+    }        
+
+        
 
     /**
      * GET the log page
