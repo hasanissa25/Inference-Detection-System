@@ -33,18 +33,50 @@
                 <p>Input Columns:</p>
                 <div id="input-columns">
                     <div class="form-group">
-                        <input type="text" name="inputColumns[0]" class="form-control" placeholder="Column Name" required>
+                        <select name="inputColumns[0]" path="input-columns">
+                            <option value="NONE" label="--- Select ---"/>
+                            <optgroup label="Patient Info">
+                                <option value="patient_info.name">patient_info.name</option>
+                                <option value="patient_info.date_of_entry">patient_info.date_of_entry</option>
+                                <option value="patient_info.date_of_leave">patient_info.date_of_leave</option>
+                                <option value="patient_info.gender">patient_info.gender</option>
+                            </optgroup>
+                            <optgroup label="Patient Medical Info">
+                                <option value="patient_medical_info.patient_id">patient_medical_info.patient_id</option>
+                                <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
+                                <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
+                            </optgroup>
+                        </select>
                         <button type="button" class="btn btn-danger  fas fa-trash"/>
                     </div>
+                    <!-- <div class="form-group">
+                        <input type="text" name="inputColumns[0]" class="form-control" placeholder="Column Name" required>
+                        <button type="button" class="btn btn-danger  fas fa-trash"/>
+                    </div> -->
                 </div>
                 <button id="addInputColumnButton" type="button" class="btn btn-success">Add Input Column</button>
 
                 <p>Blocked Columns:</p>
                 <div id="blocked-columns">
                     <div class="form-group">
-                        <input type="text" name="blockedColumns[0]" class="form-control" placeholder="Column Name" required>
+                        <select name="blockedColumns[0]" path="blocked-columns">
+                            <option value="NONE" label="--- Select ---"/>
+                            <optgroup label="Patient Info">
+                                <option value="patient_info.name">patient_info.name</option>
+                                <option value="patient_info.date_of_entry">patient_info.date_of_entry</option>
+                                <option value="patient_info.date_of_leave">patient_info.date_of_leave</option>
+                                <option value="patient_info.gender">patient_info.gender</option>
+                            </optgroup>
+                            <optgroup label="Patient Medical Info">
+                                <option value="patient_medical_info.patient_id">patient_medical_info.patient_id</option>
+                                <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
+                                <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
+                            </optgroup>
+                        </select>
                         <button type="button" class="btn btn-danger  fas fa-trash"/>
                     </div>
+                    <!-- <input type="text" name="blockedColumns[0]" class="form-control" placeholder="Column Name" required>
+                        <button type="button" class="btn btn-danger  fas fa-trash"/> -->
                 </div>
                 <div class="row">
                         <div class="col mb-2">
@@ -74,7 +106,20 @@
 
 function inputComponentBuilder(num) {
     const inputComponent = `<div class="form-group">
-                            <input type="text" name="inputColumns[${num}]" class="form-control" placeholder="Column Name" required>
+                            <select name="inputColumns[${num}]" path="input-columns">
+                            <option value="NONE" label="--- Select ---"/>
+                            <optgroup label="Patient Info">
+                                <option value="patient_info.name">patient_info.name</option>
+                                <option value="patient_info.date_of_entry">patient_info.date_of_entry</option>
+                                <option value="patient_info.date_of_leave">patient_info.date_of_leave</option>
+                                <option value="patient_info.gender">patient_info.gender</option>
+                            </optgroup>
+                            <optgroup label="Patient Medical Info">
+                                <option value="patient_medical_info.patient_id">patient_medical_info.patient_id</option>
+                                <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
+                                <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
+                            </optgroup>
+                            </select>
                             <button type="button" class="btn btn-danger  fas fa-trash"/>
                             </div>`;
     return inputComponent;
@@ -82,13 +127,24 @@ function inputComponentBuilder(num) {
 
 function blockedComponentBuilder(num) {
     const inputComponent = `<div class="form-group">
-                            <input type="text" name="blockedColumns[${num}]" class="form-control" placeholder="Column Name" required>
+                            <select name="blockedColumns[${num}]" path="blocked-columns">
+                            <option value="NONE" label="--- Select ---"/>
+                            <optgroup label="Patient Info">
+                                <option value="patient_info.name">patient_info.name</option>
+                                <option value="patient_info.date_of_entry">patient_info.date_of_entry</option>
+                                <option value="patient_info.date_of_leave">patient_info.date_of_leave</option>
+                                <option value="patient_info.gender">patient_info.gender</option>
+                            </optgroup>
+                            <optgroup label="Patient Medical Info">
+                                <option value="patient_medical_info.patient_id">patient_medical_info.patient_id</option>
+                                <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
+                                <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
+                            </optgroup>
+                            </select>
                             <button type="button" class="btn btn-danger  fas fa-trash"/>
                             </div>`;
     return inputComponent;
 }
-
-
 
 $(document).ready(function(){
     $("#addInputColumnButton").click(function(){
