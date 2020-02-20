@@ -108,12 +108,12 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
         else {
-            if (newPolicyForm.getInputColumns() == null || newPolicyForm.getInputColumns().isEmpty() || newPolicyForm.getInputColumns().contains(null) || newPolicyForm.getInputColumns().contains("")) {
+            if (newPolicyForm.getInputColumns() == null || newPolicyForm.getInputColumns().contains("NONE") || newPolicyForm.getInputColumns().isEmpty() || newPolicyForm.getInputColumns().contains(null) || newPolicyForm.getInputColumns().contains("")) {
                 logger.info("Error - Empty Input Columns");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return "addPolicy";
             }
-            if (newPolicyForm.getBlockedColumns() == null || newPolicyForm.getBlockedColumns().isEmpty() || newPolicyForm.getBlockedColumns().contains(null) || newPolicyForm.getBlockedColumns().contains("")) {
+            if (newPolicyForm.getBlockedColumns() == null || newPolicyForm.getBlockedColumns().contains("NONE") || newPolicyForm.getBlockedColumns().isEmpty() || newPolicyForm.getBlockedColumns().contains(null) || newPolicyForm.getBlockedColumns().contains("")) {
                 logger.info("Error - Empty Blocked Columns");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return "addPolicy";
@@ -165,12 +165,12 @@ public class IFSAdminController {
             return "redirect:/editPolicy?policyId=" + policyId;
         }
         else {
-            if (policyForm.getInputColumns() == null || policyForm.getInputColumns().isEmpty() || policyForm.getInputColumns().contains(null) || policyForm.getInputColumns().contains("")) {
+            if (policyForm.getInputColumns() == null || policyForm.getInputColumns().contains("NONE") || policyForm.getInputColumns().isEmpty() || policyForm.getInputColumns().contains(null) || policyForm.getInputColumns().contains("")) {
                 logger.info("Error - Empty Input Columns");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return "redirect:/editPolicy?policyId=" + policyId;
             }
-            if (policyForm.getBlockedColumns() == null || policyForm.getBlockedColumns().isEmpty() || policyForm.getBlockedColumns().contains(null) || policyForm.getBlockedColumns().contains("")) {
+            if (policyForm.getBlockedColumns() == null || policyForm.getBlockedColumns().contains("NONE") || policyForm.getBlockedColumns().isEmpty() || policyForm.getBlockedColumns().contains(null) || policyForm.getBlockedColumns().contains("")) {
                 logger.info("Error - Empty Blocked Columns");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return "redirect:/editPolicy?policyId=" + policyId;
