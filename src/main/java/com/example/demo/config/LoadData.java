@@ -78,14 +78,9 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
         p.setBlockedColumns(Arrays.asList("patient_medical_info.patient_id"));
         policyRepository.save(p);
 
-        patientMedicalInfoRepository.saveAll(Arrays.asList(new PatientMedicalInfo((Long)null, "TBD", "Cardiac Arrest", 1500, false),
-                new PatientMedicalInfo((Long)null, "3", "Brain Aneurysm", 1000, false),
-                new PatientMedicalInfo((Long)null, "2", "Brain Aneurysm", 1000, false),
-                new PatientMedicalInfo((Long)null, "4", "Cardiac Arrest", 1500, false),
-                new PatientMedicalInfo((Long)null, "5", "Brain Aneurysm", 1000, false),
-                new PatientMedicalInfo((Long)null, "TBD", "Brain Aneurysm", 1000, false),
-                new PatientMedicalInfo((Long) null, "9", "Cardiac Arrest", 1500, false),
-                new PatientMedicalInfo((Long)null, "7", "Cardiac Arrest", 1500, false)));
+        patientMedicalInfoRepository.saveAll(Arrays.asList(new PatientMedicalInfo(1, "TBD", "Cardiac Arrest", 1500, false),
+                new PatientMedicalInfo(2, "3", "Brain Aneurysm", 1000, false),
+                new PatientMedicalInfo(3, "2", "Brain Aneurysm", 1000, false)));
 
         patientInfoRepository
                 .saveAll(Arrays.asList(new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
