@@ -80,7 +80,14 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
 
         patientMedicalInfoRepository.saveAll(Arrays.asList(new PatientMedicalInfo(1, "TBD", "Cardiac Arrest", 1500, false),
                 new PatientMedicalInfo(2, "3", "Brain Aneurysm", 1000, false),
-                new PatientMedicalInfo(3, "2", "Brain Aneurysm", 1000, false)));
+                new PatientMedicalInfo(3, "2", "Brain Aneurysm", 1000, false),
+                new PatientMedicalInfo(4, "4", "Cardiac Arrest", 1500, false),
+                new PatientMedicalInfo(5, "5", "Brain Aneurysm", 1000, false),
+                new PatientMedicalInfo(6, "TBD", "Brain Aneurysm", 1000, false),
+                new PatientMedicalInfo(7, "9", "Cardiac Arrest", 1500, false),
+                new PatientMedicalInfo(8, "7", "Cardiac Arrest", 1500, false)));
+
+        
 
         patientInfoRepository
                 .saveAll(Arrays.asList(new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
