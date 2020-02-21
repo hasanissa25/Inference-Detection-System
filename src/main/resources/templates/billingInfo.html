@@ -20,7 +20,7 @@
                 <a class="nav-link" href="/patientInfo">Patient Info</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="/BillingInfo">Billing Info</a>
+                <a class="nav-link active" href="/billingInfo">Billing Info</a>
             </li>
             </ul>
         </div>
@@ -28,7 +28,7 @@
    
     <div class="card mt-3">
         <div class="card-body">
-   <form action="#" th:action="@{/BillingInfo}"  th:object="${BillingInfoForm}" method="post">        
+   <form action="#" th:action="@{/billingInfo}"  th:object="${billingInfoForm}" method="post">        
      <div class="form-group">
       <label for="AccountNumber">Account Number:</label>
       <input type="text" class="form-control" th:field="*{AccountNumber}">
