@@ -92,6 +92,7 @@ public class IFSAdminController {
     @GetMapping("/addPolicy")
     public String addPolicy(Model m) {
         logger.info("GET addPolicy");
+        m.addAttribute("validationErr", false);
         m.addAttribute("policy", new Policy());
         return "addPolicy";
     }
@@ -106,21 +107,25 @@ public class IFSAdminController {
         if (newPolicyForm == null) {
             logger.info("Error - Form is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            m.addAttribute("validationErr", true);
         }
         else {
             if (newPolicyForm.getInputColumns() == null || newPolicyForm.getInputColumns().contains("NONE") || newPolicyForm.getInputColumns().isEmpty() || newPolicyForm.getInputColumns().contains(null) || newPolicyForm.getInputColumns().contains("")) {
                 logger.info("Error - Empty Input Columns");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                m.addAttribute("validationErr", true);
                 return "addPolicy";
             }
             if (newPolicyForm.getBlockedColumns() == null || newPolicyForm.getBlockedColumns().contains("NONE") || newPolicyForm.getBlockedColumns().isEmpty() || newPolicyForm.getBlockedColumns().contains(null) || newPolicyForm.getBlockedColumns().contains("")) {
                 logger.info("Error - Empty Blocked Columns");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                m.addAttribute("validationErr", true);
                 return "addPolicy";
             }
             if (newPolicyForm.getRelationship() == null || newPolicyForm.getRelationship().isBlank()) {
                 logger.info("Error - Empty Relationship");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                m.addAttribute("validationErr", true);
                 return "addPolicy";
             }
 
@@ -142,6 +147,7 @@ public class IFSAdminController {
     public String editPolicy(@RequestParam(name="policyId") int policyId , Model m) {
         logger.info("Editing Policy ID: " + policyId);
         Optional<Policy> policy = policyManager.getPolicyById(policyId);
+        m.addAttribute("validationErr", false);
         m.addAttribute("policy", policy.get());
         return "editPolicy";
     }
@@ -157,28 +163,43 @@ public class IFSAdminController {
         if (policyId < 0 || policyId > 999) {
             logger.info("Error - Policy ID value error");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return "redirect:/editPolicy?policyId=" + policyId;
+            m.addAttribute("validationErr", true);
+            Optional<Policy> policy = policyManager.getPolicyById(policyId);
+            m.addAttribute("policy", policy.get());
+            return "editPolicy";
         }
         if (policyForm == null) {
             logger.info("Error - Form is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return "redirect:/editPolicy?policyId=" + policyId;
+            m.addAttribute("validationErr", true);
+            Optional<Policy> policy = policyManager.getPolicyById(policyId);
+            m.addAttribute("policy", policy.get());
+            return "editPolicy";
         }
         else {
             if (policyForm.getInputColumns() == null || policyForm.getInputColumns().contains("NONE") || policyForm.getInputColumns().isEmpty() || policyForm.getInputColumns().contains(null) || policyForm.getInputColumns().contains("")) {
                 logger.info("Error - Empty Input Columns");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return "redirect:/editPolicy?policyId=" + policyId;
+                m.addAttribute("validationErr", true);
+                Optional<Policy> policy = policyManager.getPolicyById(policyId);
+                m.addAttribute("policy", policy.get());
+                return "editPolicy";
             }
             if (policyForm.getBlockedColumns() == null || policyForm.getBlockedColumns().contains("NONE") || policyForm.getBlockedColumns().isEmpty() || policyForm.getBlockedColumns().contains(null) || policyForm.getBlockedColumns().contains("")) {
                 logger.info("Error - Empty Blocked Columns");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return "redirect:/editPolicy?policyId=" + policyId;
+                m.addAttribute("validationErr", true);
+                Optional<Policy> policy = policyManager.getPolicyById(policyId);
+                m.addAttribute("policy", policy.get());
+                return "editPolicy";
             }
             if (policyForm.getRelationship() == null || policyForm.getRelationship().isBlank()) {
                 logger.info("Error - Empty Relationship");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return "redirect:/editPolicy?policyId=" + policyId;
+                m.addAttribute("validationErr", true);
+                Optional<Policy> policy = policyManager.getPolicyById(policyId);
+                m.addAttribute("policy", policy.get());
+                return "editPolicy";
             }
 
             logger.info("Editing Policy ID: " + policyId);
@@ -187,8 +208,6 @@ public class IFSAdminController {
             return "redirect:/editPolicy?policyId=" + policyId;
         }
     }        
-
-        
 
     /**
      * GET the log page
