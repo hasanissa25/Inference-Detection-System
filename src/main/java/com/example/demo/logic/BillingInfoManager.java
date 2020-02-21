@@ -29,7 +29,7 @@ public class BillingInfoManager {
 
     public List<BillingInfo> search(String accountNumber, String patientAddress, Integer totalMedicalCosts) {
         List<BillingInfo> results = null;
-        if(StringUtils.isEmpty(accountNumber) && StringUtils.isEmpty(patientAddress) && totalMedicalCosts == 0)
+        if(StringUtils.isEmpty(accountNumber) && StringUtils.isEmpty(patientAddress) && totalMedicalCosts == null)
             results = billingInfoRepository.findAll();
         else 
             results = billingInfoRepository.customSearch(accountNumber, patientAddress, totalMedicalCosts);
