@@ -6,6 +6,6 @@ import com.example.demo.data.model.PatientMedicalInfo;
 
 public interface CustomPatientMedicalInfoRepository {
 
-    List<PatientMedicalInfo> customSearch(Long patientId, String lengthOfStay, String reasonOfVisit, Long dailyMedicalCost);
+    List<PatientMedicalInfo> customSearch(Long patientId, String lengthOfStay, String reasonOfVisit, Integer dailyMedicalCost);
     
 }

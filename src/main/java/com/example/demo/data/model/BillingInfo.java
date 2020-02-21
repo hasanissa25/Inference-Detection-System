@@ -19,13 +19,21 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BillingInfo {
+    // @Id
+    // @Column(name = "AccountNumber", updatable = false, nullable = false)
+    // //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "billing_info_generator")
+    // //@SequenceGenerator(name="billing_info_generator", sequenceName = "billing_info_seq")
+    
+    // private String accountNumber;
+    // private String patientAddress;
+    // private Integer totalMedicalCosts; 
+    // @Transient
+    // private boolean inference;
+
     @Id
-    @Column(name = "AccountNumber", updatable = false, nullable = false)
-    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "billing_info_generator")
-    //@SequenceGenerator(name="billing_info_generator", sequenceName = "billing_info_seq")
-    private int accountNumber;
+    private String accountNumber;
     private String patientAddress;
-    private int totalMedicalCosts; 
+    private Integer totalMedicalCosts; 
     @Transient
     private boolean inference;
 } 

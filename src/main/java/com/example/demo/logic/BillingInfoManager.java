@@ -27,9 +27,9 @@ public class BillingInfoManager {
         this.billingInfoRepository = billingInfoRepository;
     }
 
-    public List<BillingInfo> search(int accountNumber, String patientAddress, int totalMedicalCosts) {
+    public List<BillingInfo> search(String accountNumber, String patientAddress, Integer totalMedicalCosts) {
         List<BillingInfo> results = null;
-        if(accountNumber == 0 && StringUtils.isEmpty(patientAddress) && totalMedicalCosts == 0)
+        if(StringUtils.isEmpty(accountNumber) && StringUtils.isEmpty(patientAddress) && totalMedicalCosts == 0)
             results = billingInfoRepository.findAll();
         // else 
         //     results = billingInfoRepository.findByNumberOrPatientAddressIgnoreCaseOrTotalMedicalCosts(accountNumber, patientAddress, totalMedicalCosts);

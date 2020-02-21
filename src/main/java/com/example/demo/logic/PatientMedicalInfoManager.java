@@ -27,7 +27,7 @@ public class PatientMedicalInfoManager {
         this.patientMedicalnfoRepository = patientMedicalnfoRepository;
     }
 
-    public List<PatientMedicalInfo> search(Long patientId, String lengthOfStay, String reasonOfVisit, Long dailyMedicalCost) {
+    public List<PatientMedicalInfo> search(Long patientId, String lengthOfStay, String reasonOfVisit, Integer dailyMedicalCost) {
         List<PatientMedicalInfo> results = null;
         if(patientId == null && StringUtils.isEmpty(lengthOfStay) && StringUtils.isEmpty(reasonOfVisit) && dailyMedicalCost == null)
             results = patientMedicalnfoRepository.findAll();

@@ -21,7 +21,7 @@ public class CustomPatientMedicalInfoRepositoryImpl implements CustomPatientMedi
     private EntityManager entityManager;
  
     @Override
-    public List<PatientMedicalInfo> customSearch(Long patientId, String lengthOfStay, String reasonOfVisit, Long dailyMedicalCost) {
+    public List<PatientMedicalInfo> customSearch(Long patientId, String lengthOfStay, String reasonOfVisit, Integer dailyMedicalCost) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<PatientMedicalInfo> query = cb.createQuery(PatientMedicalInfo.class);
         Root<PatientMedicalInfo> patientMedicalInfos = query.from(PatientMedicalInfo.class);
@@ -29,7 +29,7 @@ public class CustomPatientMedicalInfoRepositoryImpl implements CustomPatientMedi
         Path<Long> patientIdPath = patientMedicalInfos.get("patientId");
         Path<String> reasonOfVisitPath = patientMedicalInfos.get("reasonOfVisit");
         Path<String> lengthOfStayPath = patientMedicalInfos.get("lengthOfStay");
-        Path<String> dailyMedicalCostPath = patientMedicalInfos.get("dailyMedicalCost");
+        Path<Integer> dailyMedicalCostPath = patientMedicalInfos.get("dailyMedicalCost");
  
         List<Predicate> predicates = new ArrayList<>();
         if(patientId != null)
