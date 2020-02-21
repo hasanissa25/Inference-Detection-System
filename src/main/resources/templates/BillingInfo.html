@@ -17,7 +17,7 @@
                 <a class="nav-link" href="/patientMedicalInfo">Patient Medical Info</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="/patientInfo">Patient Info</a>
+                <a class="nav-link" href="/patientInfo">Patient Info</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link active" href="/BillingInfo">Billing Info</a>
@@ -34,12 +34,12 @@
       <input type="text" class="form-control" th:field="*{AccountNumber}">
      </div>
          <div class="form-group">
-    <label for="PatientAddress">Date of Entry:</label>
+    <label for="PatientAddress">Patient Address:</label>
     <input type="text" class="form-control" th:field="*{PatientAddress}">
   </div>
     <div class="form-group">
-    <label for="TotalMedicalCost">Date of Leave:</label>
-    <input type="number" class="form-control" th:field="*{TotalMedicalCost}">
+    <label for="TotalMedicalCosts">Total Medical Costs:</label>
+    <input type="number" class="form-control" th:field="*{TotalMedicalCosts}">
   </div>
    <button type="submit" class="btn btn-primary mb-2 btn-lg btn-block">Search</button>
             </form>
@@ -61,7 +61,7 @@
                 <tr th:each="result : ${searchResults}">
                     <th scope="row" th:text="${result.AccountNumber}" />
                     <td th:text="${result.PatientAddress}"/>
-                    <td th:text="${result.TotalMedicalCost}"/>
+                    <td th:text="${result.TotalMedicalCosts}"/>
                     <td th:text="${result.inference} ? 'yes' : 'no'">
                 </tr>
             </tbody>

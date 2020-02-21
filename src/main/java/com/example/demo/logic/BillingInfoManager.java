@@ -31,10 +31,11 @@ public class BillingInfoManager {
         List<BillingInfo> results = null;
         if(StringUtils.isEmpty(accountNumber) && StringUtils.isEmpty(patientAddress) && totalMedicalCosts == 0)
             results = billingInfoRepository.findAll();
-        // else 
-        //     results = billingInfoRepository.findByNumberOrPatientAddressIgnoreCaseOrTotalMedicalCosts(accountNumber, patientAddress, totalMedicalCosts);
+        else 
+            results = billingInfoRepository.customSearch(accountNumber, patientAddress, totalMedicalCosts);
         //results = inferenceDetectionEngine.checkInferenceForBillingInfo(results, Arrays.asList("billing_info.account_number", "billing_info.patient_address", "billing_info.total_medical_costs"));
         return results;
     }
+
 
 }

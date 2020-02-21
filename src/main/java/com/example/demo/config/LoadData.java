@@ -99,7 +99,8 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
                         new PatientInfo("Fiona Fastener", "Oct 25, 2014", "TBD", "F", false),
                         new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)));
 
-        billingInfoRepository.saveAll(Arrays.asList(new BillingInfo("85720", "99 Jaymarry Cres", 13500, false),
+        billingInfoRepository
+        .saveAll(Arrays.asList(new BillingInfo("85720", "99 Jaymarry Cres", 13500, false),
                 new BillingInfo("85721", "1348 Millfair Way", 6000, false),
                 new BillingInfo("85722", "34 Bensay Ave", 3000, false),
                 new BillingInfo("85723", "3281 Beavertree Dr", 5000, false),

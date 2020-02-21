@@ -30,19 +30,19 @@
         <div class="card-body">
    <form action="#" th:action="@{/patientInfo}"  th:object="${patientInfoForm}" method="post">        
      <div class="form-group">
-      <label for="patientId">Patient Name:</label>
+      <label for="name">Patient Name:</label>
       <input type="text" class="form-control" th:field="*{name}">
      </div>
          <div class="form-group">
-    <label for="reasonOfVisit">Date of Entry:</label>
+    <label for="dateOfEntry">Date of Entry:</label>
     <input type="text" class="form-control" th:field="*{dateOfEntry}">
   </div>
     <div class="form-group">
-    <label for="lengthOfStay">Date of Leave:</label>
+    <label for="dateOfLeave">Date of Leave:</label>
     <input type="text" class="form-control" th:field="*{dateOfLeave}">
   </div>
   <div class="form-group">
-    <label for="lengthOfStay">Gender:</label>
+    <label for="Gender">Gender:</label>
     <input type="text" class="form-control" th:field="*{gender}">
   </div>
    <button type="submit" class="btn btn-primary mb-2 btn-lg btn-block">Search</button>
