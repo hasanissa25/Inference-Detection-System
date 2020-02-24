@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.example.demo.data.model.BillingInfo;
 import com.example.demo.data.model.DBLogEntry;
 import com.example.demo.data.model.DBLogEntry2;
 import com.example.demo.data.model.PatientInfo;
@@ -129,6 +130,85 @@ public class InferenceDetectionEngine {
         return resultList;
     }
 
+    public List<BillingInfo> checkInferenceForBillingInfo(List<BillingInfo> resultList, List<String> tablesAndColumnsAccessed) {
+        
+        boolean policiesFound = false;
+
+        //1 - First step for the inference detection is to fetch the user 
+        String currentUserName = getUser();
+        logger.info("Step 1: getUser() => " + currentUserName);
+        
+        //2. get policies related to the query
+        List<Policy> policies = policyRepository.findDistinctByInputColumnsInAndBlockedColumnsIn(tablesAndColumnsAccessed, tablesAndColumnsAccessed);
+        logger.info("Step 2: get policies, found [" + policies.size() + "] policies => " + policies);
+        if(!policies.isEmpty()) {
+            policiesFound = true;
+        }
+        
+        if(policiesFound) {
+            //for each item in the result list check if it causes potential inference attack
+            Map<BillingInfo, Boolean> inferenceDetectionResults = new HashMap<>();
+            for(BillingInfo pi : resultList) {
+                for(Policy p: policies) {
+                    //3. get the input columns that are not part of this query
+                    List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
+                    policyInputColumns.removeIf(x-> tablesAndColumnsAccessed.contains(x));
+                    //get information from the logs based on the policy input columns
+                    List<DBLogEntry> logEntries = dbLogEntryRepository.findDistinctByTablesColumnsAccessedInAndUserName(policyInputColumns, currentUserName);
+                    //logger.info("Logs=>" + logEntries);
+                    //TODO: if we have duplicate information, then we will process into unique set
+                    //TODO: for each log entry, check the policy criteria
+                    for(DBLogEntry entry: logEntries) {
+                        for(String id: entry.getIdsAccessed()) {
+                            Integer dailyMedicalCost = patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getDailyMedicalCost();
+                            String lengthOfStay = patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getLengthOfStay();
+                            Integer lengthOfStayN = Integer.valueOf(lengthOfStay);
+                            Integer totalMedicalCosts = pi.getTotalMedicalCosts();
+                            
+                            boolean isInference = false;
+                            //=========================================================================================
+                            //TODO: how to make it generic, an idea, implement and replace hardcoded parts
+                            Map<String, Integer> policyCriteriaInputMap = new HashMap<>();
+                            policyCriteriaInputMap.put("patient_medical_info.length_of_stay", lengthOfStayN);
+                            policyCriteriaInputMap.put("patient_medical_info.daily_medical_cost", dailyMedicalCost);
+                            policyCriteriaInputMap.put("billing_info.total_medical_costs", totalMedicalCosts);
+                            //boolean isInference = p.processCriteria(policyCriteriaInputMap);
+                            //=========================================================================================
+                            // Hard coded part
+                            //=========================================================================================
+                            if("TBD".equals(totalMedicalCosts) || "TBD".equals(dailyMedicalCost)) {
+                                continue; //ignore this and continue to the next one
+                            }
+                            else {
+                                //int lengthOfStayN = Integer.valueOf(lengthOfStay);
+                                int bill = lengthOfStayN * dailyMedicalCost;
+                                isInference = bill == totalMedicalCosts; //the hard coded criteria, if they are equal
+                                logger.info("pi.accountNumber=" + pi.getAccountNumber() + ", pmi.id=" + id +", bill =" + bill + ", total medical costs=" + totalMedicalCosts + ", inference=" + isInference);
+                            }
+                            //=========================================================================================
+                            
+                            //TODOif it matches, mark it as reference attack
+                            if(isInference) {
+                                pi.setInference(true);
+                                break;
+                            }
+                        }
+                    }
+                    
+                }
+            }
+        }
+
+        //last step. record a log of the query performed (TODO: add inference logic)
+        List<String> values = resultList.stream().map(e -> String.valueOf(e.getAccountNumber())).collect(Collectors.toList());
+        DBLogEntry dbLogEntry = new DBLogEntry(null, currentUserName, tablesAndColumnsAccessed, values, LocalDateTime.now());
+        
+        logger.info("Step last: recording log => " + dbLogEntry);
+        dbLogEntryRepository.save(dbLogEntry);
+
+        return resultList;
+    }
+
     public List<PatientMedicalInfo> checkInferenceForPatientMedicalInfo(List<PatientMedicalInfo> resultList, List<String> tablesAndColumnsAccessed) {
         //1 - First step for the inference detection is to fetch the user 
         String currentUserName = getUser();
@@ -141,6 +221,19 @@ public class InferenceDetectionEngine {
     
         return resultList;
     }
+
+    // public List<BillingInfo> checkInferenceForBillingInfo(List<BillingInfo> resultList, List<String> tablesAndColumnsAccessed) {
+    //     //1 - First step for the inference detection is to fetch the user 
+    //     String currentUserName = getUser();
+    //     logger.info("Step 1: getUser() => " + currentUserName);
+        
+    //     List<String> values = resultList.stream().map(e -> String.valueOf(e.getAccountNumber())).collect(Collectors.toList());
+    //     DBLogEntry dbLogEntry = new DBLogEntry(null, currentUserName, tablesAndColumnsAccessed, values, LocalDateTime.now());
+    //     logger.info("Step last: recording log => " + dbLogEntry);
+    //     dbLogEntryRepository.save(dbLogEntry);
+    
+    //     return resultList;
+    // } //might be unnessecary
 
     //We get the user if they are logged in. If they are not logged in we return null.
     private String getUser(){
