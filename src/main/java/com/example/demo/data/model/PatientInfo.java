@@ -56,8 +56,6 @@ public class PatientInfo{// extends Table{
             case "gender":
                 this.gender = val;
                 break;
-            default: 
-                return;
         }
     }
 

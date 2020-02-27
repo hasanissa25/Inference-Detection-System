@@ -34,7 +34,6 @@ public class PatientMedicalInfo{// extends Table{
     // @Override
     public String getColumnValue(String col){
         switch(col){
-
             case "patient_id":
                 return String.valueOf(patientId);
             case "length_of_stay":
@@ -43,6 +42,20 @@ public class PatientMedicalInfo{// extends Table{
                 return reasonOfVisit;
             default:
                 return null;
+        }
+    }
+
+    public void setByColumn(String col, String val) {
+        switch(col){
+            case "patient_id":
+                this.patientId = -1L;   //TODO
+                break;
+            case "length_of_stay":
+                this.lengthOfStay = val;
+                break;
+            case "reason_of_visit":
+                this.reasonOfVisit = val;
+                break;
         }
     }
 
