@@ -133,8 +133,26 @@ public class InferenceDetectionEngine {
                                     }
                                 }
                                 //using the operands and operators for this row, check if there is an inference detection
-                                if(isInference(operators, operands)) pi.setInference(true);  
-                                
+                                if(isInference(operators, operands)){
+                                    pi.setInference(true);  
+
+                                    //Inference Prevention
+                                    logger.info("\n\n\nFOUND INFERENCE");
+                                    logger.info("pi: " + pi);
+
+                                    //Find the blocked columns and change those values if they match
+                                    List<String> policyBlockedColumns = new ArrayList<>(p.getBlockedColumns());
+                                    logger.info("blocked columns: " + policyBlockedColumns);
+                                    for(String blockedColumn: policyBlockedColumns) {
+                                        if (blockedColumn.contains("patient_info")) {
+                                            String column = blockedColumn.split("\\.")[1];
+                                            if (pi.getColumn(column) != null) {
+                                                pi.setByColumn(column, "Not Authorized");
+                                            }
+                                        }
+                                    }
+                                } 
+
                             }
                             
                         }
@@ -144,7 +162,6 @@ public class InferenceDetectionEngine {
                 }
             }
         }
-        
         return resultList;
     }
     
@@ -236,7 +253,6 @@ public class InferenceDetectionEngine {
                 }
             }
         }
-        
         return resultList;
     }
     

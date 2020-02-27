@@ -42,6 +42,25 @@ public class PatientInfo{// extends Table{
         }
     }
 
+    public void setByColumn(String col, String val) {
+        switch(col){
+            case "date_of_entry":
+                this.dateOfEntry = val;
+                break;
+            case "date_of_leave":
+                this.dateOfLeave = val;
+                break;
+            case "name":
+                this.name = val;
+                break;
+            case "gender":
+                this.gender = val;
+                break;
+            default: 
+                return;
+        }
+    }
+
    // @Override
     public String getTableName() {
         return "patient_info";
