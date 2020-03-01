@@ -46,7 +46,7 @@
                                     <a class="btn btn-primary" th:href="@{/editUser(userId=${user.id})}">
                                         <span class="fas fa-edit">
                                     </a>
-                                    <a class="btn btn-danger" th:href="@{/removeUser(userId=${user.id})}">
+                                    <a th:href="@{/removeUser(userId=${user.id})}" class="btn btn-danger" href="#" th:attr="onclick=|if(!confirmDelete('${user.userName}')){event.preventDefault()}|"  >
                                         <span class="fas fa-trash">
                                     </a>
                                 </div>
@@ -67,6 +67,11 @@
     </main>
     <!-- /.container -->
     <footer  th:replace="fragments/common.html :: htmlfooter"></footer>
+    <script>
+        function confirmDelete(userName) {
+            return confirm("Are you sure to delete this user: " + userName +"?");
+        }
+    </script>
 </body>
 
 </html>
