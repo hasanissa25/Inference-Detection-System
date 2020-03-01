@@ -1,7 +1,9 @@
 package com.example.demo.data.model;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Queue;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -21,7 +23,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Policy {
+public class Policy{
     @Id
     @Column(name = "id", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "policy_generator")
@@ -31,9 +33,35 @@ public class Policy {
     private List<String> inputColumns;
     @ElementCollection 
     private List<String> blockedColumns;
+    private String relationship;
 
-    public boolean processCriteria(Map<String, String> policyCriteriaInputMap) {
-        //TODO: placeholder to make policy criteria generic
-        return true;
-	}
+    
+    public Queue<String> getRelationshipOperators(){
+        //relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
+        relationship = relationship.trim();
+        String[] tokens = relationship.split("(\\s+)");
+        Queue<String> operators = new LinkedList<String>();
+        for(String token:tokens){ 
+            if(!token.matches("[a-zA-Z_\\.]+")){
+                operators.add(token);
+            }
+        }
+
+        return operators;
+    }
+
+    public ArrayList<String> getRelationshipOperands(){
+        //relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
+        relationship = relationship.trim();
+        String[] tokens = relationship.split("(\\s+)");
+        ArrayList<String> operands = new ArrayList<String>();
+        for(String token:tokens){ 
+            if(token.matches("[a-zA-Z_\\.]+")){
+                operands.add(token);
+            }
+        }
+
+        return operands;
+    }
+
 }
