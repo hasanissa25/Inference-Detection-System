@@ -38,7 +38,7 @@
             <input id="lastLoginDate" hidden th:name="lastLoginDate" th:value="${user.lastLoginDate}" />
           </div>
           <button type="submit" class="btn btn-primary" onclick="DoSubmit()">Submit</button>
-          <a class="btn btn-primary" href="/users">Go Back</a>
+          <a class="btn btn-primary" href="/users" onclick="return confirm('Are you sure you want to withdraw all the changes?')">Go Back</a>
         </form>
       </div>
     </div>
