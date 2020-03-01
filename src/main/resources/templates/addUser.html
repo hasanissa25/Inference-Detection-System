@@ -3,9 +3,16 @@
 <head>
 <th:block th:include="fragments/common.html :: htmlheader"></th:block>
 </head>
+<style>
+  .alert {
+      background-color: #f44336;
+      color: white;
+      width: 100%;
+      margin: 10px;
+  }
+</style>
 <body>
   <header th:replace="fragments/common.html :: header"></header>
-
   <main class="container" role="main">
     <div class="row">
       <div class="col">
@@ -21,6 +28,11 @@
           </li>
         </ul>
       </div>
+    </div>
+      <div class="row" th:if="${validationErr}">
+        <div class="alert">
+            Error: Input is invalid
+        </div> 
     </div>
     <div class="row">
       <div class="col">

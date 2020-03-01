@@ -53,4 +53,13 @@ public class User {
           name = "role_id", referencedColumnName = "id")) 
     private Collection<Role> roles;
     
+    public String getUserName() {
+      return userName;
+    }
+
+    public String getPassword() {
+      return password;
+    }
+
+    
 }
