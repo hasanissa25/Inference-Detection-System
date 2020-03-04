@@ -1,5 +1,6 @@
 package com.example.demo.view;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -131,10 +132,23 @@ public class IFSAdminController {
             }
 
             String[] relationshipSplit = newPolicyForm.getRelationship().split(" ");
+            String[] allowedColumns = {"patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", 
+                                     "patient_info.gender", "patient_medical_info.patient_id", "patient_medical_info.reason_of_visit",
+                                     "patient_medical_info.length_of_stay"};
             for (String s : relationshipSplit) {
+                boolean isValidColumn = Arrays.stream(allowedColumns).anyMatch(s::equals);
+
                 //Only 1 operator allowed between columns
-                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") && s.length() > 1) {
-                    logger.info("Error - Relationship has invalid operators");
+                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
+                    if (s.length() > 1 && !s.equals("!=")) {
+                        logger.info("Error - Relationship has invalid operators");
+                        servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        m.addAttribute("validationErr", true);
+                        return "addPolicy";
+                    }
+                }
+                else if (!isValidColumn) {
+                    logger.info("Error - Relationship has invalid columns");
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     return "addPolicy";
@@ -215,14 +229,27 @@ public class IFSAdminController {
             }
 
             String[] relationshipSplit = policyForm.getRelationship().split(" ");
+            String[] allowedColumns = {"patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", 
+                                     "patient_info.gender", "patient_medical_info.patient_id", "patient_medical_info.reason_of_visit",
+                                     "patient_medical_info.length_of_stay"};
             for (String s : relationshipSplit) {
+                boolean isValidColumn = Arrays.stream(allowedColumns).anyMatch(s::equals);
                 //Only 1 operator allowed between columns
-                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") && s.length() > 1) {
-                    logger.info("Error - Relationship has invalid operators");
+                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
+                    if (s.length() > 1 && !s.equals("!=")) {
+                        logger.info("Error - Relationship has invalid operators");
+                        servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        m.addAttribute("validationErr", true);
+                        return "editPolicy";
+                    }
+                }
+                else if (!isValidColumn) {
+                    logger.info("Error - Relationship has invalid columns");
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
-                    return "editPolicy";
+                    return "addPolicy";
                 }
+                
             }
 
             logger.info("Editing Policy ID: " + policyId);
