@@ -122,11 +122,23 @@ public class IFSAdminController {
                 m.addAttribute("validationErr", true);
                 return "addPolicy";
             }
+
             if (newPolicyForm.getRelationship() == null || newPolicyForm.getRelationship().isBlank()) {
                 logger.info("Error - Empty Relationship");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 return "addPolicy";
+            }
+
+            String[] relationshipSplit = newPolicyForm.getRelationship().split(" ");
+            for (String s : relationshipSplit) {
+                //Only 1 operator allowed between columns
+                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") && s.length() > 1) {
+                    logger.info("Error - Relationship has invalid operators");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", true);
+                    return "addPolicy";
+                }
             }
 
             logger.info("Add new policy parameters: " + newPolicyForm);
@@ -200,6 +212,17 @@ public class IFSAdminController {
                 Optional<Policy> policy = policyManager.getPolicyById(policyId);
                 m.addAttribute("policy", policy.get());
                 return "editPolicy";
+            }
+
+            String[] relationshipSplit = policyForm.getRelationship().split(" ");
+            for (String s : relationshipSplit) {
+                //Only 1 operator allowed between columns
+                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") && s.length() > 1) {
+                    logger.info("Error - Relationship has invalid operators");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", true);
+                    return "editPolicy";
+                }
             }
 
             logger.info("Editing Policy ID: " + policyId);
