@@ -12,6 +12,9 @@
             width: 100%;
             margin: 10px;
         }
+        #input-validation-err, #blocked-validation-err {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -44,6 +47,11 @@
             <form id="editPolicy" action="/editPolicy" th:action="@{/editPolicy(policyId=${policy.id})}"  th:object="${policy}" method="post">
                 <input hidden th:name="id" th:value="${policy.id}"/>
                 <p>Input Columns:</p>
+                <div id="input-validation-err" class="row">
+                    <div class="alert">
+                            Error: Input is invalid
+                    </div> 
+                </div>
                 <div id="input-columns">
                     <div class="form-group" th:each="x, itemStat : ${policy.inputColumns}">
                         <select name="inputColumns[0]" path="input-columns" th:field="${policy.inputColumns[__${itemStat.index}__]}">
@@ -66,6 +74,11 @@
                 <button id="addInputColumnButton" type="button" class="btn btn-success">Add Input Column</button>
 
                 <p>Blocked Columns:</p>
+                <div id="blocked-validation-err" class="row">
+                    <div class="alert">
+                            Error: Input is invalid
+                    </div> 
+                </div>
                 <div id="blocked-columns">
                     <div class="form-group" th:each="x, itemStat : ${policy.blockedColumns}">
                         <select name="blockedColumns[0]" path="blocked-columns" th:field="${policy.blockedColumns[__${itemStat.index}__]}">
@@ -93,7 +106,7 @@
                 <p>Relationship:</p>
                 <div id="relationship">
                     <div class="form-group">
-                        <input type="text" class="form-control" th:field="${policy.relationship}">
+                        <input id="relationship-val" type="text" class="form-control" th:field="${policy.relationship}">
                     </div>
                 </div>
 
@@ -167,6 +180,41 @@ $(document).ready(function(){
     $(document).on('click','button.btn-danger', function(){
         $(this).parent().remove();
     });
+
+    $("#editPolicy").submit(function( event ) {
+        event.preventDefault();
+
+        let form = this;
+        let hasErrors = false;
+        let inputCols = $('select[name^="inputColumns"]');
+        let blockedCols = $('select[name^="blockedColumns"]');
+        let relationship = $('#relationship-val').val();
+
+
+        for(let i=0; i< inputCols.length; i++) {
+            if (inputCols[i].value == "NONE") {
+                $("#input-validation-err").css('display', 'block');
+                hasErrors = true;
+                console.log("error")
+            }
+        }
+
+        for(let i=0; i< blockedCols.length; i++) {
+            if (blockedCols[i].value == "NONE") {
+                $("#blocked-validation-err").css('display', 'block');
+                hasErrors = true;
+                console.log("error")
+            }
+        }
+
+        let str = relationship.split(" ");
+
+        if (hasErrors == false) {
+            $("#input-validation-err").css('display', 'none');
+            $("#blocked-validation-err").css('display', 'none');
+            form.submit();
+        }
+    })
 });
 </script>
 </body>
