@@ -61,5 +61,8 @@ public class User {
       return password;
     }
 
+    public Collection<Role> getAllRoles() {
+      return roles;
+    }
     
 }
