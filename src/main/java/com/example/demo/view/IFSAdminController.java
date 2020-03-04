@@ -123,7 +123,7 @@ public class IFSAdminController {
                 return "addPolicy";
             }
 
-            if (newPolicyForm.getRelationship() == null || newPolicyForm.getRelationship().isBlank()) {
+            if (newPolicyForm.getRelationship() == null || newPolicyForm.getRelationship().isEmpty() || newPolicyForm.getRelationship().length() == 0) {
                 logger.info("Error - Empty Relationship");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
@@ -205,7 +205,7 @@ public class IFSAdminController {
                 m.addAttribute("policy", policy.get());
                 return "editPolicy";
             }
-            if (policyForm.getRelationship() == null || policyForm.getRelationship().isBlank()) {
+            if (policyForm.getRelationship() == null || policyForm.getRelationship().isEmpty() || policyForm.getRelationship().length() == 0) {
                 logger.info("Error - Empty Relationship");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
