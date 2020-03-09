@@ -19,7 +19,7 @@ import com.example.demo.data.model.PatientMedicalInfo;
 import com.example.demo.data.model.Policy;
 
 import com.example.demo.data.model.QueryResult;
-
+import com.example.demo.data.model.Policy.ResponseObject;
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PatientlnfoRepository;
@@ -89,9 +89,14 @@ public class InferenceDetectionEngine {
                     logger.info("policyInputColumns =>" + policyInputColumns);
 
                     // 6. Parse the logical relationship of the inputColumns
-                    ArrayList<String> policyRelationshipOperands = p.getRelationshipOperands();
+                    ResponseObject relationshipData = p.getRelationshipData();
+                    ArrayList<String> policyRelationshipOperands = relationshipData.getOperands();
                     logger.info("policyRelationshipOperands=>" + policyRelationshipOperands);
-                    Queue<String> policyRelationshipOperators = p.getRelationshipOperators();
+
+                    // ArrayList<String> policyRelationshipOperands = p.getRelationshipOperands();
+                    // Queue<String> policyRelationshipOperators = p.getRelationshipOperators();
+
+                    Queue<String> policyRelationshipOperators = relationshipData.getOperators();
                     logger.info("policyRelationshipOperators=>" + policyRelationshipOperators);
 
                     // 7. Check if one of the inputColumns is part of the item in focus of the
@@ -217,11 +222,18 @@ public class InferenceDetectionEngine {
                     // 5. Get the policyInputColumns
                     List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
                     logger.info("policyInputColumns =>" + policyInputColumns);
+
                     // 6. Parse the logical relationship of the inputColumns
-                    ArrayList<String> policyRelationshipOperands = p.getRelationshipOperands();
-                    logger.info("policyRelationshipOperands=>" + policyRelationshipOperands);
-                    Queue<String> policyRelationshipOperators = p.getRelationshipOperators();
+                    // ArrayList<String> policyRelationshipOperands = p.getRelationshipOperands();
+                    // logger.info("policyRelationshipOperands=>" + policyRelationshipOperands);
+                    // Queue<String> policyRelationshipOperators = p.getRelationshipOperators();
+                    // logger.info("policyRelationshipOperators=>" + policyRelationshipOperators);
+                    ResponseObject relationshipData = p.getRelationshipData();
+                    ArrayList<String> policyRelationshipOperands = relationshipData.getOperands();
+                    logger.info("policyRelationshipOperands=>" + policyRelationshipOperands); 
+                    Queue<String> policyRelationshipOperators = relationshipData.getOperators();
                     logger.info("policyRelationshipOperators=>" + policyRelationshipOperators);
+
 
                     // 7. Check if one of the inputColumns is part of the item in focus of the
                     // result list

@@ -50,32 +50,76 @@ public class Policy{
         return relationship;
     }
     
-    public Queue<String> getRelationshipOperators(){
-        //relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
+    //Operators and Operands
+    public class ResponseObject {
+        private Queue<String> operators;
+        private ArrayList<String> operands;
+
+        // public ResponseObject() {
+        //     operators = new LinkedList<String>();
+        //     operands = new ArrayList<String>();
+        // }
+
+        public ResponseObject(Queue<String> operators, ArrayList<String>operands) {
+            this.operators = operators;
+            this.operands = operands;
+        }        
+
+        public Queue<String> getOperators() {
+            return this.operators;
+        }
+
+        public ArrayList<String> getOperands() {
+            return this.operands;
+        }
+    }
+
+    public ResponseObject getRelationshipData(){
         relationship = relationship.trim();
         String[] tokens = relationship.split("(\\s+)");
         Queue<String> operators = new LinkedList<String>();
-        for(String token:tokens){ 
-            if(!token.matches("[a-zA-Z_\\.]+")){
-                operators.add(token);
-            }
-        }
-
-        return operators;
-    }
-
-    public ArrayList<String> getRelationshipOperands(){
-        //relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
-        relationship = relationship.trim();
-        String[] tokens = relationship.split("(\\s+)");
         ArrayList<String> operands = new ArrayList<String>();
         for(String token:tokens){ 
-            if(token.matches("[a-zA-Z_\\.]+")){
+            if(!token.matches("[a-zA-Z_\\.]+")){
+                //Found operator
+                operators.add(token);
+            }
+            else {
+                //Found operand
                 operands.add(token);
             }
         }
 
-        return operands;
+        ResponseObject response = new ResponseObject(operators, operands);
+        return response;
+
     }
+    // public Queue<String> getRelationshipOperators(){
+    //     //relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
+    //     relationship = relationship.trim();
+    //     String[] tokens = relationship.split("(\\s+)");
+    //     Queue<String> operators = new LinkedList<String>();
+    //     for(String token:tokens){ 
+    //         if(!token.matches("[a-zA-Z_\\.]+")){
+    //             operators.add(token);
+    //         }
+    //     }
+
+    //     return operators;
+    // }
+
+    // public ArrayList<String> getRelationshipOperands(){
+    //     //relationship = "patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay";
+    //     relationship = relationship.trim();
+    //     String[] tokens = relationship.split("(\\s+)");
+    //     ArrayList<String> operands = new ArrayList<String>();
+    //     for(String token:tokens){ 
+    //         if(token.matches("[a-zA-Z_\\.]+")){
+    //             operands.add(token);
+    //         }
+    //     }
+
+    //     return operands;
+    // }
 
 }
