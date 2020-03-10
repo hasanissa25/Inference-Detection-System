@@ -6,6 +6,15 @@
     <style>
         .form-group { display: flex; }
         #addInputColumnButton { margin-bottom: 15px; }
+        .alert {
+            background-color: #f44336;
+            color: white;
+            width: 100%;
+            margin: 10px;
+        }
+        #input-validation-err, #blocked-validation-err {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -27,24 +36,65 @@
             </ul>
         </div>
     </div>
+    <div class="row" th:if="${validationErr}">
+        <div class="alert">
+            Error: Input is invalid
+        </div> 
+    </div>
      <div class="row">
         <div class="col">
             <h1>Edit Policy: <span th:text="${policy.id}" /></h1>
             <form id="editPolicy" action="/editPolicy" th:action="@{/editPolicy(policyId=${policy.id})}"  th:object="${policy}" method="post">
                 <input hidden th:name="id" th:value="${policy.id}"/>
                 <p>Input Columns:</p>
+                <div id="input-validation-err" class="row">
+                    <div class="alert">
+                            Error: Input is invalid
+                    </div> 
+                </div>
                 <div id="input-columns">
                     <div class="form-group" th:each="x, itemStat : ${policy.inputColumns}">
-                        <input type="text" class="form-control" th:field="${policy.inputColumns[__${itemStat.index}__]}" required>
+                        <select name="inputColumns[0]" path="input-columns" th:field="${policy.inputColumns[__${itemStat.index}__]}">
+                            <option value="NONE" label="--- Select ---"/>
+                            <optgroup label="Patient Info">
+                                <option value="patient_info.name">patient_info.name</option>
+                                <option value="patient_info.date_of_entry">patient_info.date_of_entry</option>
+                                <option value="patient_info.date_of_leave">patient_info.date_of_leave</option>
+                                <option value="patient_info.gender">patient_info.gender</option>
+                            </optgroup>
+                            <optgroup label="Patient Medical Info">
+                                <option value="patient_medical_info.patient_id">patient_medical_info.patient_id</option>
+                                <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
+                                <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
+                            </optgroup>
+                        </select>
                         <button type="button" class="btn btn-danger  fas fa-trash"/>
                     </div>
                 </div>
                 <button id="addInputColumnButton" type="button" class="btn btn-success">Add Input Column</button>
 
                 <p>Blocked Columns:</p>
+                <div id="blocked-validation-err" class="row">
+                    <div class="alert">
+                            Error: Input is invalid
+                    </div> 
+                </div>
                 <div id="blocked-columns">
                     <div class="form-group" th:each="x, itemStat : ${policy.blockedColumns}">
-                        <input type="text" class="form-control" th:field="${policy.blockedColumns[__${itemStat.index}__]}" required>
+                        <select name="blockedColumns[0]" path="blocked-columns" th:field="${policy.blockedColumns[__${itemStat.index}__]}">
+                            <option value="NONE" label="--- Select ---"/>
+                            <optgroup label="Patient Info">
+                                <option value="patient_info.name">patient_info.name</option>
+                                <option value="patient_info.date_of_entry">patient_info.date_of_entry</option>
+                                <option value="patient_info.date_of_leave">patient_info.date_of_leave</option>
+                                <option value="patient_info.gender">patient_info.gender</option>
+                            </optgroup>
+                            <optgroup label="Patient Medical Info">
+                                <option value="patient_medical_info.patient_id">patient_medical_info.patient_id</option>
+                                <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
+                                <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
+                            </optgroup>
+                        </select>
                         <button type="button" class="btn btn-danger  fas fa-trash"/>
                     </div>
                 </div>
@@ -56,7 +106,7 @@
                 <p>Relationship:</p>
                 <div id="relationship">
                     <div class="form-group">
-                        <input type="text" class="form-control" th:field="${policy.relationship}">
+                        <input id="relationship-val" type="text" class="form-control" th:field="${policy.relationship}">
                     </div>
                 </div>
 
@@ -76,7 +126,20 @@
 
 function inputComponentBuilder(num) {
     const inputComponent = `<div class="form-group">
-                            <input type="text" name="inputColumns[${num}]" class="form-control" placeholder="Column Name" required>
+                            <select name="inputColumns[${num}]" path="input-columns">
+                            <option value="NONE" label="--- Select ---"/>
+                            <optgroup label="Patient Info">
+                                <option value="patient_info.name">patient_info.name</option>
+                                <option value="patient_info.date_of_entry">patient_info.date_of_entry</option>
+                                <option value="patient_info.date_of_leave">patient_info.date_of_leave</option>
+                                <option value="patient_info.gender">patient_info.gender</option>
+                            </optgroup>
+                            <optgroup label="Patient Medical Info">
+                                <option value="patient_medical_info.patient_id">patient_medical_info.patient_id</option>
+                                <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
+                                <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
+                            </optgroup>
+                            </select>
                             <button type="button" class="btn btn-danger  fas fa-trash"/>
                             </div>`;
     return inputComponent;
@@ -84,7 +147,20 @@ function inputComponentBuilder(num) {
 
 function blockedComponentBuilder(num) {
     const inputComponent = `<div class="form-group">
-                            <input type="text" name="blockedColumns[${num}]" class="form-control" placeholder="Column Name" required>
+                            <select name="blockedColumns[${num}]" path="blocked-columns">
+                            <option value="NONE" label="--- Select ---"/>
+                            <optgroup label="Patient Info">
+                                <option value="patient_info.name">patient_info.name</option>
+                                <option value="patient_info.date_of_entry">patient_info.date_of_entry</option>
+                                <option value="patient_info.date_of_leave">patient_info.date_of_leave</option>
+                                <option value="patient_info.gender">patient_info.gender</option>
+                            </optgroup>
+                            <optgroup label="Patient Medical Info">
+                                <option value="patient_medical_info.patient_id">patient_medical_info.patient_id</option>
+                                <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
+                                <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
+                            </optgroup>
+                            </select>
                             <button type="button" class="btn btn-danger  fas fa-trash"/>
                             </div>`;
     return inputComponent;
@@ -104,6 +180,41 @@ $(document).ready(function(){
     $(document).on('click','button.btn-danger', function(){
         $(this).parent().remove();
     });
+
+    $("#editPolicy").submit(function( event ) {
+        event.preventDefault();
+
+        let form = this;
+        let hasErrors = false;
+        let inputCols = $('select[name^="inputColumns"]');
+        let blockedCols = $('select[name^="blockedColumns"]');
+        let relationship = $('#relationship-val').val();
+
+
+        for(let i=0; i< inputCols.length; i++) {
+            if (inputCols[i].value == "NONE") {
+                $("#input-validation-err").css('display', 'block');
+                hasErrors = true;
+                console.log("error")
+            }
+        }
+
+        for(let i=0; i< blockedCols.length; i++) {
+            if (blockedCols[i].value == "NONE") {
+                $("#blocked-validation-err").css('display', 'block');
+                hasErrors = true;
+                console.log("error")
+            }
+        }
+
+        let str = relationship.split(" ");
+
+        if (hasErrors == false) {
+            $("#input-validation-err").css('display', 'none');
+            $("#blocked-validation-err").css('display', 'none');
+            form.submit();
+        }
+    })
 });
 </script>
 </body>

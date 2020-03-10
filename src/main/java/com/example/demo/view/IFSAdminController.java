@@ -1,7 +1,10 @@
 package com.example.demo.view;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletResponse;
 
 import com.example.demo.data.model.DBLogEntry;
 import com.example.demo.data.model.Policy;
@@ -69,10 +72,17 @@ public class IFSAdminController {
      * @param m
      */
     @GetMapping("/deletePolicy")
-    public String deletePolicy(@RequestParam(name="policyId") int policyId , Model m) {
+    public String deletePolicy(@RequestParam(name="policyId") int policyId , Model m, HttpServletResponse servletResponse) {
         logger.info("User accessed /deletePolicy");
-        policyManager.deletePolicyById(policyId);
-        return "redirect:/admin";
+        if (policyId < 0 || policyId > 999) {
+            logger.info("Error - Policy ID value error");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "redirect:/admin";
+        }
+        else {
+            policyManager.deletePolicyById(policyId);
+            return "redirect:/admin";
+        }
     }
 
 
@@ -83,6 +93,7 @@ public class IFSAdminController {
     @GetMapping("/addPolicy")
     public String addPolicy(Model m) {
         logger.info("GET addPolicy");
+        m.addAttribute("validationErr", false);
         m.addAttribute("policy", new Policy());
         return "addPolicy";
     }
@@ -93,11 +104,64 @@ public class IFSAdminController {
      * @param m
      */
     @PostMapping("addPolicy")
-    public String addNewPolicy(@ModelAttribute Policy newPolicyForm, Model m){
-        logger.info("Add new policy parameters: " + newPolicyForm);
-        logger.info("POST: " + newPolicyForm);
-        policyManager.savePolicy(newPolicyForm);
-        return "redirect:/admin";
+    public String addNewPolicy(@ModelAttribute Policy newPolicyForm, Model m, HttpServletResponse servletResponse){
+        if (newPolicyForm == null) {
+            logger.info("Error - Form is empty");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            m.addAttribute("validationErr", true);
+        }
+        else {
+            if (newPolicyForm.getInputColumns() == null || newPolicyForm.getInputColumns().contains("NONE") || newPolicyForm.getInputColumns().isEmpty() || newPolicyForm.getInputColumns().contains(null) || newPolicyForm.getInputColumns().contains("")) {
+                logger.info("Error - Empty Input Columns");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                m.addAttribute("validationErr", true);
+                return "addPolicy";
+            }
+            if (newPolicyForm.getBlockedColumns() == null || newPolicyForm.getBlockedColumns().contains("NONE") || newPolicyForm.getBlockedColumns().isEmpty() || newPolicyForm.getBlockedColumns().contains(null) || newPolicyForm.getBlockedColumns().contains("")) {
+                logger.info("Error - Empty Blocked Columns");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                m.addAttribute("validationErr", true);
+                return "addPolicy";
+            }
+
+            if (newPolicyForm.getRelationship() == null || newPolicyForm.getRelationship().isEmpty() || newPolicyForm.getRelationship().length() == 0) {
+                logger.info("Error - Empty Relationship");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                m.addAttribute("validationErr", true);
+                return "addPolicy";
+            }
+
+            String[] relationshipSplit = newPolicyForm.getRelationship().split(" ");
+            String[] allowedColumns = {"patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", 
+                                     "patient_info.gender", "patient_medical_info.patient_id", "patient_medical_info.reason_of_visit",
+                                     "patient_medical_info.length_of_stay"};
+            for (String s : relationshipSplit) {
+                boolean isValidColumn = Arrays.stream(allowedColumns).anyMatch(s::equals);
+
+                //Only 1 operator allowed between columns
+                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
+                    if (s.length() > 1 && !s.equals("!=")) {
+                        logger.info("Error - Relationship has invalid operators");
+                        servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        m.addAttribute("validationErr", true);
+                        return "addPolicy";
+                    }
+                }
+                else if (!isValidColumn) {
+                    logger.info("Error - Relationship has invalid columns");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", true);
+                    return "addPolicy";
+                }
+            }
+
+            logger.info("Add new policy parameters: " + newPolicyForm);
+            logger.info("POST: " + newPolicyForm);
+            policyManager.savePolicy(newPolicyForm);
+            return "redirect:/admin";
+        }        
+
+        return "addPolicy";
     }
     
     /**
@@ -109,6 +173,7 @@ public class IFSAdminController {
     public String editPolicy(@RequestParam(name="policyId") int policyId , Model m) {
         logger.info("Editing Policy ID: " + policyId);
         Optional<Policy> policy = policyManager.getPolicyById(policyId);
+        m.addAttribute("validationErr", false);
         m.addAttribute("policy", policy.get());
         return "editPolicy";
     }
@@ -120,14 +185,79 @@ public class IFSAdminController {
      * @param m
      */
     @PostMapping("/editPolicy")
-    public String savePolicy(@RequestParam(name="policyId") int policyId , @ModelAttribute Policy policyForm, Model m) {
-        logger.info("Editing Policy ID: " + policyId);
-        logger.info("Policy Form: " + policyForm);
-        policyManager.savePolicy(policyForm);
-        // Optional<Policy> policy = policyManager.getPolicyById(policyId);
-        // m.addAttribute("policy", policy.get());
-        return "redirect:/editPolicy?policyId=" + policyId;
-    }
+    public String savePolicy(@RequestParam(name="policyId") int policyId , @ModelAttribute Policy policyForm, Model m, HttpServletResponse servletResponse) {
+        if (policyId < 0 || policyId > 999) {
+            logger.info("Error - Policy ID value error");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            m.addAttribute("validationErr", true);
+            Optional<Policy> policy = policyManager.getPolicyById(policyId);
+            m.addAttribute("policy", policy.get());
+            return "editPolicy";
+        }
+        if (policyForm == null) {
+            logger.info("Error - Form is empty");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            m.addAttribute("validationErr", true);
+            Optional<Policy> policy = policyManager.getPolicyById(policyId);
+            m.addAttribute("policy", policy.get());
+            return "editPolicy";
+        }
+        else {
+            if (policyForm.getInputColumns() == null || policyForm.getInputColumns().contains("NONE") || policyForm.getInputColumns().isEmpty() || policyForm.getInputColumns().contains(null) || policyForm.getInputColumns().contains("")) {
+                logger.info("Error - Empty Input Columns");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                m.addAttribute("validationErr", true);
+                Optional<Policy> policy = policyManager.getPolicyById(policyId);
+                m.addAttribute("policy", policy.get());
+                return "editPolicy";
+            }
+            if (policyForm.getBlockedColumns() == null || policyForm.getBlockedColumns().contains("NONE") || policyForm.getBlockedColumns().isEmpty() || policyForm.getBlockedColumns().contains(null) || policyForm.getBlockedColumns().contains("")) {
+                logger.info("Error - Empty Blocked Columns");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                m.addAttribute("validationErr", true);
+                Optional<Policy> policy = policyManager.getPolicyById(policyId);
+                m.addAttribute("policy", policy.get());
+                return "editPolicy";
+            }
+            if (policyForm.getRelationship() == null || policyForm.getRelationship().isEmpty() || policyForm.getRelationship().length() == 0) {
+                logger.info("Error - Empty Relationship");
+                servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                m.addAttribute("validationErr", true);
+                Optional<Policy> policy = policyManager.getPolicyById(policyId);
+                m.addAttribute("policy", policy.get());
+                return "editPolicy";
+            }
+
+            String[] relationshipSplit = policyForm.getRelationship().split(" ");
+            String[] allowedColumns = {"patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", 
+                                     "patient_info.gender", "patient_medical_info.patient_id", "patient_medical_info.reason_of_visit",
+                                     "patient_medical_info.length_of_stay"};
+            for (String s : relationshipSplit) {
+                boolean isValidColumn = Arrays.stream(allowedColumns).anyMatch(s::equals);
+                //Only 1 operator allowed between columns
+                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
+                    if (s.length() > 1 && !s.equals("!=")) {
+                        logger.info("Error - Relationship has invalid operators");
+                        servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        m.addAttribute("validationErr", true);
+                        return "editPolicy";
+                    }
+                }
+                else if (!isValidColumn) {
+                    logger.info("Error - Relationship has invalid columns");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", true);
+                    return "addPolicy";
+                }
+                
+            }
+
+            logger.info("Editing Policy ID: " + policyId);
+            logger.info("Policy Form: " + policyForm);
+            policyManager.savePolicy(policyForm);
+            return "redirect:/editPolicy?policyId=" + policyId;
+        }
+    }        
 
     /**
      * GET the log page
