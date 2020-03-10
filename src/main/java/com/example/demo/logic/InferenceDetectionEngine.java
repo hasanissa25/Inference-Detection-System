@@ -158,7 +158,7 @@ public class InferenceDetectionEngine {
                                     
                                     boolean isAuthorizedToView = false;
                                     for (GrantedAuthority s : roles){
-                                        if (s.toString().equals("ROLE_ADMIN") || s.toString().equals("ROLE_DOCTOR")) {
+                                        if (s.toString().equals("ROLE_ADMIN")) {
                                             isAuthorizedToView = true;
                                         }
                                     }
@@ -291,7 +291,7 @@ public class InferenceDetectionEngine {
 
                                     boolean isAuthorizedToView = false;
                                     for (GrantedAuthority s : roles){
-                                        if (s.toString().equals("ROLE_ADMIN") || s.toString().equals("ROLE_DOCTOR")) {
+                                        if (s.toString().equals("ROLE_ADMIN")) {
                                             isAuthorizedToView = true;
                                         }
                                     }
