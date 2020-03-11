@@ -86,11 +86,11 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
             new PatientInfo("Horus Harvey", "Oct 20, 2014", "TBD", "M", false)
             ));
 
-
+        Role nurseRole = new Role(0, "ROLE_ NURSE", new ArrayList<Privilege>());
         Role doctorRole = new Role(0, "ROLE_DOCTOR", new ArrayList<Privilege>());
         Role adminRole = new Role(0, "ROLE_ADMIN", new ArrayList<Privilege>());
 
-        roleRepository.saveAll(Arrays.asList(doctorRole, adminRole));
+        roleRepository.saveAll(Arrays.asList(doctorRole, adminRole,nurseRole));
 
         List<User> users = new ArrayList<>();
         users.add(new User(1, "hasan", LocalDate.now(), null, passwordEncoder.encode("hasan"), Arrays.asList(adminRole)));
@@ -101,6 +101,7 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
         users.add(new User(6, "calvin", LocalDate.now(), null, passwordEncoder.encode("calvin"),Arrays.asList(adminRole)));
         users.add(new User(7, "admin", LocalDate.now(), null, passwordEncoder.encode("admin"),Arrays.asList(adminRole)));
         users.add(new User(8, "user", LocalDate.now(), null, passwordEncoder.encode("user"),Arrays.asList(doctorRole)));
+        users.add(new User(9, "nurse", LocalDate.now(), null, passwordEncoder.encode("nurse"),Arrays.asList(nurseRole)));
         userRepository.saveAll(users);
 
         alreadySetup = true;
