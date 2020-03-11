@@ -33,7 +33,8 @@ public class PatientMedicalInfoManager {
             results = patientMedicalnfoRepository.findAll();
         else 
             results = patientMedicalnfoRepository.customSearch(patientId, lengthOfStay, reasonOfVisit);
-        results = inferenceDetectionEngine.checkInferenceForPatientMedicalInfo(results, Arrays.asList("patient_medical_info.id", "patient_medical_info.length_of_stay", "patient_medical_info.reason_of_visit"));
+        //results = inferenceDetectionEngine.checkInferenceForPatientMedicalInfo(results, Arrays.asList("patient_medical_info.id", "patient_medical_info.length_of_stay", "patient_medical_info.reason_of_visit"));
+        results = inferenceDetectionEngine.checkForInference(PatientMedicalInfo.class, results, Arrays.asList("patient_medical_info.id", "patient_medical_info.length_of_stay", "patient_medical_info.reason_of_visit"));
         return results;
     }
 

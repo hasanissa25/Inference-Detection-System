@@ -2,6 +2,7 @@ package com.example.demo.data.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,7 +27,7 @@ public class CustomPatientMedicalInfoRepositoryImpl implements CustomPatientMedi
         CriteriaQuery<PatientMedicalInfo> query = cb.createQuery(PatientMedicalInfo.class);
         Root<PatientMedicalInfo> patientMedicalInfos = query.from(PatientMedicalInfo.class);
  
-        Path<Long> patientIdPath = patientMedicalInfos.get("patientId");
+        Path<String> patientIdPath = patientMedicalInfos.get("patientId");
         Path<String> reasonOfVisitPath = patientMedicalInfos.get("reasonOfVisit");
         Path<String> lengthOfStayPath = patientMedicalInfos.get("lengthOfStay");
  
@@ -44,4 +45,24 @@ public class CustomPatientMedicalInfoRepositoryImpl implements CustomPatientMedi
         return entityManager.createQuery(query)
             .getResultList();
     }
+
+    @Override
+    public PatientMedicalInfo findByPatientID(String patientId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<PatientMedicalInfo> query = cb.createQuery(PatientMedicalInfo.class);
+        Root<PatientMedicalInfo> patientMedicalInfos = query.from(PatientMedicalInfo.class);
+
+        Path<String> patientIdPath = patientMedicalInfos.get("patientId");
+
+        List<Predicate> predicates = new ArrayList<>();
+        if(patientId != null)
+            predicates.add(cb.equal(patientIdPath, patientId));
+
+        query.select(patientMedicalInfos)
+                .where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
+
+        return entityManager.createQuery(query).getSingleResult();
+    }
+
+
 }

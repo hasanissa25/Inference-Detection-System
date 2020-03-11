@@ -87,6 +87,13 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
             ));
 
 
+        Policy p = new Policy();
+        p.setInputColumns(Arrays.asList("patient_medical_info.length_of_stay", "patient_info.date_of_entry",
+                "patient_info.date_of_leave"));
+        p.setBlockedColumns(Arrays.asList("patient_info.name"));
+        p.setRelationship("patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay");
+        policyRepository.save(p);
+
         Role doctorRole = new Role(0, "ROLE_DOCTOR", new ArrayList<Privilege>());
         Role adminRole = new Role(0, "ROLE_ADMIN", new ArrayList<Privilege>());
 

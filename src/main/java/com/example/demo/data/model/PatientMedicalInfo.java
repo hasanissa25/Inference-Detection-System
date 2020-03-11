@@ -6,11 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.metadata.ClassMetadata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @ToString
@@ -21,8 +23,6 @@ import java.util.List;
 public class PatientMedicalInfo extends SuperTable{
 
     @Column
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patient_medical_info_generator")
-    @SequenceGenerator(name="patient_medical_info_generator", sequenceName = "patient_medical_info_seq")
     private String patientId;
 
     @Column
@@ -34,12 +34,19 @@ public class PatientMedicalInfo extends SuperTable{
     @Transient
     private boolean inference;
 
+    @PrePersist
+    public void initializeUUID() {
+        if (patientId == null) {
+            patientId = (UUID.randomUUID().toString().replace("-", ""));
+        }
+    }
+
 
     @Override
     public String getColumnValue(String col){
         switch(col){
             case "patient_id":
-                return patientId;
+                return String.valueOf(patientId);
             case "length_of_stay":
                 return lengthOfStay;
             case "reason_of_visit":
@@ -75,7 +82,7 @@ public class PatientMedicalInfo extends SuperTable{
 
     @Override
     public String getId() {
-        return patientId;
+        return String.valueOf(patientId);
     }
 
     @Override
