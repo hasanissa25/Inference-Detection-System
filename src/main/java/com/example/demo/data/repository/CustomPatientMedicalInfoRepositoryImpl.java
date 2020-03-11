@@ -21,7 +21,7 @@ public class CustomPatientMedicalInfoRepositoryImpl implements CustomPatientMedi
     private EntityManager entityManager;
  
     @Override
-    public List<PatientMedicalInfo> customSearch(Long patientId, String lengthOfStay, String reasonOfVisit) {
+    public List<PatientMedicalInfo> customSearch(String patientId, String lengthOfStay, String reasonOfVisit) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<PatientMedicalInfo> query = cb.createQuery(PatientMedicalInfo.class);
         Root<PatientMedicalInfo> patientMedicalInfos = query.from(PatientMedicalInfo.class);

@@ -12,13 +12,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-import com.example.demo.data.model.DBLogEntry;
-import com.example.demo.data.model.DBLogEntry2;
-import com.example.demo.data.model.PatientInfo;
-import com.example.demo.data.model.PatientMedicalInfo;
-import com.example.demo.data.model.Policy;
+import com.example.demo.data.model.*;
 
-import com.example.demo.data.model.QueryResult;
 import com.example.demo.data.model.Policy.ResponseObject;
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
@@ -50,6 +45,150 @@ public class InferenceDetectionEngine {
 
     @Autowired
     private PatientlnfoRepository patientlnfoRepository;
+
+
+
+    public <T extends SuperTable> List<T> checkForInference(Class<T> type, List<T> resultList,
+                                                          List<String> tablesAndColumnsAccessed) {
+
+        if (!resultList.isEmpty()) {
+            logger.info("results => " + resultList);
+            logger.info("table columns accessed => " + tablesAndColumnsAccessed);
+            // 1 - First step for the inference detection is to fetch the user
+            String currentUserName = getUser();
+            logger.info("getUser() => " + currentUserName);
+
+            // 2. get policies related to the query
+            List<Policy> policies = policyRepository.findDistinctByInputColumnsInAndBlockedColumnsIn(
+                    tablesAndColumnsAccessed, tablesAndColumnsAccessed);
+            logger.info("get policies, found [" + policies.size() + "] policies => " + policies);
+
+            // 3. record a log of the query performed
+            List<String> values = resultList.stream().map(e -> String.valueOf(e.getId()))
+                    .collect(Collectors.toList());
+            logger.info("values => " + values);
+            DBLogEntry dbLogEntry = new DBLogEntry(null, currentUserName, tablesAndColumnsAccessed, values,
+                    LocalDateTime.now());
+
+            logger.info("recording and saving log => " + dbLogEntry);
+            dbLogEntryRepository.save(dbLogEntry);
+
+            // 4.for each item in the result list check if it causes potential inference
+
+            for (T item : resultList) {
+                item = type.cast(item);
+                // set inference to false
+                item.setInference(false);
+                logger.info(type.toString() + "=> "+ item);
+                for (Policy p : policies) {
+                    // 5. Get the policyInputColumns
+                    List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
+
+                    logger.info("policyInputColumns =>" + policyInputColumns);
+
+                    // 6. Parse the logical relationship of the inputColumns
+                    ResponseObject relationshipData = p.getRelationshipData();
+                    ArrayList<String> policyRelationshipOperands = relationshipData.getOperands();
+                    logger.info("policyRelationshipOperands=>" + policyRelationshipOperands);
+
+                    // ArrayList<String> policyRelationshipOperands = p.getRelationshipOperands();
+                    // Queue<String> policyRelationshipOperators = p.getRelationshipOperators();
+
+                    Queue<String> policyRelationshipOperators = relationshipData.getOperators();
+                    logger.info("policyRelationshipOperators=>" + policyRelationshipOperators);
+
+                    // 7. Check if one of the inputColumns is part of the item in focus of the
+                    // result list
+                    // if so, add the value of that column into the logical relationship
+                    for (String operand : policyRelationshipOperands) {
+                        String col = operand.split("\\.")[1].trim();
+                        String table = operand.split("\\.")[0].trim();
+                        if (table.equals(item.getTableName())) {
+                            policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand),
+                                    item.getColumnValue(col));
+                        }
+                    }
+
+                    // 8. Get the logs that have accessed the policyInputColumns
+                    List<DBLogEntry> logEntries = dbLogEntryRepository
+                            .findDistinctByTablesColumnsAccessedIn(policyInputColumns);
+                    logger.info("logEntries =>" + logEntries);
+
+                    // 9. iterate through each log
+
+                    for (DBLogEntry entry : logEntries) {
+                        logger.info("Log entry=>" + entry);
+                        // get table columns accessed in each log
+                        List<String> tableColumnsFromLog = entry.getTablesColumnsAccessed();
+                        // Ignore logs that are part of the item in focus of the result list, item's
+                        // values have already been added to logical relationship
+                        if (!tableColumnsFromLog.get(0).startsWith(item.getTableName())) {
+                            List<String> operands;
+                            Queue<String> operators;
+                            // 10. loop through each id accessed in the log
+                            for (String id : entry.getIdsAccessed()) {
+                                // list of operands for each id/row accessed
+                                operands = new ArrayList<String>(policyRelationshipOperands);
+                                // queue of operators from the policy relationship
+                                operators = new LinkedList<String>(policyRelationshipOperators);
+                                // 11. loop through each column on the policy input columns
+                                for (String operand : policyRelationshipOperands) {
+                                    // ignore if one of the policy input columns is one of the columns of the item
+                                    // in focus of the result list
+                                    // the values of the item's columns have already been added
+                                    if (!operand.startsWith(item.getTableName())) {
+                                        // 12. if table columns accessed in the log contains one of the input policy
+                                        // columns, add the value of the operand to the list
+                                        if (tableColumnsFromLog.contains(operand)) {
+                                            operands.set(operands.indexOf(operand), queryRepositories(operand, id));
+
+                                        }
+                                    }
+                                }
+
+                                // using the operands and operators for this row, check if there is an inference
+                                // detection
+                                if (isInference(operators, operands)) {
+                                    item.setInference(true);
+
+                                    // Inference Prevention
+                                    Collection<? extends GrantedAuthority> roles = getUserRole();
+
+                                    boolean isAuthorizedToView = false;
+                                    for (GrantedAuthority s : roles){
+                                        if (s.toString().equals("ROLE_ADMIN")) {
+                                            isAuthorizedToView = true;
+                                        }
+                                    }
+                                    // Only block if not admin or doctor
+                                    if (!isAuthorizedToView) {
+                                        // Find the blocked columns and change those values if they match
+                                        List<String> policyBlockedColumns = new ArrayList<>(p.getBlockedColumns());
+                                        for (String blockedColumn : policyBlockedColumns) {
+                                            if (blockedColumn.contains("patient_info")) {
+                                                String column = blockedColumn.split("\\.")[1];
+                                                if (item.getColumnValue(column) != null) {
+                                                    item.setByColumn(column, "Not Authorized");
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            }
+        }
+        return resultList;
+    }
+
+
 
     public List<PatientInfo> checkInferenceForPatientInfo(List<PatientInfo> resultList,
             List<String> tablesAndColumnsAccessed) {
@@ -107,7 +246,7 @@ public class InferenceDetectionEngine {
                         String table = operand.split("\\.")[0].trim();
                         if (table.equals(pi.getTableName())) {
                             policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand),
-                                    pi.getColumn(col));
+                                    pi.getColumnValue(col));
                         }
                     }
 
@@ -169,7 +308,7 @@ public class InferenceDetectionEngine {
                                         for (String blockedColumn : policyBlockedColumns) {
                                             if (blockedColumn.contains("patient_info")) {
                                                 String column = blockedColumn.split("\\.")[1];
-                                                if (pi.getColumn(column) != null) {
+                                                if (pi.getColumnValue(column) != null) {
                                                     pi.setByColumn(column, "Not Authorized");
                                                 }
                                             }
@@ -189,6 +328,8 @@ public class InferenceDetectionEngine {
         }
         return resultList;
     }
+
+
 
     public List<PatientMedicalInfo> checkInferenceForPatientMedicalInfo(List<PatientMedicalInfo> resultList,
             List<String> tablesAndColumnsAccessed) {

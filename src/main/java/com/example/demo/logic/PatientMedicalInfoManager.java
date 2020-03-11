@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 public class PatientMedicalInfoManager {
 
-    
+
     private PatientMedicalInfoRepository patientMedicalnfoRepository;
 
     @Autowired
@@ -27,7 +27,7 @@ public class PatientMedicalInfoManager {
         this.patientMedicalnfoRepository = patientMedicalnfoRepository;
     }
 
-    public List<PatientMedicalInfo> search(Long patientId, String lengthOfStay, String reasonOfVisit) {
+    public List<PatientMedicalInfo> search(String patientId, String lengthOfStay, String reasonOfVisit) {
         List<PatientMedicalInfo> results = null;
         if(patientId == null && StringUtils.isEmpty(lengthOfStay) && StringUtils.isEmpty(reasonOfVisit))
             results = patientMedicalnfoRepository.findAll();

@@ -1,41 +1,45 @@
 package com.example.demo.data.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.metadata.ClassMetadata;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @ToString
 @Data 
-//@EqualsAndHashCode(callSuper=false)
+@DiscriminatorValue("patient_medical_info")
 @NoArgsConstructor
 @AllArgsConstructor
-public class PatientMedicalInfo{// extends Table{
-    @Id 
-    @Column(name = "patientId", updatable = false, nullable = false)
+public class PatientMedicalInfo extends SuperTable{
+
+    @Column
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patient_medical_info_generator")
     @SequenceGenerator(name="patient_medical_info_generator", sequenceName = "patient_medical_info_seq")
-    private Long patientId;
+    private String patientId;
+
+    @Column
     private String lengthOfStay;
-    private String reasonOfVisit; 
+
+    @Column
+    private String reasonOfVisit;
+
     @Transient
     private boolean inference;
 
 
-    // @Override
+    @Override
     public String getColumnValue(String col){
         switch(col){
             case "patient_id":
-                return String.valueOf(patientId);
+                return patientId;
             case "length_of_stay":
                 return lengthOfStay;
             case "reason_of_visit":
@@ -48,7 +52,7 @@ public class PatientMedicalInfo{// extends Table{
     public void setByColumn(String col, String val) {
         switch(col){
             case "patient_id":
-                this.patientId = -1L;   //TODO
+                this.patientId = val;
                 break;
             case "length_of_stay":
                 this.lengthOfStay = val;
@@ -59,14 +63,24 @@ public class PatientMedicalInfo{// extends Table{
         }
     }
 
-    // @Override
+    @Override
     public String getTableName() {
         return "patient_medical_info";
     }
 
-    // @Override
+    @Override
+    public String[] getColumnNames(){
+        return new String[]{"patient_id","length_of_stay","reason_of_visit"};
+    }
+
+    @Override
     public String getId() {
-        return String.valueOf(patientId);
+        return patientId;
+    }
+
+    @Override
+    public void setInference(boolean b){
+        inference = b;
     }
 
 

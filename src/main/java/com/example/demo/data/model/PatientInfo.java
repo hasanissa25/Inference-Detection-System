@@ -1,8 +1,6 @@
 package com.example.demo.data.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,24 +9,26 @@ import lombok.ToString;
 
 @Entity
 @Data
-//@EqualsAndHashCode(callSuper=false)
+@DiscriminatorValue("patient_info")
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class PatientInfo{// extends Table{
+public class PatientInfo extends SuperTable{
 
-    @Id
+    @Column
     private String name;
+    @Column
     private String dateOfEntry;
-    private String dateOfLeave; 
+    @Column
+    private String dateOfLeave;
+    @Column
     private String gender;
     @Transient
     private boolean inference;
 
-   // @Override
-    public String getColumn(String col){
+    @Override
+    public String getColumnValue(String col){
         switch(col){
-
             case "date_of_entry":
                 return dateOfEntry;
             case "date_of_leave":
@@ -59,15 +59,23 @@ public class PatientInfo{// extends Table{
         }
     }
 
-   // @Override
+    @Override
     public String getTableName() {
         return "patient_info";
     }
 
-    // @Override
+    @Override
+    public String[] getColumnNames() {
+        return new String[]{"name", "date_of_entry", "date_of_leave", "gender"};
+    }
+
+    @Override
     public String getId() {
         return name;
     }
 
-    
+    @Override
+    public void setInference(boolean b){
+        inference = b;
+    }
 } 
