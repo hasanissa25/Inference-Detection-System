@@ -322,7 +322,7 @@ public class IFSAdminController {
             m.addAttribute("validationErr", true);
             return "addUser";
         }
-        else if(newUserForm.getAllRoles() == null) {
+        else if(newUserForm.getRole() == null) {
             logger.info("Error - Role is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", true);

@@ -50,11 +50,11 @@
             <input id="lastLoginDate" hidden th:name="lastLoginDate" th:value="${user.lastLoginDate}" />
           </div>
           <div class="form-group">
-            <label for="UserRole">User Roles:</label>
+            <label for="UserRole">User Role:</label>
             <br>
-            <select class="form-control" name="roles" id="roles">
+            <select class="form-control" name="role" id="role">
               <option value="NONE" label="--- Select ---"/>
-              <option th:each="role : ${availableRoles}" th:value="${roles}" th:text="${role.name}"></option>
+              <option th:name="role" th:each="role : ${availableRoles}" th:value="${role.id}" th:text="${role.name}"></option>
             </select>
           </div>
           <button type="submit" class="btn btn-primary" onclick="DoSubmit()">Submit</button>

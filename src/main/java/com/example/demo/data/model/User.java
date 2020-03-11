@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -45,14 +46,14 @@ public class User {
     private LocalDate lastLoginDate;
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinTable( 
         name = "users_roles", 
         joinColumns = @JoinColumn(
           name = "user_id", referencedColumnName = "id"), 
         inverseJoinColumns = @JoinColumn(
           name = "role_id", referencedColumnName = "id")) 
-    private List<Role> roles;
+    private Role role;
     
     public String getUserName() {
       return userName;
@@ -62,8 +63,8 @@ public class User {
       return password;
     }
 
-    public List<Role> getAllRoles() {
-      return roles;
+    public Role getRole() {
+      return role;
     }
     
 }
