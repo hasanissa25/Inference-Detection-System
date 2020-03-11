@@ -52,9 +52,9 @@
           <div class="form-group">
             <label for="UserRole">User Roles:</label>
             <br>
-            <select class="form-control" name="roles" id="">
+            <select class="form-control" name="roles" id="roles">
               <option value="NONE" label="--- Select ---"/>
-              <option th:each="role : ${roles}" th:value="${role}" th:text="${role.name}"></option>
+              <option th:each="role : ${availableRoles}" th:value="${roles}" th:text="${role.name}"></option>
             </select>
           </div>
           <button type="submit" class="btn btn-primary" onclick="DoSubmit()">Submit</button>

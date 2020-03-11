@@ -2,6 +2,7 @@ package com.example.demo.data.model;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,7 +52,7 @@ public class User {
           name = "user_id", referencedColumnName = "id"), 
         inverseJoinColumns = @JoinColumn(
           name = "role_id", referencedColumnName = "id")) 
-    private Collection<Role> roles;
+    private List<Role> roles;
     
     public String getUserName() {
       return userName;
@@ -61,7 +62,7 @@ public class User {
       return password;
     }
 
-    public Collection<Role> getAllRoles() {
+    public List<Role> getAllRoles() {
       return roles;
     }
     

@@ -296,7 +296,7 @@ public class IFSAdminController {
         logger.info("GET addNewUser");
         List<Role> roles = roleManager.getAllRoles();
         m.addAttribute("user", new User());
-        m.addAttribute("roles", roles);
+        m.addAttribute("availableRoles", roles);
         m.addAttribute("validationErr", false);
         return "addUser";
     }
