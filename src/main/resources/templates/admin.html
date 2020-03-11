@@ -56,7 +56,7 @@
                     </td>                    
                     <td>
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <a class="btn btn-primary" href="/editPolicy?policyId=1">   
+                            <a class="btn btn-primary" th:href="@{/editPolicy(policyId=${policy.id})}">   
                                 <span class="fas fa-edit">
                             </a>                            
                             <a class="btn btn-danger" th:href="@{/deletePolicy(policyId=${policy.id})}">
