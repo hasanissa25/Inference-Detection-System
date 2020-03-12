@@ -34,9 +34,14 @@
             </ul>
         </div>
     </div>
+    <div id="policy-err" class="row" th:if="${duplicatePolicy}">
+        <div class="alert">
+            Error: Policy already exists.
+        </div> 
+    </div>
     <div id="validation-err" class="row" th:if="${validationErr}">
         <div class="alert">
-            Error: Input is invalid
+            Error: Server side validation failed
         </div> 
     </div>
      <div class="row">
@@ -47,7 +52,7 @@
                 <p>Input Columns:</p>
                 <div id="input-validation-err" class="row">
                     <div class="alert">
-                            Error: Input is invalid
+                            Error: Input Column cannot be empty
                     </div> 
                 </div>
                 <div id="input-columns">
@@ -78,7 +83,7 @@
                 <p>Blocked Columns:</p>
                 <div id="blocked-validation-err" class="row">
                     <div class="alert">
-                            Error: Input is invalid
+                            Error: Blocked Column cannot be empty
                     </div> 
                 </div>
                 <div id="blocked-columns">
