@@ -56,7 +56,7 @@
             </thead>
             <tbody>
                 <tr th:each="result : ${searchResults}">
-                    <th scope="row" th:text="{result.patientId}" />
+                    <th scope="row" th:text="${result.patientId}" />
                     <td th:text="${result.reasonOfVisit}"/>
                     <td th:text="${result.lengthOfStay}"/>
                     <td th:text="${result.inference} ? 'yes' : 'no'">
