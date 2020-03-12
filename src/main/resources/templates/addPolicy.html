@@ -34,6 +34,11 @@
             </ul>
         </div>
     </div>
+    <div id="policy-err" class="row" th:if="${duplicatePolicy}">
+        <div class="alert">
+            Error: Policy already exists.
+        </div> 
+    </div>
     <div id="validation-err" class="row" th:if="${validationErr}">
         <div class="alert">
             Error: Server side validation failed
