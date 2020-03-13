@@ -12,7 +12,7 @@ public abstract class SuperTable {
     @Column(name = "id", updatable = false, nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "table_generator")
     @SequenceGenerator(name="table_generator", sequenceName = "table_seq")
-    private Long id;
+    protected Long id;
 
 
     public abstract String getTableName();

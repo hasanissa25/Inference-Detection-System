@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CustomPatientMedicalInfoRepository {
     @Query("from PatientMedicalInfo")
-    List<PatientMedicalInfo> customSearch(String patientId, String lengthOfStay, String reasonOfVisit);
-
-    PatientMedicalInfo findByPatientID(String patientId);
+    List<PatientMedicalInfo> customSearch(Long patientId, String lengthOfStay, String reasonOfVisit);
+    @Query("from PatientMedicalInfo")
+    PatientMedicalInfo findById(Long patientId);
 }

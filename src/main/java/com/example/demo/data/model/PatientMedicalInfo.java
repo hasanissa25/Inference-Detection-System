@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.metadata.ClassMetadata;
 
@@ -23,7 +25,7 @@ import java.util.UUID;
 public class PatientMedicalInfo extends SuperTable{
 
     @Column
-    private String patientId;
+    private Long patientId;
 
     @Column
     private String lengthOfStay;
@@ -34,13 +36,13 @@ public class PatientMedicalInfo extends SuperTable{
     @Transient
     private boolean inference;
 
-    @PrePersist
-    public void initializeUUID() {
-        if (patientId == null) {
-            patientId = (UUID.randomUUID().toString().replace("-", ""));
-        }
-    }
-
+//    @OneToOne
+//    private GeneralSequenceNumber number;
+//
+//    @PrePersist
+//    private void setId(){
+//        patientId=number.number;
+//    }
 
     @Override
     public String getColumnValue(String col){
@@ -59,7 +61,7 @@ public class PatientMedicalInfo extends SuperTable{
     public void setByColumn(String col, String val) {
         switch(col){
             case "patient_id":
-                this.patientId = val;
+                this.patientId = Long.valueOf(val);
                 break;
             case "length_of_stay":
                 this.lengthOfStay = val;

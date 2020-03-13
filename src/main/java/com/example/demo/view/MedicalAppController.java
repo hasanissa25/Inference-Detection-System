@@ -79,7 +79,7 @@ public class MedicalAppController {
         List<PatientInfo> results = patientInfoManager.search(patientInfoForm.getName(), patientInfoForm.getDateOfEntry(), patientInfoForm.getDateOfLeave(), patientInfoForm.getGender());
         m.addAttribute("searchResults", results);
         m.addAttribute("patientInfoForm", patientInfoForm);
-        logger.info("Patient Medical Info form results: " + results);
+        logger.info("Patient Info form results: " + results);
         return "patientInfo";
     }
 }

@@ -42,6 +42,12 @@ public class InferenceDetectionEngine {
     @Autowired
     private TableRepository tableRepository;
 
+    private Set<String> allLogTableColumns = new HashSet<>();
+
+    private Set<String> allLogIDAccessed = new HashSet<>();
+
+    private Map<String, Set<String>> columnValuesMap = new HashMap<>();
+
     public <T extends SuperTable> List<T> checkForInference(Class<T> type, List<T> resultList,
                                                           List<String> tablesAndColumnsAccessed) {
 
@@ -88,12 +94,11 @@ public class InferenceDetectionEngine {
                     logger.info("policyRelationshipOperators=>" + policyRelationshipOperators);
 
                     //map tables to their columns & fill in values for policyRelationshipOperand
-                    Map<String, Set<String>> tablesColumns = new HashMap<>();
                     for(String operand : policyRelationshipOperands){
                         String col = operand.split("\\.")[1].trim();
                         String table = operand.split("\\.")[0].trim();
                         if(!table.equals(item.getTableName())) {
-                            if (tablesColumns.get(table) == null) tablesColumns.put(operand, new HashSet<>());
+                            if (columnValuesMap.get(table) == null) columnValuesMap.put(operand, new HashSet<>());
                         }
                         else policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand), item.getColumnValue(col));
                     }
@@ -101,42 +106,39 @@ public class InferenceDetectionEngine {
 
                     // 7. Get the logs that have accessed the policyInputColumns
                     List<DBLogEntry> logEntries = dbLogEntryRepository
-                            .findDistinctByTablesColumnsAccessedIn(policyInputColumns);
+                            .findAll();
                     logger.info("logEntries =>" + logEntries);
 
-                    Set<String> allLogTableColumns = new HashSet<>();
-                    Set<String> allLogIDAccessed = new HashSet<>();
-
-                    // 9. iterate through each log
-                    for (DBLogEntry entry : logEntries) {
-                        logger.info("Log entry=>" + entry);
-                        // get table columns and IDS accessed in each log
-                        allLogTableColumns.addAll(entry.getTablesColumnsAccessed());
-                        allLogIDAccessed.addAll(entry.getIdsAccessed());
-
-                    }
-                    for (String key : tablesColumns.keySet()) {
-                            if (allLogTableColumns.contains(key)) {
-                                for (String id : allLogIDAccessed) {
-                                    String result = queryRepositories(key, id);
-                                    tablesColumns.get(key).add(result);
-                                }
+                    // 9. iterate through log
+                    DBLogEntry entry = logEntries.get(logEntries.size()-1);
+                    logger.info("columnValues=>" + columnValuesMap.keySet());
+                    for(String column : columnValuesMap.keySet()){
+                        if(entry.getTablesColumnsAccessed().contains(column)){
+                            for (String id : entry.getIdsAccessed()) {
+                                String result = queryRepositories(column, id);
+                                logger.info("Result => " + result);
+                                columnValuesMap.get(column).add(result);
+                                logger.info("tableColumn: " + columnValuesMap.get(column));
                             }
+                        }
+
                     }
+
+
 
                     boolean flag = true;
                     while(flag){
                         List<String> operands = new ArrayList<String>(policyRelationshipOperands);
                         Queue<String> operators = new LinkedList<String>(policyRelationshipOperators);
 
-                        for(Map.Entry<String, Set<String>> entry : tablesColumns.entrySet()) {
-                            if(entry.getValue().size() == 0){
+                        for(Map.Entry<String, Set<String>> e : columnValuesMap.entrySet()) {
+                            if(e.getValue().size() == 0){
                                 flag = false;
                                 break;
                             }
                             else {
-                                operands.set(operands.indexOf(entry.getKey()), new ArrayList<String>(entry.getValue()).get(0));
-                                entry.getValue().remove(new ArrayList<String>(entry.getValue()).get(0));
+                                operands.set(operands.indexOf(e.getKey()), new ArrayList<String>(e.getValue()).get(0));
+                                e.getValue().remove(new ArrayList<String>(e.getValue()).get(0));
                             }
                         }
                             // using the operands and operators for this row, check if there is an inference
@@ -202,41 +204,42 @@ public class InferenceDetectionEngine {
         logger.info("id queried:"+id);
         String col = tableCol.split("\\.")[1].trim();
         String table = tableCol.split("\\.")[0].trim();
-        switch(table){
-            
+
+        switch(table) {
+
             case "patient_info":
-            
-            switch(col){
-                case "name":
-                return patientlnfoRepository.findByName(id).getName();
-                case "date_of_entry":
-                return patientlnfoRepository.findByName(id).getDateOfEntry();
-                case "date_of_leave":
-                return patientlnfoRepository.findByName(id).getDateOfLeave();
-                case "gender":
-                return patientlnfoRepository.findByName(id).getGender();
-                
-                default:
-                return null;
-            }
-            
+
+                switch (col) {
+                    case "name":
+                        return patientlnfoRepository.findByName(id).getName();
+                    case "date_of_entry":
+                        return patientlnfoRepository.findByName(id).getDateOfEntry();
+                    case "date_of_leave":
+                        return patientlnfoRepository.findByName(id).getDateOfLeave();
+                    case "gender":
+                        return patientlnfoRepository.findByName(id).getGender();
+
+                    default:
+                        return null;
+                }
+
             case "patient_medical_info":
-            
-            switch(col){
-                case "patient_id":
-                return patientMedicallnfoRepository.findByPatientID(id).getPatientId().toString();
-                case "length_of_stay":
-                return patientMedicallnfoRepository.findByPatientID(id).getLengthOfStay();
-                case "reason_of_visit":
-                return patientMedicallnfoRepository.findByPatientID(id).getReasonOfVisit();
-                default:
-                return null;
-            }
-            
+
+                switch (col) {
+                    case "patient_id":
+                        return patientMedicallnfoRepository.findById(Long.valueOf(id)).getPatientId().toString();
+                    case "length_of_stay":
+                        return patientMedicallnfoRepository.findById(Long.valueOf(id)).getLengthOfStay();
+                    case "reason_of_visit":
+                        return patientMedicallnfoRepository.findById(Long.valueOf(id)).getReasonOfVisit();
+                    default:
+                        return null;
+                }
+
             default:
-            return null;
-            
+                return null;
         }
+
         
     }
     

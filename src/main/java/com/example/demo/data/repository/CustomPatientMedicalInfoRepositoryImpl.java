@@ -22,12 +22,12 @@ public class CustomPatientMedicalInfoRepositoryImpl implements CustomPatientMedi
     private EntityManager entityManager;
  
     @Override
-    public List<PatientMedicalInfo> customSearch(String patientId, String lengthOfStay, String reasonOfVisit) {
+    public List<PatientMedicalInfo> customSearch(Long patientId, String lengthOfStay, String reasonOfVisit) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<PatientMedicalInfo> query = cb.createQuery(PatientMedicalInfo.class);
         Root<PatientMedicalInfo> patientMedicalInfos = query.from(PatientMedicalInfo.class);
  
-        Path<String> patientIdPath = patientMedicalInfos.get("patientId");
+        Path<Long> patientIdPath = patientMedicalInfos.get("patientId");
         Path<String> reasonOfVisitPath = patientMedicalInfos.get("reasonOfVisit");
         Path<String> lengthOfStayPath = patientMedicalInfos.get("lengthOfStay");
  
@@ -46,23 +46,25 @@ public class CustomPatientMedicalInfoRepositoryImpl implements CustomPatientMedi
             .getResultList();
     }
 
+
     @Override
-    public PatientMedicalInfo findByPatientID(String patientId) {
+    public PatientMedicalInfo findById(Long patientId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<PatientMedicalInfo> query = cb.createQuery(PatientMedicalInfo.class);
         Root<PatientMedicalInfo> patientMedicalInfos = query.from(PatientMedicalInfo.class);
 
-        Path<String> patientIdPath = patientMedicalInfos.get("patientId");
+        Path<Long> patientIdPath = patientMedicalInfos.get("patientId");
+
 
         List<Predicate> predicates = new ArrayList<>();
         if(patientId != null)
             predicates.add(cb.equal(patientIdPath, patientId));
+
 
         query.select(patientMedicalInfos)
                 .where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 
         return entityManager.createQuery(query).getSingleResult();
     }
-
 
 }
