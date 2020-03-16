@@ -430,28 +430,33 @@ public class IFSAdminController {
     @PostMapping("/addUser")
     public String addUser(@ModelAttribute User newUserForm, Model m, HttpServletResponse servletResponse) {
         logger.info("User Form: " + newUserForm);
+        List<Role> roles = roleManager.getAllRoles();
         if (newUserForm == null) {
             logger.info("Error - Form is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "Cannot submit empty form");
+            m.addAttribute("availableRoles", roles);
             return "addUser";
         }
         else if(newUserForm.getUserName().isEmpty() || newUserForm.getPassword().isEmpty()) {
             logger.info("Error - User Name or Password is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "User Name or Password is empty");
+            m.addAttribute("availableRoles", roles);
             return "addUser";
         }
         else if(newUserForm.getUserName().trim().length() == 0 || newUserForm.getPassword().trim().length() == 0) {
             logger.info("Error - User Name or Password only contains spaces");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", " User Name or Password only contains spaces");
+            m.addAttribute("availableRoles", roles);
             return "addUser";
         }
         else if(newUserForm.getRole() == null) {
             logger.info("Error - Role is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "Role is empty");
+            m.addAttribute("availableRoles", roles);
             return "addUser";
         }
         newUserForm.setPassword(passwordencoder.encode(newUserForm.getPassword()));
@@ -467,9 +472,11 @@ public class IFSAdminController {
     @GetMapping("/editUser")
     public String editUser(@RequestParam(name="userId") int userId , Model m) {
         logger.info("Editing User ID: " + userId);
+        List<Role> roles = roleManager.getAllRoles();
         Optional<User> user = userManager.getUserById(userId);
         m.addAttribute("validationErr", false);
         m.addAttribute("user", user.get());
+        m.addAttribute("availableRoles", roles);
         return "editUser";
     }
 
@@ -477,22 +484,26 @@ public class IFSAdminController {
     public String saveUser(@RequestParam(name="userId") int userId, @ModelAttribute User userForm, Model m, HttpServletResponse servletResponse) {
         logger.info("Saving User ID: " + userId);
         logger.info("User Form: " + userForm);
+        List<Role> roles = roleManager.getAllRoles();
         if (userForm == null) {
             logger.info("Error - Form is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "Form is empty");
+            m.addAttribute("availableRoles", roles);
             return "editUser";
         }
         else if(userForm.getUserName().isEmpty() || userForm.getPassword().isEmpty()) {
             logger.info("Error - User Name or Password is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "User Name or Password is empty");
+            m.addAttribute("availableRoles", roles);
             return "editUser";
         }
         else if(userForm.getUserName().trim().length() == 0 || userForm.getPassword().trim().length() == 0) {
             logger.info("Error - User Name or Password only contains spaces");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "User Name or Password only contains spaces");
+            m.addAttribute("availableRoles", roles);
             return "editUser";
         }
         userForm.setPassword(passwordencoder.encode(userForm.getPassword()));
@@ -504,8 +515,9 @@ public class IFSAdminController {
     public String removeUser(@RequestParam(name="userId") int userId , Model m, HttpServletResponse servletResponse) {
         logger.info("Removing User ID: " + userId);
         if (userId < 0 || userId > 999) {
-            logger.info("Error - Policy ID value error");
+            logger.info("Error - User ID value error");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            m.addAttribute("validationErr", "User ID value error");
             return "redirect:/users";
         }
         userManager.removeUser(userId);
