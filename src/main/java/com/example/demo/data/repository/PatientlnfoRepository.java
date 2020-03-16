@@ -9,5 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PatientlnfoRepository extends JpaRepository<PatientInfo, Long> {
 
 	List<PatientInfo> findByNameIgnoreCaseOrDateOfEntryOrDateOfLeaveOrGenderIgnoreCase(String patientName, String dateOfEntry,
-			String dateOfLeave, String gender);
+            String dateOfLeave, String gender);
+            
+    PatientInfo findByName(String patientName);
 }
