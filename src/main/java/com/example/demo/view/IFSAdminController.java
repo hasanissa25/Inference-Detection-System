@@ -14,6 +14,7 @@ import com.example.demo.data.model.Policy;
 import com.example.demo.data.model.Role;
 import com.example.demo.data.model.User;
 import com.example.demo.data.repository.DBLogEntryRepository;
+import com.example.demo.data.repository.UserRepository;
 import com.example.demo.logic.PolicyManager;
 import com.example.demo.logic.RoleManager;
 import com.example.demo.logic.UserManager;
@@ -431,6 +432,11 @@ public class IFSAdminController {
     public String addUser(@ModelAttribute User newUserForm, Model m, HttpServletResponse servletResponse) {
         logger.info("User Form: " + newUserForm);
         List<Role> roles = roleManager.getAllRoles();
+        List<User> users = userManager.getAllUsers();
+        String userName = newUserForm.getUserName();
+        String userPassword = newUserForm.getPassword();
+        Role userRole = newUserForm.getRole();
+
         if (newUserForm == null) {
             logger.info("Error - Form is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -438,27 +444,46 @@ public class IFSAdminController {
             m.addAttribute("availableRoles", roles);
             return "addUser";
         }
-        else if(newUserForm.getUserName().isEmpty() || newUserForm.getPassword().isEmpty()) {
+        else if(userName.isEmpty() || userPassword.isEmpty()) {
             logger.info("Error - User Name or Password is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", "User Name or Password is empty");
             m.addAttribute("availableRoles", roles);
             return "addUser";
         }
-        else if(newUserForm.getUserName().trim().length() == 0 || newUserForm.getPassword().trim().length() == 0) {
+        else if(userName.trim().length() == 0 || userPassword.trim().length() == 0) {
             logger.info("Error - User Name or Password only contains spaces");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", " User Name or Password only contains spaces");
             m.addAttribute("availableRoles", roles);
             return "addUser";
         }
-        else if(newUserForm.getRole() == null) {
+        else if(userRole == null) {
             logger.info("Error - Role is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", "Role is empty");
             m.addAttribute("availableRoles", roles);
             return "addUser";
         }
+        else if(!roles.contains(userRole)) {
+            logger.info("Error - Role does not exists");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            m.addAttribute("validationErr", "Role does not exists");
+            m.addAttribute("availableRoles", roles);
+            return "addUser";
+        }
+        else {
+            for (User user : users) {
+                if(user.getUserName().equalsIgnoreCase(userName)) {
+                    logger.info("Error - Duplicate users");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", "Duplicate users");
+                    m.addAttribute("availableRoles", roles);
+                    return "addUser";
+                }
+            }
+        }
+        
         newUserForm.setPassword(passwordencoder.encode(newUserForm.getPassword()));
         userManager.saveUserInfo(newUserForm);
         return "redirect:/users";
@@ -485,6 +510,11 @@ public class IFSAdminController {
         logger.info("Saving User ID: " + userId);
         logger.info("User Form: " + userForm);
         List<Role> roles = roleManager.getAllRoles();
+        List<User> users = userManager.getAllUsers();
+        String userName = userForm.getUserName();
+        String userPassword = userForm.getPassword();
+        Role userRole = userForm.getRole();
+
         if (userForm == null) {
             logger.info("Error - Form is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -492,19 +522,37 @@ public class IFSAdminController {
             m.addAttribute("availableRoles", roles);
             return "editUser";
         }
-        else if(userForm.getUserName().isEmpty() || userForm.getPassword().isEmpty()) {
+        else if(userName.isEmpty() || userPassword.isEmpty()) {
             logger.info("Error - User Name or Password is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", "User Name or Password is empty");
             m.addAttribute("availableRoles", roles);
             return "editUser";
         }
-        else if(userForm.getUserName().trim().length() == 0 || userForm.getPassword().trim().length() == 0) {
+        else if(userName.trim().length() == 0 || userPassword.trim().length() == 0) {
             logger.info("Error - User Name or Password only contains spaces");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", "User Name or Password only contains spaces");
             m.addAttribute("availableRoles", roles);
             return "editUser";
+        }
+        else if(!roles.contains(userRole)) {
+            logger.info("Error - Role does not exists");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            m.addAttribute("validationErr", "Role does not exists");
+            m.addAttribute("availableRoles", roles);
+            return "addUser";
+        }
+        else {
+            for (User user : users) {
+                if(user.getUserName().equalsIgnoreCase(userName)) {
+                    logger.info("Error - Duplicate users");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", "Duplicate users");
+                    m.addAttribute("availableRoles", roles);
+                    return "addUser";
+                }
+            }
         }
         userForm.setPassword(passwordencoder.encode(userForm.getPassword()));
         userManager.saveUserInfo(userForm);
