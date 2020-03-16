@@ -1,8 +1,11 @@
 package com.example.demo.view;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -122,11 +125,32 @@ public class IFSAdminController {
                 m.addAttribute("validationErr", true);
                 return "addPolicy";
             }
+            Set<String> set = new HashSet<String>();
+            for (String each: newPolicyForm.getInputColumns()) {
+                if (!set.add(each)){
+                    logger.info("Error - Duplicate Input Columns");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", true);
+                    return "addPolicy";
+                } 
+            }
+
+
             if (newPolicyForm.getBlockedColumns() == null || newPolicyForm.getBlockedColumns().contains("NONE") || newPolicyForm.getBlockedColumns().isEmpty() || newPolicyForm.getBlockedColumns().contains(null) || newPolicyForm.getBlockedColumns().contains("")) {
                 logger.info("Error - Empty Blocked Columns");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 return "addPolicy";
+            }
+
+            Set<String> set2 = new HashSet<String>();
+            for (String each: newPolicyForm.getBlockedColumns()) {
+                if (!set2.add(each)){
+                    logger.info("Error - Duplicate Blocked Columns");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", true);
+                    return "addPolicy";
+                } 
             }
 
             if (newPolicyForm.getRelationship() == null || newPolicyForm.getRelationship().isEmpty() || newPolicyForm.getRelationship().length() == 0) {
@@ -157,6 +181,46 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     return "addPolicy";
+                }
+            }
+
+            //Check if policy already exists
+            List<Policy> policies = policyManager.getAllPolicies();
+            for(Policy policy : policies) {
+                if(policy.getRelationship().equals(newPolicyForm.getRelationship())){
+                    if(newPolicyForm.getInputColumns().size() == policy.getInputColumns().size()){
+                        boolean sameInputColumns = true;
+                        boolean sameBlockedColumns = true;
+                        for(String inputCol: newPolicyForm.getInputColumns()) {
+                            logger.info("input col: " + inputCol);
+                            logger.info("policy input cols: " + policy.getInputColumns());
+                            if (!policy.getInputColumns().contains(inputCol)) {
+                                //Different
+                                logger.info("different input column");
+                                sameInputColumns = false;
+                                break;
+                            }
+                        }
+
+                        if (newPolicyForm.getBlockedColumns().size() == policy.getBlockedColumns().size()) {
+                            if (sameInputColumns == true) {
+                                for(String blockedCol: newPolicyForm.getBlockedColumns()) {
+                                    logger.info("blocked col: " + blockedCol);
+                                    if (!policy.getBlockedColumns().contains(blockedCol)) {
+                                        //Different
+                                        logger.info("different blocked column");
+                                        sameBlockedColumns = false;
+                                        break;
+                                    }
+                                }
+                                if (sameBlockedColumns == true) {
+                                    logger.info("Error - Policy already exists");
+                                    m.addAttribute("duplicatePolicy", true);
+                                    return "addPolicy";
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -216,6 +280,17 @@ public class IFSAdminController {
                 m.addAttribute("policy", policy.get());
                 return "editPolicy";
             }
+
+            Set<String> set = new HashSet<String>();
+            for (String each: policyForm.getInputColumns()) {
+                if (!set.add(each)){
+                    logger.info("Error - Duplicate Input Columns");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", true);
+                    return "editPolicy";
+                } 
+            }
+
             if (policyForm.getBlockedColumns() == null || policyForm.getBlockedColumns().contains("NONE") || policyForm.getBlockedColumns().isEmpty() || policyForm.getBlockedColumns().contains(null) || policyForm.getBlockedColumns().contains("")) {
                 logger.info("Error - Empty Blocked Columns");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -224,6 +299,17 @@ public class IFSAdminController {
                 m.addAttribute("policy", policy.get());
                 return "editPolicy";
             }
+
+            Set<String> set2 = new HashSet<String>();
+            for (String each: policyForm.getBlockedColumns()) {
+                if (!set2.add(each)){
+                    logger.info("Error - Duplicate Blocked Columns");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", true);
+                    return "editPolicy";
+                } 
+            }
+
             if (policyForm.getRelationship() == null || policyForm.getRelationship().isEmpty() || policyForm.getRelationship().length() == 0) {
                 logger.info("Error - Empty Relationship");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -252,11 +338,51 @@ public class IFSAdminController {
                     logger.info("Error - Relationship has invalid columns");
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
-                    return "addPolicy";
+                    return "editPolicy";
                 }
                 
             }
 
+            //Check if policy already exists
+            List<Policy> policies = policyManager.getAllPolicies();
+            for(Policy policy : policies) {
+                if(policy.getRelationship().equals(policyForm.getRelationship())){
+                    if(policyForm.getInputColumns().size() == policy.getInputColumns().size()){
+                        boolean sameInputColumns = true;
+                        boolean sameBlockedColumns = true;
+                        for(String inputCol: policyForm.getInputColumns()) {
+                            logger.info("input col: " + inputCol);
+                            logger.info("policy input cols: " + policy.getInputColumns());
+                            if (!policy.getInputColumns().contains(inputCol)) {
+                                //Different
+                                logger.info("different input column");
+                                sameInputColumns = false;
+                                break;
+                            }
+                        }
+
+                        if (policyForm.getBlockedColumns().size() == policy.getBlockedColumns().size()) {
+                            if (sameInputColumns == true) {
+                                for(String blockedCol: policyForm.getBlockedColumns()) {
+                                    logger.info("blocked col: " + blockedCol);
+                                    if (!policy.getBlockedColumns().contains(blockedCol)) {
+                                        //Different
+                                        logger.info("different blocked column");
+                                        sameBlockedColumns = false;
+                                        break;
+                                    }
+                                }
+                                if (sameBlockedColumns == true) {
+                                    logger.info("Error - Policy already exists");
+                                    m.addAttribute("duplicatePolicy", true);
+                                    return "editPolicy";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
             logger.info("Editing Policy ID: " + policyId);
             logger.info("Policy Form: " + policyForm);
             policyManager.savePolicy(policyForm);
