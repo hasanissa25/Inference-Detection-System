@@ -71,5 +71,9 @@ public class PatientMedicalInfo{// extends Table{
         return String.valueOf(patientId);
     }
 
+    public void setInference(boolean b){
+        this.inference=b;
+    }
+
 
 } 

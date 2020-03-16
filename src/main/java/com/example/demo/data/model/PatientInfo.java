@@ -26,7 +26,7 @@ public class PatientInfo{// extends Table{
     private boolean inference;
 
    // @Override
-    public String getColumn(String col){
+    public String getColumnValue(String col){
         switch(col){
 
             case "date_of_entry":
@@ -69,5 +69,9 @@ public class PatientInfo{// extends Table{
         return name;
     }
 
-    
+    public void setInference(boolean b){
+        this.inference=b;
+    }
+
+
 } 
