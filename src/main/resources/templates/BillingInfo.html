@@ -17,6 +17,9 @@
                 <a class="nav-link" href="/patientMedicalInfo">Patient Medical Info</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="/patientInfo">Patient Info</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link active" href="/BillingInfo">Billing Info</a>
             </li>
             </ul>
@@ -27,15 +30,15 @@
         <div class="card-body">
    <form action="#" th:action="@{/BillingInfo}"  th:object="${BillingInfoForm}" method="post">        
      <div class="form-group">
-      <label for="AccountNumber">Account Number:</label>
+      <label>Account Number:</label>
       <input type="number" class="form-control" th:field="*{AccountNumber}">
      </div>
          <div class="form-group">
-    <label for="PatientAddress">Date of Entry:</label>
+    <label>Date of Entry:</label>
     <input type="text" class="form-control" th:field="*{PatientAddress}">
   </div>
     <div class="form-group">
-    <label for="TotalMedicalCost">Date of Leave:</label>
+    <label>Date of Leave:</label>
     <input type="number" class="form-control" th:field="*{TotalMedicalCost}">
   </div>
    <button type="submit" class="btn btn-primary mb-2 btn-lg btn-block">Search</button>

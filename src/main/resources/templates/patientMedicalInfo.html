@@ -19,6 +19,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="/patientInfo">Patient Info</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/BillingInfo">Billing Info</a>
+            </li>
             </ul>
         </div>
     </div>
@@ -27,19 +30,19 @@
         <div class="card-body">
    <form action="#" th:action="@{/patientMedicalInfo}"  th:object="${patientMedicalInfoForm}" method="post">        
      <div class="form-group">
-      <label for="patientId">Patient ID:</label>
+      <label>Patient ID:</label>
       <input type="number" class="form-control" th:field="*{patientId}"  >
      </div>
          <div class="form-group">
-    <label for="reasonOfVisit">Reason of Visit:</label>
+    <label>Reason of Visit:</label>
     <input type="text" class="form-control" th:field="*{reasonOfVisit}">
   </div>
     <div class="form-group">
-    <label for="lengthOfStay">Length of Stay:</label>
+    <label>Length of Stay:</label>
     <input type="text" class="form-control" th:field="*{lengthOfStay}">
   </div>
   <div class="form-group">
-    <label for="dailyMedicalCost">Gender:</label>
+    <label>Gender:</label>
     <input type="number" class="form-control" th:field="*{dailyMedicalCost}">
   </div>
    <button type="submit" class="btn btn-primary mb-2 btn-lg btn-block">Search</button>
