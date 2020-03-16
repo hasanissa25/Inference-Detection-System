@@ -12,4 +12,6 @@ public interface PatientlnfoRepository extends JpaRepository<PatientInfo, Long> 
             String dateOfLeave, String gender);
             
     PatientInfo findByName(String patientName);
+
+
 }
