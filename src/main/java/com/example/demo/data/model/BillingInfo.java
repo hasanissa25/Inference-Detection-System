@@ -80,8 +80,8 @@ public class BillingInfo{// extends Table{
                 return String.valueOf(accountNumber);
             case "patient_address":
                 return patientAddress;
-            // case "total_medical_costs":
-            //     return totalMedicalCosts;
+            case "total_medical_costs":
+                return String.valueOf(totalMedicalCosts);
             default:
                 return null;
         }
@@ -95,9 +95,9 @@ public class BillingInfo{// extends Table{
             case "patient_address":
                 this.patientAddress = val;
                 break;
-            // case "total_medical_costs":
-            //     this.totalMedicalCosts = val;
-            //     break;
+            case "total_medical_costs":
+                this.totalMedicalCosts = Integer.parseInt(val);
+                break;
         }
     }
 

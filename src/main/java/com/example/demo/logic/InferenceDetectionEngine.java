@@ -112,7 +112,7 @@
 //                         String table = operand.split("\\.")[0].trim();
 //                         if (table.equals(pi.getTableName())) {
 //                             policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand),
-//                                     pi.getColumn(col));
+//                                     pi.getColumnValue(col));
 //                         }
 //                     }
 
@@ -174,7 +174,7 @@
 //                                         for (String blockedColumn : policyBlockedColumns) {
 //                                             if (blockedColumn.contains("patient_info")) {
 //                                                 String column = blockedColumn.split("\\.")[1];
-//                                                 if (pi.getColumn(column) != null) {
+//                                                 if (pi.getColumnValue(column) != null) {
 //                                                     pi.setByColumn(column, "Not Authorized");
 //                                                 }
 //                                             }

@@ -41,6 +41,8 @@ public class PatientMedicalInfo{// extends Table{
                 return lengthOfStay;
             case "reason_of_visit":
                 return reasonOfVisit;
+            case "daily_medical_cost":
+                return String.valueOf(dailyMedicalCost);
             default:
                 return null;
         }
@@ -56,6 +58,9 @@ public class PatientMedicalInfo{// extends Table{
                 break;
             case "reason_of_visit":
                 this.reasonOfVisit = val;
+                break;
+            case "daily_medical_cost":
+                this.dailyMedicalCost = Integer.parseInt(val);
                 break;
         }
     }
