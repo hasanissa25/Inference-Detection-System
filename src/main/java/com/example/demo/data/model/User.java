@@ -2,6 +2,7 @@ package com.example.demo.data.model;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -44,13 +46,25 @@ public class User {
     private LocalDate lastLoginDate;
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinTable( 
         name = "users_roles", 
         joinColumns = @JoinColumn(
           name = "user_id", referencedColumnName = "id"), 
         inverseJoinColumns = @JoinColumn(
           name = "role_id", referencedColumnName = "id")) 
-    private Collection<Role> roles;
+    private Role role;
+    
+    public String getUserName() {
+      return userName;
+    }
+
+    public String getPassword() {
+      return password;
+    }
+
+    public Role getRole() {
+      return role;
+    }
     
 }

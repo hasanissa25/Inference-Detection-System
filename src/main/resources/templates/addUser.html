@@ -3,9 +3,16 @@
 <head>
 <th:block th:include="fragments/common.html :: htmlheader"></th:block>
 </head>
+<style>
+  .alert {
+      background-color: #f44336;
+      color: white;
+      width: 100%;
+      margin: 10px;
+  }
+</style>
 <body>
   <header th:replace="fragments/common.html :: header"></header>
-
   <main class="container" role="main">
     <div class="row">
       <div class="col">
@@ -22,6 +29,11 @@
         </ul>
       </div>
     </div>
+      <div class="row" th:if="${validationErr}">
+        <div class="alert">
+            Error: Input is invalid
+        </div> 
+    </div>
     <div class="row">
       <div class="col">
         <h1>Add a New User:</h1>
@@ -37,8 +49,16 @@
             <input id="creationDate" hidden th:name="creationDate" th:value="${user.creationDate}" />
             <input id="lastLoginDate" hidden th:name="lastLoginDate" th:value="${user.lastLoginDate}" />
           </div>
+          <div class="form-group">
+            <label for="UserRole">User Role:</label>
+            <br>
+            <select class="form-control" name="role" id="role">
+              <option value="NONE" label="--- Select ---"/>
+              <option th:name="role" th:each="role : ${availableRoles}" th:value="${role.id}" th:text="${role.name}"></option>
+            </select>
+          </div>
           <button type="submit" class="btn btn-primary" onclick="DoSubmit()">Submit</button>
-          <a class="btn btn-primary" href="/users">Go Back</a>
+          <a class="btn btn-primary" href="/users" onclick="return confirm('Are you sure you want to withdraw all the changes?')">Go Back</a>
         </form>
       </div>
     </div>

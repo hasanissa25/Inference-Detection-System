@@ -108,21 +108,21 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
                 new BillingInfo("85725", "523 Menpearl St", 0, false),
                 new BillingInfo("85726", "2 Brysonmount Dr", 0, false),
                 new BillingInfo("85727", "4488 Tonsinville Way", 10500, false)));
-
+                
         Role doctorRole = new Role(0, "ROLE_DOCTOR", new ArrayList<Privilege>());
         Role adminRole = new Role(0, "ROLE_ADMIN", new ArrayList<Privilege>());
 
         roleRepository.saveAll(Arrays.asList(doctorRole, adminRole));
 
         List<User> users = new ArrayList<>();
-        users.add(new User(1, "hasan", LocalDate.now(), null, passwordEncoder.encode("hasan"), Arrays.asList(adminRole)));
-        users.add(new User(2, "ryan", LocalDate.now(), null, passwordEncoder.encode("ryan"), Arrays.asList(adminRole)));
-        users.add(new User(3, "jason", LocalDate.now(), null, passwordEncoder.encode("jason"),Arrays.asList(doctorRole)));
-        users.add(new User(4, "sasha", LocalDate.now(), null, passwordEncoder.encode("sasha"),Arrays.asList(adminRole)));
-        users.add(new User(5, "tashfiq", LocalDate.now(), null, passwordEncoder.encode("tashfiq"),Arrays.asList(adminRole)));
-        users.add(new User(6, "calvin", LocalDate.now(), null, passwordEncoder.encode("calvin"),Arrays.asList(adminRole)));
-        users.add(new User(7, "admin", LocalDate.now(), null, passwordEncoder.encode("admin"),Arrays.asList(adminRole)));
-        users.add(new User(8, "user", LocalDate.now(), null, passwordEncoder.encode("user"),Arrays.asList(doctorRole)));
+        users.add(new User(1, "hasan", LocalDate.now(), null, passwordEncoder.encode("hasan"), adminRole));
+        users.add(new User(2, "ryan", LocalDate.now(), null, passwordEncoder.encode("ryan"), adminRole));
+        users.add(new User(3, "jason", LocalDate.now(), null, passwordEncoder.encode("jason"),doctorRole));
+        users.add(new User(4, "sasha", LocalDate.now(), null, passwordEncoder.encode("sasha"),adminRole));
+        users.add(new User(5, "tashfiq", LocalDate.now(), null, passwordEncoder.encode("tashfiq"),adminRole));
+        users.add(new User(6, "calvin", LocalDate.now(), null, passwordEncoder.encode("calvin"),adminRole));
+        users.add(new User(7, "admin", LocalDate.now(), null, passwordEncoder.encode("admin"),adminRole));
+        users.add(new User(8, "user", LocalDate.now(), null, passwordEncoder.encode("user"),doctorRole));
         userRepository.saveAll(users);
 
         alreadySetup = true;
