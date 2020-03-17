@@ -541,16 +541,16 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", "Role does not exists");
             m.addAttribute("availableRoles", roles);
-            return "addUser";
+            return "editUser";
         }
         else {
             for (User user : users) {
-                if(user.getUserName().equalsIgnoreCase(userName)) {
+                if(user.getUserName().equalsIgnoreCase(userName) && user.getUserId() != userId) {
                     logger.info("Error - Duplicate users");
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", "Duplicate users");
                     m.addAttribute("availableRoles", roles);
-                    return "addUser";
+                    return "editUser";
                 }
             }
         }
