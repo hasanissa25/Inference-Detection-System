@@ -64,8 +64,8 @@ import lombok.ToString;
 public class BillingInfo{// extends Table{
     @Id 
     @Column(name = "AccountNumber", updatable = false, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "billing_info_generator")
-    @SequenceGenerator(name="billing_info_generator", sequenceName = "billing_info_seq")
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "billing_info_generator")
+    //@SequenceGenerator(name="billing_info_generator", sequenceName = "billing_info_seq")
     private String accountNumber;
     private String patientAddress; 
     private Integer totalMedicalCosts; 
