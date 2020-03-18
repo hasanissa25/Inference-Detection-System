@@ -41,7 +41,8 @@
     </div>
     <div id="validation-err" class="row" th:if="${validationErr}">
         <div class="alert">
-            Error: Server side validation failed
+            <p th:text="${errMessage}">
+            <!-- Error: Server side validation failed -->
         </div> 
     </div>
      <div class="row">
