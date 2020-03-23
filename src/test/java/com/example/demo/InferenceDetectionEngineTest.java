@@ -1,7 +1,8 @@
-/*
+
 
 package com.example.demo;
 
+import com.example.demo.config.GlobalConfiguration;
 import com.example.demo.config.LoadData;
 import com.example.demo.data.model.PatientInfo;
 import com.example.demo.data.model.PatientMedicalInfo;
@@ -12,14 +13,25 @@ import com.example.demo.data.repository.PolicyRepository;
 import com.example.demo.logic.PatientInfoManager;
 import com.example.demo.logic.PatientMedicalInfoManager;
 import com.example.demo.logic.PolicyManager;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -29,7 +41,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes={DemoApplication.class})
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={
+        "file:src/main/java/com/example/demo/config/LoadData"
+})
 public class InferenceDetectionEngineTest {
 
     @Autowired
@@ -41,38 +56,45 @@ public class InferenceDetectionEngineTest {
     @Autowired
     private PatientlnfoRepository patientInfoRepository;
 
+    @Autowired
     private PatientInfoManager pi;
 
+    @Autowired
     private PatientMedicalInfoManager pmi;
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     private static final Logger log = LoggerFactory.getLogger(InferenceDetectionEngineTest.class);
 
 
-    @Bean
-    public PatientMedicalInfoManager PatientMedicalInfoManager(
-            PatientMedicalInfoRepository patientMedicalInfoRepository) {
-        return new PatientMedicalInfoManager(patientMedicalInfoRepository);
-    }
+    @Before
+    public void before(){
 
-    @Bean
-    public PatientInfoManager patientInfoManager(PatientlnfoRepository patientInfoRepository) {
-        return new PatientInfoManager(patientInfoRepository);
-    }
 
-    @Test
-    public void noPolicy() {
-        patientMedicalInfoRepository.saveAll(Arrays.asList(
-                new PatientMedicalInfo(null, "TBD", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "3", "Brain Aneurysm",false),
-                new PatientMedicalInfo(null, "4", "Brain Aneurysm",false)));
+        pi = new PatientInfoManager(patientInfoRepository);
+        pmi = new PatientMedicalInfoManager(patientMedicalInfoRepository);
+
 
         patientInfoRepository.saveAll(Arrays.asList(
                 new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
                 new PatientInfo("Mary Jane", "Oct 22, 2014", "Oct 31, 2014", "F", false),
                 new PatientInfo("Patty Patterson", "Oct 24, 2014", "Oct 31, 2014", "F", false)));
 
-        pi = patientInfoManager(patientInfoRepository);
-        pmi = PatientMedicalInfoManager(patientMedicalInfoRepository);
+
+
+        patientMedicalInfoRepository.saveAll(Arrays.asList(
+                new PatientMedicalInfo(1L, "TBD", "Cardiac Arrest", false),
+                new PatientMedicalInfo(2L, "3", "Brain Aneurysm",false),
+                new PatientMedicalInfo(3L, "4", "Brain Aneurysm",false)));
+
+
+
+    }
+
+    @Test
+    @Order(1)
+    public void noPolicy() {
 
         //search with no policy
         pmi.search(null, "4", "Brain Aneurysm");
@@ -83,20 +105,8 @@ public class InferenceDetectionEngineTest {
     }
 
     @Test
+    @Order(2)
     public void withPolicy() {
-
-        patientMedicalInfoRepository.saveAll(Arrays.asList(
-                new PatientMedicalInfo(null, "TBD", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "3", "Brain Aneurysm",false),
-                new PatientMedicalInfo(null, "4", "Brain Aneurysm",false)));
-
-        patientInfoRepository.saveAll(Arrays.asList(
-                new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
-                new PatientInfo("Mary Jane", "Oct 22, 2014", "Oct 31, 2014", "F", false),
-                new PatientInfo("Patty Patterson", "Oct 24, 2014", "Oct 31, 2014", "F", false)));
-
-        pi = patientInfoManager(patientInfoRepository);
-        pmi = PatientMedicalInfoManager(patientMedicalInfoRepository);
 
 
         //new policy
@@ -116,29 +126,9 @@ public class InferenceDetectionEngineTest {
     }
 
     @Test
+    @Order(3)
     public void withPolicyNoInference() {
 
-        patientMedicalInfoRepository.saveAll(Arrays.asList(
-                new PatientMedicalInfo(null, "TBD", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "3", "Brain Aneurysm",false),
-                new PatientMedicalInfo(null, "4", "Brain Aneurysm",false)));
-
-        patientInfoRepository.saveAll(Arrays.asList(
-                new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
-                new PatientInfo("Mary Jane", "Oct 22, 2014", "Oct 31, 2014", "F", false),
-                new PatientInfo("Patty Patterson", "Oct 24, 2014", "Oct 31, 2014", "F", false)));
-
-        pi = patientInfoManager(patientInfoRepository);
-        pmi = PatientMedicalInfoManager(patientMedicalInfoRepository);
-
-
-        //new policy
-        Policy p = new Policy();
-        p.setInputColumns(Arrays.asList("patient_medical_info.length_of_stay", "patient_info.date_of_entry",
-                "patient_info.date_of_leave"));
-        p.setBlockedColumns(Arrays.asList("patient_info.name"));
-        p.setRelationship("patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay");
-        policyRepository.save(p);
 
         //No inference detected in this search
         pi.search("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M");
@@ -150,20 +140,8 @@ public class InferenceDetectionEngineTest {
     }
 
     @Test
+    @Order(4)
     public void withPolicyRemoved() {
-
-        patientMedicalInfoRepository.saveAll(Arrays.asList(
-                new PatientMedicalInfo(null, "TBD", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "3", "Brain Aneurysm",false),
-                new PatientMedicalInfo(null, "4", "Brain Aneurysm",false)));
-
-        patientInfoRepository.saveAll(Arrays.asList(
-                new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
-                new PatientInfo("Mary Jane", "Oct 22, 2014", "Oct 31, 2014", "F", false),
-                new PatientInfo("Patty Patterson", "Oct 24, 2014", "Oct 31, 2014", "F", false)));
-
-        pi = patientInfoManager(patientInfoRepository);
-        pmi = PatientMedicalInfoManager(patientMedicalInfoRepository);
 
         //remove policies
         policyRepository.deleteAll();
@@ -179,23 +157,8 @@ public class InferenceDetectionEngineTest {
 
 
     @Test
+    @Order(5)
     public void performanceTest() {
-
-        patientMedicalInfoRepository.saveAll(Arrays.asList(
-                new PatientMedicalInfo(null, "TBD", "Cardiac Arrest", false),
-                new PatientMedicalInfo(null, "3", "Brain Aneurysm",false),
-                new PatientMedicalInfo(null, "4", "Brain Aneurysm",false)));
-
-        patientInfoRepository.saveAll(Arrays.asList(
-                new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
-                new PatientInfo("Mary Jane", "Oct 22, 2014", "Oct 31, 2014", "F", false),
-                new PatientInfo("Patty Patterson", "Oct 24, 2014", "Oct 31, 2014", "F", false)));
-
-        pi = patientInfoManager(patientInfoRepository);
-        pmi = PatientMedicalInfoManager(patientMedicalInfoRepository);
-
-        //remove policies
-        policyRepository.deleteAll();
 
         //search without policy
         Instant start = Instant.now();
@@ -227,4 +190,3 @@ public class InferenceDetectionEngineTest {
 }
 
 
-*/
