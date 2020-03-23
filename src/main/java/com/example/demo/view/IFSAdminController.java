@@ -121,6 +121,7 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", true);
             m.addAttribute("errMessage", "Server Side Validation Error - Form is empty");
+
         }
         else {
             if (newPolicyForm.getInputColumns() == null || newPolicyForm.getInputColumns().contains("NONE") || newPolicyForm.getInputColumns().isEmpty() || newPolicyForm.getInputColumns().contains(null) || newPolicyForm.getInputColumns().contains("")) {
@@ -128,6 +129,7 @@ public class IFSAdminController {
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Input Columns");
+
                 return "addPolicy";
             }
             Set<String> set = new HashSet<String>();
@@ -137,6 +139,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Input Columns");
+
                     return "addPolicy";
                 } 
             }
@@ -147,6 +150,7 @@ public class IFSAdminController {
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Blocked Columns");
+
                 return "addPolicy";
             }
 
@@ -157,6 +161,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Blocked Columns");
+
                     return "addPolicy";
                 } 
             }
@@ -201,6 +206,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid columns");
+
                     return "addPolicy";
                 }
             }
@@ -281,6 +287,7 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", true);
             m.addAttribute("errMessage", "Server Side Validation Error - Policy ID value error");
+
             Optional<Policy> policy = policyManager.getPolicyById(policyId);
             m.addAttribute("policy", policy.get());
             return "editPolicy";
@@ -290,6 +297,7 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", true);
             m.addAttribute("errMessage", "Server Side Validation Error - Form is empty");
+
             Optional<Policy> policy = policyManager.getPolicyById(policyId);
             m.addAttribute("policy", policy.get());
             return "editPolicy";
@@ -312,6 +320,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Input Columns");
+
                     return "editPolicy";
                 } 
             }
@@ -321,6 +330,7 @@ public class IFSAdminController {
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Blocked Columns");
+
                 Optional<Policy> policy = policyManager.getPolicyById(policyId);
                 m.addAttribute("policy", policy.get());
                 return "editPolicy";
@@ -331,6 +341,7 @@ public class IFSAdminController {
                 if (!set2.add(each)){
                     logger.info("Error - Duplicate Blocked Columns");
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Blocked Columns");
+
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     return "editPolicy";
@@ -341,7 +352,9 @@ public class IFSAdminController {
                 logger.info("Error - Empty Relationship");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
+
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Relationship");
+
                 Optional<Policy> policy = policyManager.getPolicyById(policyId);
                 m.addAttribute("policy", policy.get());
                 return "editPolicy";
@@ -370,15 +383,16 @@ public class IFSAdminController {
                         servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         m.addAttribute("validationErr", true);
                         m.addAttribute("errMessage", "Server Side Validation Error - Invalid operators");
-                        return "addPolicy";
+                        return "editPolicy";
                     }
                 }
                 if (!isValidColumn) {
                     logger.info("Error - Relationship has invalid columns");
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
+
                     m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid columns");
-                    return "addPolicy";
+                    return "editPolicy";
                 }
             }
 
