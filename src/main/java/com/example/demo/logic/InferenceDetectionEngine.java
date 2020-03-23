@@ -64,8 +64,7 @@ public class InferenceDetectionEngine {
             logger.info("getUser() => " + currentUserName);
 
             // 2. get policies related to the query
-            List<Policy> policies = policyRepository.findDistinctByInputColumnsInAndBlockedColumnsIn(
-                    tablesAndColumnsAccessed, tablesAndColumnsAccessed);
+            List<Policy> policies = policyRepository.findAll();
             logger.info("get policies, found [" + policies.size() + "] policies => " + policies);
 
             // 3. record a log of the query performed
@@ -90,11 +89,13 @@ public class InferenceDetectionEngine {
             // attack
             for (PatientInfo pi : resultList) {
 
-                columnValuesMap = new HashMap<>();
+
                 // set inference to false
                 pi.setInference(false);
                 logger.info("PatientInfo =>" + pi);
                 for (Policy p : policies) {
+                    columnValuesMap = new HashMap<>();
+
                     // 5. Get the policyInputColumns
                     List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
 
@@ -125,6 +126,11 @@ public class InferenceDetectionEngine {
 
                     logger.info("ColumnValues =>"+ columnValuesMap.keySet());
 
+                    //no foreign table policies
+                    if(columnValuesMap.keySet().size() == 0){
+                        return resultList;
+                    }
+
                     // 9. iterate through each log
                     for (String column : columnValuesMap.keySet()) {
                         if (allLogTableColumns.contains(column)) {
@@ -147,6 +153,8 @@ public class InferenceDetectionEngine {
                                 loop = false;
                                 break;
                             }
+
+                            logger.info("operands column " + column);
                             operands.set(operands.indexOf(column), columnValuesMap.get(column).remove(0));
 
                         }
@@ -171,7 +179,7 @@ public class InferenceDetectionEngine {
                                 // Find the blocked columns and change those values if they match
                                 List<String> policyBlockedColumns = new ArrayList<>(p.getBlockedColumns());
                                 for (String blockedColumn : policyBlockedColumns) {
-                                    if (blockedColumn.contains("patient_medical_info")) {
+                                    if (blockedColumn.contains("patient_info")) {
                                         String column = blockedColumn.split("\\.")[1];
                                         if (pi.getColumnValue(column) != null) {
                                             pi.setByColumn(column, "Not Authorized");
@@ -189,8 +197,7 @@ public class InferenceDetectionEngine {
     }
 
     public List<PatientMedicalInfo> checkInferenceForPatientMedicalInfo(List<PatientMedicalInfo> resultList,
-                                                                        List<String> tablesAndColumnsAccessed) {
-
+                                                                        List<String> tablesAndColumnsAccessed)  {
         if (!resultList.isEmpty()) {
             logger.info("results => " + resultList);
             logger.info("table columns accessed => " + tablesAndColumnsAccessed);
@@ -199,8 +206,7 @@ public class InferenceDetectionEngine {
             logger.info("getUser() => " + currentUserName);
 
             // 2. get policies related to the query
-            List<Policy> policies = policyRepository.findDistinctByInputColumnsInAndBlockedColumnsIn(
-                    tablesAndColumnsAccessed, tablesAndColumnsAccessed);
+            List<Policy> policies = policyRepository.findAll();
             logger.info("get policies, found [" + policies.size() + "] policies => " + policies);
 
             // 3. record a log of the query performed
@@ -217,15 +223,20 @@ public class InferenceDetectionEngine {
             allLogTableColumns.addAll(dbLogEntry.getTablesColumnsAccessed());
             allLogIDAccessed.addAll(dbLogEntry.getIdsAccessed());
 
+            logger.info("TableColumns =>"+ allLogTableColumns);
+
+            logger.info("allLogID =>"+ allLogIDAccessed);
+
             // 4.for each item in the result list check if it causes potential inference
             // attack
             for (PatientMedicalInfo pi : resultList) {
 
-                Map<String, ArrayList<String>> columnValuesMap = new HashMap<>();
                 // set inference to false
                 pi.setInference(false);
-                logger.info("PatientInfo =>" + pi);
+                logger.info("PatientMedicalInfo =>" + pi);
                 for (Policy p : policies) {
+
+                    columnValuesMap = new HashMap<>();
                     // 5. Get the policyInputColumns
                     List<String> policyInputColumns = new ArrayList<>(p.getInputColumns());
 
@@ -254,12 +265,12 @@ public class InferenceDetectionEngine {
                             policyRelationshipOperands.set(policyRelationshipOperands.indexOf(operand), pi.getColumnValue(col));
                     }
 
-//                    // 8. Get the logs that have accessed the policyInputColumns
-//                    List<DBLogEntry> logEntries = dbLogEntryRepository
-//                            .findDistinctByTablesColumnsAccessedIn(policyInputColumns);
-//                    logger.info("logEntries =>" + logEntries);
-//
-//
+                    logger.info("ColumnValues =>"+ columnValuesMap.keySet());
+
+                    //no foreign table policies
+                    if(columnValuesMap.keySet().size() == 0){
+                        return resultList;
+                    }
 
                     // 9. iterate through each log
                     for (String column : columnValuesMap.keySet()) {
@@ -323,7 +334,6 @@ public class InferenceDetectionEngine {
 
         return resultList;
     }
-
     // We get the user if they are logged in. If they are not logged in we return
     // null.
     private String getUser() {
@@ -344,7 +354,7 @@ public class InferenceDetectionEngine {
     }
     
     private String queryRepositories(String tableColumn, String id){
-        logger.info("id queried:"+id+ "for column "+tableColumn);
+        logger.info("id queried:"+id+ " for column: "+tableColumn);
         String table = tableColumn.split("\\.")[0];
         String col = tableColumn.split("\\.")[1];
 
@@ -386,7 +396,7 @@ public class InferenceDetectionEngine {
                     return null;
 
             }
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException|NullPointerException e){
             return null;
         }
 

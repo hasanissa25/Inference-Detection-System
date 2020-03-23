@@ -1,4 +1,4 @@
-
+/*
 
 package com.example.demo;
 
@@ -10,6 +10,7 @@ import com.example.demo.data.model.Policy;
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PatientlnfoRepository;
 import com.example.demo.data.repository.PolicyRepository;
+import com.example.demo.logic.InferenceDetectionEngine;
 import com.example.demo.logic.PatientInfoManager;
 import com.example.demo.logic.PatientMedicalInfoManager;
 import com.example.demo.logic.PolicyManager;
@@ -26,6 +27,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
@@ -42,9 +44,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "file:src/main/java/com/example/demo/config/LoadData"
-})
+@SpringBootTest
+
 public class InferenceDetectionEngineTest {
 
     @Autowired
@@ -63,7 +64,8 @@ public class InferenceDetectionEngineTest {
     private PatientMedicalInfoManager pmi;
 
     @Autowired
-    private TestEntityManager entityManager;
+    private InferenceDetectionEngine inferenceDetectionEngine;
+
 
     private static final Logger log = LoggerFactory.getLogger(InferenceDetectionEngineTest.class);
 
@@ -74,20 +76,6 @@ public class InferenceDetectionEngineTest {
 
         pi = new PatientInfoManager(patientInfoRepository);
         pmi = new PatientMedicalInfoManager(patientMedicalInfoRepository);
-
-
-        patientInfoRepository.saveAll(Arrays.asList(
-                new PatientInfo("John Smith", "Oct 27, 2014", "Oct 31, 2014", "M", false),
-                new PatientInfo("Mary Jane", "Oct 22, 2014", "Oct 31, 2014", "F", false),
-                new PatientInfo("Patty Patterson", "Oct 24, 2014", "Oct 31, 2014", "F", false)));
-
-
-
-        patientMedicalInfoRepository.saveAll(Arrays.asList(
-                new PatientMedicalInfo(1L, "TBD", "Cardiac Arrest", false),
-                new PatientMedicalInfo(2L, "3", "Brain Aneurysm",false),
-                new PatientMedicalInfo(3L, "4", "Brain Aneurysm",false)));
-
 
 
     }
@@ -190,3 +178,4 @@ public class InferenceDetectionEngineTest {
 }
 
 
+*/
