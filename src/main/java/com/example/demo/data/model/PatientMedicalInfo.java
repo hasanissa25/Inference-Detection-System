@@ -79,5 +79,8 @@ public class PatientMedicalInfo{// extends Table{
         return String.valueOf(patientId);
     }
 
-
+    public static String[] getColumnNames() {
+        String[] tableColumns = {"patient_id", "reason_of_visit","length_of_stay"};
+        return tableColumns;
+    }
 } 

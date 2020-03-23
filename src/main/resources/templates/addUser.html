@@ -29,9 +29,9 @@
         </ul>
       </div>
     </div>
-      <div class="row" th:if="${validationErr}">
+    <div class="row" th:if="${validationErr}">
         <div class="alert">
-            Error: Input is invalid
+            <span th:text="${validationErr}"/>
         </div> 
     </div>
     <div class="row">
@@ -52,8 +52,8 @@
           <div class="form-group">
             <label for="UserRole">User Role:</label>
             <br>
-            <select class="form-control" name="role" id="role">
-              <option value="NONE" label="--- Select ---"/>
+            <select required class="form-control" name="role" id="role">
+              <option label="--- Select ---"/>
               <option th:name="role" th:each="role : ${availableRoles}" th:value="${role.id}" th:text="${role.name}"></option>
             </select>
           </div>

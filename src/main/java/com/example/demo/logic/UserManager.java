@@ -34,4 +34,5 @@ public class UserManager {
     public void removeUser(int id) {
         userRepository.deleteById(id);
     }
+
 }

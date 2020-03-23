@@ -9,11 +9,9 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.example.demo.data.model.DBLogEntry;
-import com.example.demo.data.model.Policy;
-import com.example.demo.data.model.Role;
-import com.example.demo.data.model.User;
+import com.example.demo.data.model.*;
 import com.example.demo.data.repository.DBLogEntryRepository;
+import com.example.demo.data.repository.UserRepository;
 import com.example.demo.logic.PolicyManager;
 import com.example.demo.logic.RoleManager;
 import com.example.demo.logic.UserManager;
@@ -172,27 +170,39 @@ public class IFSAdminController {
             }
 
             String[] relationshipSplit = newPolicyForm.getRelationship().split(" ");
-            String[] allowedColumns = {"patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", 
-                                     "patient_info.gender", "patient_medical_info.patient_id", "patient_medical_info.reason_of_visit",
-                                     "patient_medical_info.length_of_stay",
-                                     "patient_medical_info.length_of_stay", "billing_info.account_number", "billing_info.patient_address",
-                                    "billing_info.total_medical_costs"};
+            String [] patientInfoAllowedColumns = PatientInfo.getColumnNames();
+            String [] patientMedicalInfoAllowedColumns = PatientMedicalInfo.getColumnNames();
+            String [] billingInfoAllowedColumns = BillingInfo.getColumnNames();
 
             for (String s : relationshipSplit) {
-                boolean isValidColumn = Arrays.stream(allowedColumns).anyMatch(s::equals);
-
+                boolean isValidColumn = true;
+                if (s.contains("patient_medical_info")) {
+                    String newStr = s.replace("patient_medical_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(patientMedicalInfoAllowedColumns).anyMatch(newStr::equals);
+                }
+                else if (s.contains("patient_info")) {
+                    String newStr = s.replace("patient_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(patientInfoAllowedColumns).anyMatch(newStr::equals);
+                }
+                else if (s.contains("billing_info.")) {
+                    String newStr = s.replace("billing_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(billingInfoAllowedColumns).anyMatch(newStr::equals);
+                }
                 //Only 1 operator allowed between columns
-                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
+                else if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
                     if (s.length() > 1 && !s.equals("!=")) {
                         logger.info("Error - Relationship has invalid operators");
                         servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         m.addAttribute("validationErr", true);
-                        m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid operators");
-
+                        m.addAttribute("errMessage", "Server Side Validation Error - Invalid operators");
                         return "addPolicy";
                     }
                 }
-                else if (!isValidColumn) {
+
+                if (!isValidColumn) {
                     logger.info("Error - Relationship has invalid columns");
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
@@ -201,7 +211,7 @@ public class IFSAdminController {
                     return "addPolicy";
                 }
             }
-
+            
             //Check if policy already exists
             List<Policy> policies = policyManager.getAllPolicies();
             for(Policy policy : policies) {
@@ -352,35 +362,45 @@ public class IFSAdminController {
             }
 
             String[] relationshipSplit = policyForm.getRelationship().split(" ");
-            String[] allowedColumns = {"patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", 
-                                     "patient_info.gender", "patient_medical_info.patient_id", "patient_medical_info.reason_of_visit",
-                                     "patient_medical_info.length_of_stay",
-                                     "patient_medical_info.length_of_stay", "billing_info.account_number", "billing_info.patient_address",
-                                    "billing_info.total_medical_costs"};
+            String [] patientInfoAllowedColumns = PatientInfo.getColumnNames();
+            String [] patientMedicalInfoAllowedColumns = PatientMedicalInfo.getColumnNames();
+            String [] billingInfoAllowedColumns = BillingInfo.getColumnNames();
 
             for (String s : relationshipSplit) {
-                boolean isValidColumn = Arrays.stream(allowedColumns).anyMatch(s::equals);
+                boolean isValidColumn = true;
+                if (s.contains("patient_medical_info")) {
+                    String newStr = s.replace("patient_medical_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(patientMedicalInfoAllowedColumns).anyMatch(newStr::equals);
+                }
+                else if (s.contains("patient_info")) {
+                    String newStr = s.replace("patient_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(patientInfoAllowedColumns).anyMatch(newStr::equals);
+                }
+                else if (s.contains("billing_info.")) {
+                    String newStr = s.replace("billing_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(billingInfoAllowedColumns).anyMatch(newStr::equals);
+                }
                 //Only 1 operator allowed between columns
-                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
+                else if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
                     if (s.length() > 1 && !s.equals("!=")) {
                         logger.info("Error - Relationship has invalid operators");
                         servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         m.addAttribute("validationErr", true);
-                        m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid operators");
-
+                        m.addAttribute("errMessage", "Server Side Validation Error - Invalid operators");
                         return "editPolicy";
                     }
                 }
-                else if (!isValidColumn) {
+                if (!isValidColumn) {
                     logger.info("Error - Relationship has invalid columns");
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
 
                     m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid columns");
-
                     return "editPolicy";
                 }
-                
             }
 
             //Check if policy already exists
@@ -470,30 +490,59 @@ public class IFSAdminController {
     @PostMapping("/addUser")
     public String addUser(@ModelAttribute User newUserForm, Model m, HttpServletResponse servletResponse) {
         logger.info("User Form: " + newUserForm);
+        List<Role> roles = roleManager.getAllRoles();
+        List<User> users = userManager.getAllUsers();
+        String userName = newUserForm.getUserName();
+        String userPassword = newUserForm.getPassword();
+        Role userRole = newUserForm.getRole();
+
         if (newUserForm == null) {
             logger.info("Error - Form is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "Cannot submit empty form");
+            m.addAttribute("availableRoles", roles);
             return "addUser";
         }
-        else if(newUserForm.getUserName().isEmpty() || newUserForm.getPassword().isEmpty()) {
+        else if(userName.isEmpty() || userPassword.isEmpty()) {
             logger.info("Error - User Name or Password is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "User Name or Password is empty");
+            m.addAttribute("availableRoles", roles);
             return "addUser";
         }
-        else if(newUserForm.getUserName().trim().length() == 0 || newUserForm.getPassword().trim().length() == 0) {
+        else if(userName.trim().length() == 0 || userPassword.trim().length() == 0) {
             logger.info("Error - User Name or Password only contains spaces");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", " User Name or Password only contains spaces");
+            m.addAttribute("availableRoles", roles);
             return "addUser";
         }
-        else if(newUserForm.getRole() == null) {
+        else if(userRole == null) {
             logger.info("Error - Role is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "Role is empty");
+            m.addAttribute("availableRoles", roles);
             return "addUser";
         }
+        else if(!roles.contains(userRole)) {
+            logger.info("Error - Role does not exists");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            m.addAttribute("validationErr", "Role does not exists");
+            m.addAttribute("availableRoles", roles);
+            return "addUser";
+        }
+        else {
+            for (User user : users) {
+                if(user.getUserName().equalsIgnoreCase(userName)) {
+                    logger.info("Error - Duplicate users");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", "Duplicate users");
+                    m.addAttribute("availableRoles", roles);
+                    return "addUser";
+                }
+            }
+        }
+        
         newUserForm.setPassword(passwordencoder.encode(newUserForm.getPassword()));
         userManager.saveUserInfo(newUserForm);
         return "redirect:/users";
@@ -507,9 +556,11 @@ public class IFSAdminController {
     @GetMapping("/editUser")
     public String editUser(@RequestParam(name="userId") int userId , Model m) {
         logger.info("Editing User ID: " + userId);
+        List<Role> roles = roleManager.getAllRoles();
         Optional<User> user = userManager.getUserById(userId);
         m.addAttribute("validationErr", false);
         m.addAttribute("user", user.get());
+        m.addAttribute("availableRoles", roles);
         return "editUser";
     }
 
@@ -517,23 +568,50 @@ public class IFSAdminController {
     public String saveUser(@RequestParam(name="userId") int userId, @ModelAttribute User userForm, Model m, HttpServletResponse servletResponse) {
         logger.info("Saving User ID: " + userId);
         logger.info("User Form: " + userForm);
+        List<Role> roles = roleManager.getAllRoles();
+        List<User> users = userManager.getAllUsers();
+        String userName = userForm.getUserName();
+        String userPassword = userForm.getPassword();
+        Role userRole = userForm.getRole();
+
         if (userForm == null) {
             logger.info("Error - Form is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "Form is empty");
+            m.addAttribute("availableRoles", roles);
             return "editUser";
         }
-        else if(userForm.getUserName().isEmpty() || userForm.getPassword().isEmpty()) {
+        else if(userName.isEmpty() || userPassword.isEmpty()) {
             logger.info("Error - User Name or Password is empty");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "User Name or Password is empty");
+            m.addAttribute("availableRoles", roles);
             return "editUser";
         }
-        else if(userForm.getUserName().trim().length() == 0 || userForm.getPassword().trim().length() == 0) {
+        else if(userName.trim().length() == 0 || userPassword.trim().length() == 0) {
             logger.info("Error - User Name or Password only contains spaces");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.addAttribute("validationErr", true);
+            m.addAttribute("validationErr", "User Name or Password only contains spaces");
+            m.addAttribute("availableRoles", roles);
             return "editUser";
+        }
+        else if(!roles.contains(userRole)) {
+            logger.info("Error - Role does not exists");
+            servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            m.addAttribute("validationErr", "Role does not exists");
+            m.addAttribute("availableRoles", roles);
+            return "editUser";
+        }
+        else {
+            for (User user : users) {
+                if(user.getUserName().equalsIgnoreCase(userName) && user.getUserId() != userId) {
+                    logger.info("Error - Duplicate users");
+                    servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.addAttribute("validationErr", "Duplicate users");
+                    m.addAttribute("availableRoles", roles);
+                    return "editUser";
+                }
+            }
         }
         userForm.setPassword(passwordencoder.encode(userForm.getPassword()));
         userManager.saveUserInfo(userForm);
@@ -544,8 +622,9 @@ public class IFSAdminController {
     public String removeUser(@RequestParam(name="userId") int userId , Model m, HttpServletResponse servletResponse) {
         logger.info("Removing User ID: " + userId);
         if (userId < 0 || userId > 999) {
-            logger.info("Error - Policy ID value error");
+            logger.info("Error - User ID value error");
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            m.addAttribute("validationErr", "User ID value error");
             return "redirect:/users";
         }
         userManager.removeUser(userId);
