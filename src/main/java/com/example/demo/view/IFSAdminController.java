@@ -9,12 +9,7 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.example.demo.data.model.DBLogEntry;
-import com.example.demo.data.model.PatientInfo;
-import com.example.demo.data.model.PatientMedicalInfo;
-import com.example.demo.data.model.Policy;
-import com.example.demo.data.model.Role;
-import com.example.demo.data.model.User;
+import com.example.demo.data.model.*;
 import com.example.demo.data.repository.DBLogEntryRepository;
 import com.example.demo.data.repository.UserRepository;
 import com.example.demo.logic.PolicyManager;
@@ -177,6 +172,7 @@ public class IFSAdminController {
             String[] relationshipSplit = newPolicyForm.getRelationship().split(" ");
             String [] patientInfoAllowedColumns = PatientInfo.getColumnNames();
             String [] patientMedicalInfoAllowedColumns = PatientMedicalInfo.getColumnNames();
+            String [] billingInfoAllowedColumns = BillingInfo.getColumnNames();
 
             for (String s : relationshipSplit) {
                 boolean isValidColumn = true;
@@ -189,6 +185,11 @@ public class IFSAdminController {
                     String newStr = s.replace("patient_info.", "");
                     System.out.println("newStr"+ newStr);
                     isValidColumn = Arrays.stream(patientInfoAllowedColumns).anyMatch(newStr::equals);
+                }
+                else if (s.contains("billing_info.")) {
+                    String newStr = s.replace("billing_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(billingInfoAllowedColumns).anyMatch(newStr::equals);
                 }
                 //Only 1 operator allowed between columns
                 else if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
@@ -363,6 +364,7 @@ public class IFSAdminController {
             String[] relationshipSplit = policyForm.getRelationship().split(" ");
             String [] patientInfoAllowedColumns = PatientInfo.getColumnNames();
             String [] patientMedicalInfoAllowedColumns = PatientMedicalInfo.getColumnNames();
+            String [] billingInfoAllowedColumns = BillingInfo.getColumnNames();
 
             for (String s : relationshipSplit) {
                 boolean isValidColumn = true;
@@ -375,6 +377,11 @@ public class IFSAdminController {
                     String newStr = s.replace("patient_info.", "");
                     System.out.println("newStr"+ newStr);
                     isValidColumn = Arrays.stream(patientInfoAllowedColumns).anyMatch(newStr::equals);
+                }
+                else if (s.contains("billing_info.")) {
+                    String newStr = s.replace("billing_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(billingInfoAllowedColumns).anyMatch(newStr::equals);
                 }
                 //Only 1 operator allowed between columns
                 else if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {

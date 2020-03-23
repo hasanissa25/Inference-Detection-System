@@ -115,5 +115,8 @@ public class BillingInfo{// extends Table{
         return String.valueOf(accountNumber);
     }
 
-
+    public static String[] getColumnNames() {
+        String[] tableColumns = {"account_number", "patient_address","total_medical_costs"};
+        return tableColumns;
+    }
 } 
