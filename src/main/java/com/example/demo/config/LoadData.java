@@ -81,17 +81,17 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
         Policy p1 = new Policy();
         p1.setInputColumns(Arrays.asList("billing_info.total_medical_costs", "patient_medical_info.length_of_stay",
                 "patient_medical_info.daily_medical_cost"));
-        p1.setBlockedColumns(Arrays.asList("patient_medical_info.patient_id"));
+        p1.setBlockedColumns(Arrays.asList("billing_info.account_number"));
         p1.setRelationship("patient_medical_info.daily_medical_cost * patient_medical_info.length_of_stay != billing_info.total_medical_costs");
         policyRepository.save(p1);
 
         patientMedicalInfoRepository.saveAll(Arrays.asList(new PatientMedicalInfo(null, "TBD", "Cardiac Arrest", 1500, false),
-                new PatientMedicalInfo(null, "3", "Brain Aneurysm", 1000, false),
                 new PatientMedicalInfo(null, "2", "Brain Aneurysm", 1000, false),
-                new PatientMedicalInfo(null, "4", "Cardiac Arrest", 1500, false),
+                new PatientMedicalInfo(null, "2", "Brain Aneurysm", 1000, false),
+                new PatientMedicalInfo(null, "1", "Cardiac Arrest", 5000, false),
                 new PatientMedicalInfo(null, "5", "Brain Aneurysm", 1000, false),
                 new PatientMedicalInfo(null, "TBD", "Brain Aneurysm", 1000, false),
-                new PatientMedicalInfo(null, "9", "Cardiac Arrest", 1500, false),
+                new PatientMedicalInfo(null, "5", "Cardiac Arrest", 1500, false),
                 new PatientMedicalInfo(null, "7", "Cardiac Arrest", 1500, false)));
 
         patientInfoRepository

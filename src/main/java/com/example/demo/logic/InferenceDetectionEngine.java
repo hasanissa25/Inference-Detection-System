@@ -352,7 +352,7 @@ public class InferenceDetectionEngine {
     }
 
 
-    public List<BillingInfo> checkInferenceForPatientBillingInfo(List<BillingInfo> resultList,
+    public List<BillingInfo> checkInferenceForBillingInfo(List<BillingInfo> resultList,
                                                                  List<String> tablesAndColumnsAccessed) {
 
         if (!resultList.isEmpty()) {
@@ -462,6 +462,9 @@ public class InferenceDetectionEngine {
 
                         // using the operands and operators for this row, check if there is an inference
                         // detection
+
+                        logger.info("BEFORE IS-INFERENCE; operands=>"+operands);
+
                         if (isInference(operators, operands)) {
                             pi.setInference(true);
 
@@ -548,10 +551,11 @@ public class InferenceDetectionEngine {
                         case "patient_id":
                             return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getPatientId().toString();
                         case "length_of_stay":
-
                             return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getLengthOfStay();
                         case "reason_of_visit":
                             return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getReasonOfVisit();
+                        case "daily_medical_cost":
+                            return patientMedicallnfoRepository.findById(Long.valueOf(id)).get().getDailyMedicalCost().toString();
                         default:
                             return null;
                     }
@@ -573,7 +577,8 @@ public class InferenceDetectionEngine {
                     return null;
 
             }
-        }catch(NumberFormatException|NullPointerException e){
+        }catch(NumberFormatException|NullPointerException|NoSuchElementException e){
+
             return null;
         }
 
@@ -592,9 +597,6 @@ public class InferenceDetectionEngine {
             String operator = operators.remove();
             String operand1 = operands.remove(0);
             String operand2 = operands.remove(0);
-            logger.info("IS-INFERENCE: OPERATOR =>" + operator);
-            logger.info("IS-INFERENCE: OPERAND1 =>" + operand1);
-            logger.info("IS-INFERENCE: OPERAND2 =>" + operand2);
             
             if(operator == null || operand1 == null || operand2 == null){
                 logger.info("IS-INFERENCE: Cannot evaluate expression, data types not compatible");

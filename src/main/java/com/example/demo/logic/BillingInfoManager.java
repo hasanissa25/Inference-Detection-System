@@ -33,7 +33,8 @@ public class BillingInfoManager {
             results = billingInfoRepository.findAll();
         else 
             results = billingInfoRepository.customSearch(accountNumber, patientAddress, totalMedicalCosts);
-        //results = inferenceDetectionEngine.checkInferenceForBillingInfo(results, Arrays.asList("billing_info.account_number", "billing_info.patient_address", "billing_info.total_medical_costs"));
+
+        results = inferenceDetectionEngine.checkInferenceForBillingInfo(results, Arrays.asList("billing_info.account_number", "billing_info.patient_address", "billing_info.total_medical_costs"));
         return results;
     }
 

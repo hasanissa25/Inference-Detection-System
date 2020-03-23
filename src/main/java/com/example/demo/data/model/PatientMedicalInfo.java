@@ -58,6 +58,8 @@ public class PatientMedicalInfo{// extends Table{
                 break;
             case "reason_of_visit":
                 this.reasonOfVisit = val;
+            case "daily_medical_cost":
+                this.dailyMedicalCost = Integer.valueOf(val);
                 break;
 
         }
