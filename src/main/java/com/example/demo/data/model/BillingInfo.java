@@ -90,13 +90,17 @@ public class BillingInfo{// extends Table{
     public void setByColumn(String col, String val) {
         switch(col){
             case "account_number":
-                this.accountNumber = val;   //TODO
+                this.accountNumber = val;
                 break;
             case "patient_address":
                 this.patientAddress = val;
                 break;
             case "total_medical_costs":
-                this.totalMedicalCosts = Integer.parseInt(val);
+                if (val.equals("Not Authorized")) {
+                    this.totalMedicalCosts = -1;
+                } else {
+                    this.totalMedicalCosts = Integer.parseInt(val);
+                }
                 break;
         }
     }

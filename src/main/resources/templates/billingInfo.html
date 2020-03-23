@@ -61,7 +61,7 @@
                 <tr th:each="result : ${searchResults}">
                     <th scope="row" th:text="${result.AccountNumber}" />
                     <td th:text="${result.PatientAddress}"/>
-                    <td th:text="${result.TotalMedicalCosts}"/>
+                    <td th:text="${result.TotalMedicalCosts != -1} ? ${result.TotalMedicalCosts} : 'Not Authorized'"/>
                     <td th:text="${result.inference} ? 'yes' : 'no'">
                 </tr>
             </tbody>
