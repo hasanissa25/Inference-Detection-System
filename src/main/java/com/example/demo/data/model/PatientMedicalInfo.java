@@ -27,6 +27,7 @@ public class PatientMedicalInfo{// extends Table{
     private Long patientId;
     private String lengthOfStay;
     private String reasonOfVisit; 
+    private Integer dailyMedicalCost; 
     @Transient
     private boolean inference;
 
@@ -40,6 +41,8 @@ public class PatientMedicalInfo{// extends Table{
                 return lengthOfStay;
             case "reason_of_visit":
                 return reasonOfVisit;
+            case "daily_medical_cost":
+                return String.valueOf(dailyMedicalCost);
             default:
                 return null;
         }
@@ -56,6 +59,7 @@ public class PatientMedicalInfo{// extends Table{
             case "reason_of_visit":
                 this.reasonOfVisit = val;
                 break;
+
         }
     }
 
