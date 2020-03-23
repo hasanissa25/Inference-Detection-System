@@ -29,6 +29,8 @@ public class UserManager {
         return userRepository.findById(id);
     }
 
+    public User getUserByName(String name){ return userRepository.findByUserName(name); }
+
     public void removeUser(int id) {
         userRepository.deleteById(id);
     }
