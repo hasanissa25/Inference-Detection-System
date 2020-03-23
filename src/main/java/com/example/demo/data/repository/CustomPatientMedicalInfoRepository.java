@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CustomPatientMedicalInfoRepository {
 
-    List<PatientMedicalInfo> customSearch(Long patientId, String lengthOfStay, String reasonOfVisit);
+    List<PatientMedicalInfo> customSearch(Long patientId, String lengthOfStay, String reasonOfVisit, Integer dailyMedicalCost);
     
 }

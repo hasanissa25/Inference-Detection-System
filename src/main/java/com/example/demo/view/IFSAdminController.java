@@ -119,6 +119,7 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", true);
             m.addAttribute("errMessage", "Server Side Validation Error - Form is empty");
+
         }
         else {
             if (newPolicyForm.getInputColumns() == null || newPolicyForm.getInputColumns().contains("NONE") || newPolicyForm.getInputColumns().isEmpty() || newPolicyForm.getInputColumns().contains(null) || newPolicyForm.getInputColumns().contains("")) {
@@ -126,6 +127,7 @@ public class IFSAdminController {
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Input Columns");
+
                 return "addPolicy";
             }
             Set<String> set = new HashSet<String>();
@@ -135,6 +137,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Input Columns");
+
                     return "addPolicy";
                 } 
             }
@@ -145,6 +148,7 @@ public class IFSAdminController {
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Blocked Columns");
+
                 return "addPolicy";
             }
 
@@ -155,6 +159,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Blocked Columns");
+
                     return "addPolicy";
                 } 
             }
@@ -170,7 +175,10 @@ public class IFSAdminController {
             String[] relationshipSplit = newPolicyForm.getRelationship().split(" ");
             String[] allowedColumns = {"patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", 
                                      "patient_info.gender", "patient_medical_info.patient_id", "patient_medical_info.reason_of_visit",
-                                     "patient_medical_info.length_of_stay"};
+                                     "patient_medical_info.length_of_stay",
+                                     "patient_medical_info.length_of_stay", "billing_info.account_number", "billing_info.patient_address",
+                                    "billing_info.total_medical_costs"};
+
             for (String s : relationshipSplit) {
                 boolean isValidColumn = Arrays.stream(allowedColumns).anyMatch(s::equals);
 
@@ -181,6 +189,7 @@ public class IFSAdminController {
                         servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         m.addAttribute("validationErr", true);
                         m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid operators");
+
                         return "addPolicy";
                     }
                 }
@@ -189,6 +198,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid columns");
+
                     return "addPolicy";
                 }
             }
@@ -269,6 +279,7 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", true);
             m.addAttribute("errMessage", "Server Side Validation Error - Policy ID value error");
+
             Optional<Policy> policy = policyManager.getPolicyById(policyId);
             m.addAttribute("policy", policy.get());
             return "editPolicy";
@@ -278,6 +289,7 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", true);
             m.addAttribute("errMessage", "Server Side Validation Error - Form is empty");
+
             Optional<Policy> policy = policyManager.getPolicyById(policyId);
             m.addAttribute("policy", policy.get());
             return "editPolicy";
@@ -300,6 +312,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Input Columns");
+
                     return "editPolicy";
                 } 
             }
@@ -309,6 +322,7 @@ public class IFSAdminController {
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Blocked Columns");
+
                 Optional<Policy> policy = policyManager.getPolicyById(policyId);
                 m.addAttribute("policy", policy.get());
                 return "editPolicy";
@@ -319,6 +333,7 @@ public class IFSAdminController {
                 if (!set2.add(each)){
                     logger.info("Error - Duplicate Blocked Columns");
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Blocked Columns");
+
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     return "editPolicy";
@@ -329,7 +344,9 @@ public class IFSAdminController {
                 logger.info("Error - Empty Relationship");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
+
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Relationship");
+
                 Optional<Policy> policy = policyManager.getPolicyById(policyId);
                 m.addAttribute("policy", policy.get());
                 return "editPolicy";
@@ -338,7 +355,10 @@ public class IFSAdminController {
             String[] relationshipSplit = policyForm.getRelationship().split(" ");
             String[] allowedColumns = {"patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", 
                                      "patient_info.gender", "patient_medical_info.patient_id", "patient_medical_info.reason_of_visit",
-                                     "patient_medical_info.length_of_stay"};
+                                     "patient_medical_info.length_of_stay",
+                                     "patient_medical_info.length_of_stay", "billing_info.account_number", "billing_info.patient_address",
+                                    "billing_info.total_medical_costs"};
+
             for (String s : relationshipSplit) {
                 boolean isValidColumn = Arrays.stream(allowedColumns).anyMatch(s::equals);
                 //Only 1 operator allowed between columns
@@ -348,6 +368,7 @@ public class IFSAdminController {
                         servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         m.addAttribute("validationErr", true);
                         m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid operators");
+
                         return "editPolicy";
                     }
                 }
@@ -355,7 +376,9 @@ public class IFSAdminController {
                     logger.info("Error - Relationship has invalid columns");
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
+
                     m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid columns");
+
                     return "editPolicy";
                 }
                 
