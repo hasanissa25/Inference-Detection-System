@@ -5,13 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletResponse;
 
 import com.example.demo.data.model.*;
 import com.example.demo.data.repository.DBLogEntryRepository;
-import com.example.demo.data.repository.UserRepository;
 import com.example.demo.logic.PolicyManager;
 import com.example.demo.logic.RoleManager;
 import com.example.demo.logic.UserManager;
@@ -28,9 +26,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class IFSAdminController {
+public class IDSAdminController {
 
-    private final static Logger logger = LoggerFactory.getLogger(IFSAdminController.class);
+    private final static Logger logger = LoggerFactory.getLogger(IDSAdminController.class);
 
     @Autowired
     private PolicyManager policyManager;
@@ -47,7 +45,7 @@ public class IFSAdminController {
     @Autowired
     private PasswordEncoder passwordencoder;
 
-    public IFSAdminController() {
+    public IDSAdminController() {
     }
 
     /**
