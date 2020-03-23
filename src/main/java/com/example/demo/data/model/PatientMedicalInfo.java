@@ -59,7 +59,11 @@ public class PatientMedicalInfo{// extends Table{
             case "reason_of_visit":
                 this.reasonOfVisit = val;
             case "daily_medical_cost":
-                this.dailyMedicalCost = Integer.valueOf(val);
+                if (val.equals("Not Authorized")) {
+                    this.dailyMedicalCost = -1;
+                } else {
+                    this.dailyMedicalCost = Integer.valueOf(val);
+                }
                 break;
 
         }
