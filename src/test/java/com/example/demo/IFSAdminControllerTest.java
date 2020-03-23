@@ -1,12 +1,15 @@
 package com.example.demo;
 
 import com.example.demo.data.model.Policy;
+import com.example.demo.data.repository.PolicyRepository;
+import com.example.demo.logic.PolicyManager;
 import com.example.demo.view.IFSAdminController;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,6 +30,9 @@ class IFSAdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private PolicyRepository mockRepository;
 
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMINISTRATOR")
@@ -219,47 +225,24 @@ class IFSAdminControllerTest {
                 .andExpect(content().string(containsString("Server Side Validation Error")));
     }
 
-
-//    @Test
-//    @WithMockUser(username = "admin", password = "admin", roles = "ADMINISTRATOR")
-//    public void getEditPolicyPage() throws Exception {
-//        //Add a new policy first
-//        String requestStr = "/addPolicy?policyId=";
-//        Policy testPolicy = new Policy();
-//        List<String> inputCols = new ArrayList<>();
-//        inputCols.add("patient_info.name");
-//        List<String> blockedCols = new ArrayList<>();
-//        blockedCols.add("patient_medical_info.reason_of_visit");
-//        testPolicy.setInputColumns(inputCols);
-//        testPolicy.setBlockedColumns(blockedCols);
-//        testPolicy.setRelationship("patient_info.name");
-//
-//        this.mockMvc.perform(post(requestStr).content(String.valueOf(testPolicy)))
-//                .andDo(print());
-//
-//        //Edit the page for that policy
-//        String requestStr2 = "/editPolicy?policyId=1";
-//
-//        this.mockMvc.perform(get(requestStr2)).andDo(print())
-//                .andExpect(status().isOk())
-//                .andExpect(content().string(containsString("Edit Policy: ")));
-//    }
-
     @Test
     @WithMockUser(username = "admin", password = "admin", roles = "ADMINISTRATOR")
     public void deletePolicyInvalidID() throws Exception {
-         String requestStr = "/deletePolicy?policyId=-1";
+         String requestStr = "/deletePolicy?policyId=-123";
          this.mockMvc.perform(get(requestStr)).andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(content().string(containsString("")));
     }
 
-//    @Test
-//    @WithMockUser(username = "admin", password = "admin", roles = "ADMINISTRATOR")
-//    public void deletePolicyValidID() throws Exception {
-//         String requestStr = "/editPolicy?policyId=1";
-//         this.mockMvc.perform(get(requestStr)).andDo(print())
-//                 .andExpect(status().is3xxRedirection())
-//                 .andExpect(content().string(containsString("")));
-//    }
+    @Test
+    @WithMockUser(username = "admin", password = "admin", roles = "ADMINISTRATOR")
+    public void deletePolicyValidID() throws Exception {
+        PolicyManager manager = new PolicyManager(mockRepository);
+        Policy p = new Policy();
+        manager.savePolicy(p);
+
+         String requestStr = "/deletePolicy?policyId=1";
+         this.mockMvc.perform(get(requestStr)).andDo(print())
+                 .andExpect(status().is3xxRedirection());
+    }
 }
