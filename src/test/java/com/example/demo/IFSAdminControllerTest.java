@@ -1,16 +1,19 @@
-package com.example.demo;
+/*package com.example.demo;
 
+import com.example.demo.DemoApplication;
 import com.example.demo.data.model.Policy;
 import com.example.demo.data.repository.PolicyRepository;
 import com.example.demo.logic.PolicyManager;
 import com.example.demo.view.IFSAdminController;
 
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -23,7 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes= DemoApplication.class)
 @AutoConfigureMockMvc(addFilters = false)
 class IFSAdminControllerTest {
     private IFSAdminController controller;
@@ -245,4 +249,4 @@ class IFSAdminControllerTest {
          this.mockMvc.perform(get(requestStr)).andDo(print())
                  .andExpect(status().is3xxRedirection());
     }
-}
+}*/
