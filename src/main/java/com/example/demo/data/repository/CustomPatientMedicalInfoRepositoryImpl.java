@@ -13,8 +13,10 @@ import javax.persistence.criteria.Root;
 
 import com.example.demo.data.model.PatientMedicalInfo;
 
+import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+@Repository
 public class CustomPatientMedicalInfoRepositoryImpl implements CustomPatientMedicalInfoRepository {
  
     @PersistenceContext
