@@ -89,7 +89,7 @@ public class LoadData implements ApplicationListener<ContextRefreshedEvent> {
         Policy p = new Policy();
         p.setInputColumns(Arrays.asList("patient_medical_info.length_of_stay", "patient_info.date_of_entry",
                 "patient_info.date_of_leave"));
-        p.setBlockedColumns(Arrays.asList("patient_info.name"));
+        p.setBlockedColumns(Arrays.asList("patient_info.name", "patient_medical_info.reason_of_visit"));
         p.setRelationship("patient_info.date_of_leave - patient_info.date_of_entry != patient_medical_info.length_of_stay");
         policyRepository.save(p);
 
