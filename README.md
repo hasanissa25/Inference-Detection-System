@@ -1,11 +1,10 @@
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/hasanissa25/ifs) 
 Steps to run:
 
-How to build the program:
-mvn clean package
+Make sure you are using Java 8
 
 How to run the program:
-mvn spring-boot:run
+mvn clean package spring-boot:run
 
 To access development database:
 go to '/h2-console'
