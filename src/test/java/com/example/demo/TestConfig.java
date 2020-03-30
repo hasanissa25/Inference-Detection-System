@@ -1,19 +1,17 @@
-package com.example.demo.config;
+package com.example.demo;
 
 import com.example.demo.data.repository.PatientMedicalInfoRepository;
 import com.example.demo.data.repository.PatientlnfoRepository;
-import com.example.demo.data.repository.BillingInfoRepository;
 import com.example.demo.data.repository.PolicyRepository;
 import com.example.demo.logic.PatientInfoManager;
 import com.example.demo.logic.PatientMedicalInfoManager;
-import com.example.demo.logic.BillingInfoManager;
 import com.example.demo.logic.PolicyManager;
-
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class GlobalConfiguration {
+@TestConfiguration
+public class TestConfig {
+
     @Bean
     public PolicyManager policyManager(PolicyRepository policyRepository) {
         return new PolicyManager(policyRepository);
@@ -28,10 +26,5 @@ public class GlobalConfiguration {
     @Bean
     public PatientInfoManager patientInfoManager(PatientlnfoRepository patientInfoRepository) {
         return new PatientInfoManager(patientInfoRepository);
-    }
-
-    @Bean
-    public BillingInfoManager BillingInfoManager(BillingInfoRepository billingInfoRepository) {
-        return new BillingInfoManager(billingInfoRepository);
     }
 }

@@ -49,7 +49,17 @@ public class Policy{
     {
         return relationship;
     }
-    
+    public void setRelationship(String relationship) { this.relationship = relationship; }
+
+    public void setInputColumns(List<String> inputCols) {
+        this.inputColumns = inputCols;
+    }
+
+    public void setBlockedColumns(List<String> blockedColumns) {
+        this.blockedColumns = blockedColumns;
+    }
+
+
     //Operators and Operands
     public class ResponseObject {
         private Queue<String> operators;
@@ -121,5 +131,4 @@ public class Policy{
 
     //     return operands;
     // }
-
 }

@@ -19,14 +19,27 @@
             <li class="nav-item">
                 <a class="nav-link" href="/patientInfo">Patient Info</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/billingInfo">Billing Info</a>
+            </li>
             </ul>
         </div>
     </div>
     <div class="card mt-3">
         <div class="card-body">
-            <h1>IFS System Demo</h1>
-            <p>Welcome to IFS system demo! This demo will demonstrate a simple inference attack, and how our system will handle it using one of two methods. Cell suppression, or modifying the result data. </p>
-            <h3>Introduction</h3>
+            <h1>Inference Detection System Demo</h1>
+            <p>This demo will demonstrate a simple inference attack, and how our system will handle it </p>
+            <h2>Steps to test</h2>
+            <ul>
+                <li>Login as Administrator</li>
+                <li>Click on Admin link at the top left</li>
+                <li>Under the Policies tab, click on Add Policy, and add the input columns, and the relationship between them. Then add the blocked columns that you want prevent users from seeing in case of an inference.</li>
+                <li>Under the Users tab, click on Add User, and enter the User Name, User Password, and User Role</li>
+                <li>Click logout on the top right, and login as the newly created user</li>
+                <li>Click on the Patient Medical Info, and perform a search, then click on Patient Info and click a search</li>
+                <li>If an inference was detected, the blocked columns will show up as "Not Authorized"</li>
+
+            </ul>
         </div>
     </div>
 </main>

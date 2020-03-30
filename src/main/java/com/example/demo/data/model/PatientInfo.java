@@ -69,5 +69,8 @@ public class PatientInfo{// extends Table{
         return name;
     }
 
-    
+    public static String[] getColumnNames() {
+        String[] tableColumns = {"name", "date_of_entry", "date_of_leave", "gender"};
+        return tableColumns;
+    }
 } 

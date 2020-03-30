@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.example.demo.data.model.PatientInfo;
 import com.example.demo.data.model.PatientMedicalInfo;
+import com.example.demo.data.model.BillingInfo;
 import com.example.demo.logic.PatientInfoManager;
 import com.example.demo.logic.PatientMedicalInfoManager;
+import com.example.demo.logic.BillingInfoManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +24,12 @@ public class MedicalAppController {
 
     private PatientMedicalInfoManager patientMedicalInfoManager;
     private PatientInfoManager patientInfoManager;
+    private BillingInfoManager billingInfoManager;
 
-    public MedicalAppController(PatientMedicalInfoManager patientMedicalInfoManager, PatientInfoManager patientInfoManager) {
+    public MedicalAppController(PatientMedicalInfoManager patientMedicalInfoManager, PatientInfoManager patientInfoManager, BillingInfoManager billingInfoManager) {
         this.patientMedicalInfoManager = patientMedicalInfoManager;
         this.patientInfoManager = patientInfoManager;
+        this.billingInfoManager = billingInfoManager;
     }
 
     @GetMapping("/")
@@ -51,7 +55,7 @@ public class MedicalAppController {
     @PostMapping("patientMedicalInfo")
     public String pateintMedicalInfoSearchForm(@ModelAttribute PatientMedicalInfo patientMedicalInfoForm, Model m) {
         logger.info("Patient Medical Info Search Form parameters:"+patientMedicalInfoForm); 
-        List<PatientMedicalInfo> results = patientMedicalInfoManager.search(patientMedicalInfoForm.getPatientId(), patientMedicalInfoForm.getLengthOfStay(), patientMedicalInfoForm.getReasonOfVisit());
+        List<PatientMedicalInfo> results = patientMedicalInfoManager.search(patientMedicalInfoForm.getPatientId(), patientMedicalInfoForm.getLengthOfStay(), patientMedicalInfoForm.getReasonOfVisit(), patientMedicalInfoForm.getDailyMedicalCost());
         m.addAttribute("searchResults", results);
         m.addAttribute("patientMedicalInfoForm", patientMedicalInfoForm);
         logger.info("Patient Medical Info form results: " + results);
@@ -82,4 +86,30 @@ public class MedicalAppController {
         logger.info("Patient Medical Info form results: " + results);
         return "patientInfo";
     }
+
+    /**
+     * GET the billing info page
+     * @param m
+     */
+    @GetMapping("billingInfo")
+    public String billingInfo(Model m) {
+        m.addAttribute("billingInfoForm", new BillingInfo());
+        return "billingInfo";
+    }
+
+    /**
+     * POST a billing info search form
+     * @param billingInfoForm
+     * @param m
+     */
+    @PostMapping("billingInfo")
+    public String billingInfoSearchForm(@ModelAttribute BillingInfo billingInfoForm, Model m) {
+        logger.info("Billing Info Search Form parameters:"+billingInfoForm); 
+        List<BillingInfo> results = billingInfoManager.search(billingInfoForm.getAccountNumber(), billingInfoForm.getPatientAddress(), billingInfoForm.getTotalMedicalCosts());
+        m.addAttribute("searchResults", results);
+        m.addAttribute("billingInfoForm", billingInfoForm);
+        logger.info("Billing Info form results: " + results);
+        return "billingInfo";
+    }
+
 }

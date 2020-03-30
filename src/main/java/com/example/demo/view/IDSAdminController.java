@@ -5,16 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.example.demo.data.model.DBLogEntry;
-import com.example.demo.data.model.Policy;
-import com.example.demo.data.model.Role;
-import com.example.demo.data.model.User;
+import com.example.demo.data.model.*;
 import com.example.demo.data.repository.DBLogEntryRepository;
-import com.example.demo.data.repository.UserRepository;
 import com.example.demo.logic.PolicyManager;
 import com.example.demo.logic.RoleManager;
 import com.example.demo.logic.UserManager;
@@ -31,9 +26,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class IFSAdminController {
+public class IDSAdminController {
 
-    private final static Logger logger = LoggerFactory.getLogger(IFSAdminController.class);
+    private final static Logger logger = LoggerFactory.getLogger(IDSAdminController.class);
 
     @Autowired
     private PolicyManager policyManager;
@@ -50,7 +45,7 @@ public class IFSAdminController {
     @Autowired
     private PasswordEncoder passwordencoder;
 
-    public IFSAdminController() {
+    public IDSAdminController() {
     }
 
     /**
@@ -119,6 +114,7 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", true);
             m.addAttribute("errMessage", "Server Side Validation Error - Form is empty");
+
         }
         else {
             if (newPolicyForm.getInputColumns() == null || newPolicyForm.getInputColumns().contains("NONE") || newPolicyForm.getInputColumns().isEmpty() || newPolicyForm.getInputColumns().contains(null) || newPolicyForm.getInputColumns().contains("")) {
@@ -126,6 +122,7 @@ public class IFSAdminController {
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Input Columns");
+
                 return "addPolicy";
             }
             Set<String> set = new HashSet<String>();
@@ -135,6 +132,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Input Columns");
+
                     return "addPolicy";
                 } 
             }
@@ -145,6 +143,7 @@ public class IFSAdminController {
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Blocked Columns");
+
                 return "addPolicy";
             }
 
@@ -155,6 +154,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Blocked Columns");
+
                     return "addPolicy";
                 } 
             }
@@ -168,31 +168,48 @@ public class IFSAdminController {
             }
 
             String[] relationshipSplit = newPolicyForm.getRelationship().split(" ");
-            String[] allowedColumns = {"patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", 
-                                     "patient_info.gender", "patient_medical_info.patient_id", "patient_medical_info.reason_of_visit",
-                                     "patient_medical_info.length_of_stay"};
-            for (String s : relationshipSplit) {
-                boolean isValidColumn = Arrays.stream(allowedColumns).anyMatch(s::equals);
+            String [] patientInfoAllowedColumns = PatientInfo.getColumnNames();
+            String [] patientMedicalInfoAllowedColumns = PatientMedicalInfo.getColumnNames();
+            String [] billingInfoAllowedColumns = BillingInfo.getColumnNames();
 
+            for (String s : relationshipSplit) {
+                boolean isValidColumn = true;
+                if (s.contains("patient_medical_info")) {
+                    String newStr = s.replace("patient_medical_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(patientMedicalInfoAllowedColumns).anyMatch(newStr::equals);
+                }
+                else if (s.contains("patient_info")) {
+                    String newStr = s.replace("patient_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(patientInfoAllowedColumns).anyMatch(newStr::equals);
+                }
+                else if (s.contains("billing_info.")) {
+                    String newStr = s.replace("billing_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(billingInfoAllowedColumns).anyMatch(newStr::equals);
+                }
                 //Only 1 operator allowed between columns
-                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
+                else if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
                     if (s.length() > 1 && !s.equals("!=")) {
                         logger.info("Error - Relationship has invalid operators");
                         servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         m.addAttribute("validationErr", true);
-                        m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid operators");
+                        m.addAttribute("errMessage", "Server Side Validation Error - Invalid operators");
                         return "addPolicy";
                     }
                 }
-                else if (!isValidColumn) {
+
+                if (!isValidColumn) {
                     logger.info("Error - Relationship has invalid columns");
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid columns");
+
                     return "addPolicy";
                 }
             }
-
+            
             //Check if policy already exists
             List<Policy> policies = policyManager.getAllPolicies();
             for(Policy policy : policies) {
@@ -269,6 +286,7 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", true);
             m.addAttribute("errMessage", "Server Side Validation Error - Policy ID value error");
+
             Optional<Policy> policy = policyManager.getPolicyById(policyId);
             m.addAttribute("policy", policy.get());
             return "editPolicy";
@@ -278,6 +296,7 @@ public class IFSAdminController {
             servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.addAttribute("validationErr", true);
             m.addAttribute("errMessage", "Server Side Validation Error - Form is empty");
+
             Optional<Policy> policy = policyManager.getPolicyById(policyId);
             m.addAttribute("policy", policy.get());
             return "editPolicy";
@@ -300,6 +319,7 @@ public class IFSAdminController {
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Input Columns");
+
                     return "editPolicy";
                 } 
             }
@@ -309,6 +329,7 @@ public class IFSAdminController {
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Blocked Columns");
+
                 Optional<Policy> policy = policyManager.getPolicyById(policyId);
                 m.addAttribute("policy", policy.get());
                 return "editPolicy";
@@ -319,6 +340,7 @@ public class IFSAdminController {
                 if (!set2.add(each)){
                     logger.info("Error - Duplicate Blocked Columns");
                     m.addAttribute("errMessage", "Server Side Validation Error - Duplicate Blocked Columns");
+
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
                     return "editPolicy";
@@ -329,36 +351,54 @@ public class IFSAdminController {
                 logger.info("Error - Empty Relationship");
                 servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.addAttribute("validationErr", true);
+
                 m.addAttribute("errMessage", "Server Side Validation Error - Empty Relationship");
+
                 Optional<Policy> policy = policyManager.getPolicyById(policyId);
                 m.addAttribute("policy", policy.get());
                 return "editPolicy";
             }
 
             String[] relationshipSplit = policyForm.getRelationship().split(" ");
-            String[] allowedColumns = {"patient_info.name", "patient_info.date_of_entry", "patient_info.date_of_leave", 
-                                     "patient_info.gender", "patient_medical_info.patient_id", "patient_medical_info.reason_of_visit",
-                                     "patient_medical_info.length_of_stay"};
+            String [] patientInfoAllowedColumns = PatientInfo.getColumnNames();
+            String [] patientMedicalInfoAllowedColumns = PatientMedicalInfo.getColumnNames();
+            String [] billingInfoAllowedColumns = BillingInfo.getColumnNames();
+
             for (String s : relationshipSplit) {
-                boolean isValidColumn = Arrays.stream(allowedColumns).anyMatch(s::equals);
+                boolean isValidColumn = true;
+                if (s.contains("patient_medical_info")) {
+                    String newStr = s.replace("patient_medical_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(patientMedicalInfoAllowedColumns).anyMatch(newStr::equals);
+                }
+                else if (s.contains("patient_info")) {
+                    String newStr = s.replace("patient_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(patientInfoAllowedColumns).anyMatch(newStr::equals);
+                }
+                else if (s.contains("billing_info.")) {
+                    String newStr = s.replace("billing_info.", "");
+                    System.out.println("newStr"+ newStr);
+                    isValidColumn = Arrays.stream(billingInfoAllowedColumns).anyMatch(newStr::equals);
+                }
                 //Only 1 operator allowed between columns
-                if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
+                else if (s.contains("+") || s.contains("-") || s.contains("*") || s.contains("/") || s.contains ("=")) {
                     if (s.length() > 1 && !s.equals("!=")) {
                         logger.info("Error - Relationship has invalid operators");
                         servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         m.addAttribute("validationErr", true);
-                        m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid operators");
+                        m.addAttribute("errMessage", "Server Side Validation Error - Invalid operators");
                         return "editPolicy";
                     }
                 }
-                else if (!isValidColumn) {
+                if (!isValidColumn) {
                     logger.info("Error - Relationship has invalid columns");
                     servletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.addAttribute("validationErr", true);
+
                     m.addAttribute("errMessage", "Server Side Validation Error - Relationship has invalid columns");
                     return "editPolicy";
                 }
-                
             }
 
             //Check if policy already exists

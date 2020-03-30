@@ -27,6 +27,7 @@ public class PatientMedicalInfo{// extends Table{
     private Long patientId;
     private String lengthOfStay;
     private String reasonOfVisit; 
+    private Integer dailyMedicalCost; 
     @Transient
     private boolean inference;
 
@@ -40,6 +41,8 @@ public class PatientMedicalInfo{// extends Table{
                 return lengthOfStay;
             case "reason_of_visit":
                 return reasonOfVisit;
+            case "daily_medical_cost":
+                return String.valueOf(dailyMedicalCost);
             default:
                 return null;
         }
@@ -55,7 +58,14 @@ public class PatientMedicalInfo{// extends Table{
                 break;
             case "reason_of_visit":
                 this.reasonOfVisit = val;
+            case "daily_medical_cost":
+                if (val.equals("Not Authorized")) {
+                    this.dailyMedicalCost = -1;
+                } else {
+                    this.dailyMedicalCost = Integer.valueOf(val);
+                }
                 break;
+
         }
     }
 
@@ -69,5 +79,8 @@ public class PatientMedicalInfo{// extends Table{
         return String.valueOf(patientId);
     }
 
-
+    public static String[] getColumnNames() {
+        String[] tableColumns = {"patient_id", "reason_of_visit","length_of_stay"};
+        return tableColumns;
+    }
 } 

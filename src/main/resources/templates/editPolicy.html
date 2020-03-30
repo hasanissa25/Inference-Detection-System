@@ -43,7 +43,9 @@
     </div>
     <div class="row" th:if="${validationErr}">
         <div class="alert">
+
             <p th:text="${errMessage}">
+
         </div> 
     </div>
      <div class="row">
@@ -72,6 +74,13 @@
                                 <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
                                 <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
                             </optgroup>
+
+                            <optgroup label="Billing Info"> 
+                                <option value="billing_info.account_number">billing_info.account_number</option>
+                                <option value="billing_info.patient_address">billing_info.patient_address</option>
+                                <option value="billing_info.total_medical_costs">billing_info.total_medical_costs</option>
+                            </optgroup>
+
                         </select>
                         <button type="button" class="btn btn-danger  fas fa-trash"/>
                     </div>
@@ -99,6 +108,13 @@
                                 <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
                                 <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
                             </optgroup>
+
+                            <optgroup label="Billing Info"> 
+                                <option value="billing_info.account_number">billing_info.account_number</option>
+                                <option value="billing_info.patient_address">billing_info.patient_address</option>
+                                <option value="billing_info.total_medical_costs">billing_info.total_medical_costs</option>
+                            </optgroup>
+
                         </select>
                         <button type="button" class="btn btn-danger  fas fa-trash"/>
                     </div>
@@ -144,6 +160,13 @@ function inputComponentBuilder(num) {
                                 <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
                                 <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
                             </optgroup>
+
+                            <optgroup label="Billing Info"> 
+                                <option value="billing_info.account_number">billing_info.account_number</option>
+                                <option value="billing_info.patient_address">billing_info.patient_address</option>
+                                <option value="billing_info.total_medical_costs">billing_info.total_medical_costs</option>
+                            </optgroup>
+
                             </select>
                             <button type="button" class="btn btn-danger  fas fa-trash"/>
                             </div>`;
@@ -165,6 +188,13 @@ function blockedComponentBuilder(num) {
                                 <option value="patient_medical_info.reason_of_visit">patient_medical_info.reason_of_visit</option>
                                 <option value="patient_medical_info.length_of_stay">patient_medical_info.length_of_stay</option>
                             </optgroup>
+
+                            <optgroup label="Billing Info"> 
+                                <option value="billing_info.account_number">billing_info.account_number</option>
+                                <option value="billing_info.patient_address">billing_info.patient_address</option>
+                                <option value="billing_info.total_medical_costs">billing_info.total_medical_costs</option>
+                            </optgroup>
+
                             </select>
                             <button type="button" class="btn btn-danger  fas fa-trash"/>
                             </div>`;

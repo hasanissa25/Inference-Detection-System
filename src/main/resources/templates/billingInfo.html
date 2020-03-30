@@ -14,13 +14,13 @@
                 <a class="nav-link" href="/">Home</a>
             </li>
              <li class="nav-item">
-                <a class="nav-link active" href="/patientMedicalInfo">Patient Medical Info</a>
+                <a class="nav-link" href="/patientMedicalInfo">Patient Medical Info</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/patientInfo">Patient Info</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/billingInfo">Billing Info</a>
+                <a class="nav-link active" href="/billingInfo">Billing Info</a>
             </li>
             </ul>
         </div>
@@ -28,22 +28,18 @@
    
     <div class="card mt-3">
         <div class="card-body">
-   <form action="#" th:action="@{/patientMedicalInfo}"  th:object="${patientMedicalInfoForm}" method="post">        
+   <form action="#" th:action="@{/billingInfo}"  th:object="${billingInfoForm}" method="post">        
      <div class="form-group">
-      <label for="patientId">Patient ID:</label>
-      <input type="number" class="form-control" th:field="*{patientId}"  >
+      <label for="AccountNumber">Account Number:</label>
+      <input type="text" class="form-control" th:field="*{AccountNumber}">
      </div>
          <div class="form-group">
-    <label for="reasonOfVisit">Reason of Visit:</label>
-    <input type="text" class="form-control" th:field="*{reasonOfVisit}">
+    <label for="PatientAddress">Patient Address:</label>
+    <input type="text" class="form-control" th:field="*{PatientAddress}">
   </div>
     <div class="form-group">
-    <label for="lengthOfStay">Length of Stay:</label>
-    <input type="text" class="form-control" th:field="*{lengthOfStay}">
-  </div>
-  <div class="form-group">
-    <label for="dailyMedicalCost">Daily Medical Cost:</label>
-    <input type="number" class="form-control" th:field="*{dailyMedicalCost}">
+    <label for="TotalMedicalCosts">Total Medical Costs:</label>
+    <input type="number" class="form-control" th:field="*{TotalMedicalCosts}">
   </div>
    <button type="submit" class="btn btn-primary mb-2 btn-lg btn-block">Search</button>
             </form>
@@ -55,19 +51,17 @@
          <table class="table">
             <thead>
                 <tr>
-                <th scope="col">Patient ID</th>
-                <th scope="col">Reason of Visit</th>
-                <th scope="col">Length of Stay</th>
-                <th scope="col">Daily Medical Cost</th>
+                <th scope="col">Account Number</th>
+                <th scope="col">Patient Address</th>
+                <th scope="col">Total Medical Costs</th>
                 <th scope="col">Inference</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="result : ${searchResults}">
-                    <th scope="row" th:text="${result.patientId != -1} ? ${result.patientId} : 'Not Authorized'" />
-                    <td th:text="${result.reasonOfVisit}"/>
-                    <td th:text="${result.lengthOfStay}"/>
-                    <td th:text="${result.dailyMedicalCost != -1} ? ${result.dailyMedicalCost} : 'Not Authorized'"/>
+                    <th scope="row" th:text="${result.AccountNumber}" />
+                    <td th:text="${result.PatientAddress}"/>
+                    <td th:text="${result.TotalMedicalCosts != -1} ? ${result.TotalMedicalCosts} : 'Not Authorized'"/>
                     <td th:text="${result.inference} ? 'yes' : 'no'">
                 </tr>
             </tbody>
